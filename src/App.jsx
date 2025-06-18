@@ -1,35 +1,68 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import Sidebar from "./components/Sidebar";
+import Dashboard from "./components/Dashboard";
+
+// Elenco delle sezioni disponibili (puoi aggiungere/rinominare)
+const SECTIONS = [
+  { key: "home", label: "Home" },
+  { key: "about", label: "About" },
+  { key: "projects", label: "Projects" },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Sezione attualmente visibile
+  const [selectedSection, setSelectedSection] = useState("home");
+  // Sezione che sto per visualizzare (destinazione)
+  const [pendingSection, setPendingSection] = useState(null);
+  // True durante la flip animation
+  const [isFlipping, setIsFlipping] = useState(false);
+  // Direzione flip ("next" o "previous")
+  const [flipDirection, setFlipDirection] = useState("next");
+
+  // Gestore click su Sidebar: parte flip SOLO se cambio sezione
+  const handleSidebarSelect = (sectionKey) => {
+    if (isFlipping || sectionKey === selectedSection) return;
+    setPendingSection(sectionKey);
+    setFlipDirection(
+      SECTIONS.findIndex((s) => s.key === sectionKey) >
+      SECTIONS.findIndex((s) => s.key === selectedSection)
+        ? "next"
+        : "previous"
+    );
+    setIsFlipping(true);
+  };
+
+  // Quando la flip animation termina, cambio effettivamente sezione
+  const handleFlipEnd = () => {
+    setSelectedSection(pendingSection);
+    setPendingSection(null);
+    setIsFlipping(false);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div
+      style={{
+        display: "flex",
+        minHeight: "100vh",
+        background: "#202a33",
+        fontFamily: "monospace",
+      }}
+    >
+      <Sidebar
+        sections={SECTIONS}
+        selected={selectedSection}
+        disabled={isFlipping}
+        onSelect={handleSidebarSelect}
+      />
+
+      <Dashboard
+        section={isFlipping ? pendingSection : selectedSection}
+        isFlipping={isFlipping}
+        flipDirection={flipDirection}
+        onFlipEnd={handleFlipEnd}
+      />
+    </div>
+  );
 }
 
-export default App
+export default App;
