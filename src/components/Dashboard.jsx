@@ -4,6 +4,7 @@ import HomeSection from "../pages/HomeSection";
 import AboutSection from "../pages/AboutSection";
 import ProjectsSection from "../pages/ProjectsSection";
 import ContactsSection from "../pages/ContactsSection";
+import Sidebar from "./Sidebar";
 import dashboardImg from "../assets/pixel-map/0.png";
 
 // Import dei frame per flip avanti
@@ -18,7 +19,6 @@ const prevFrames = Object.keys(prevFramesModules)
   .sort((a, b) => Number(a.match(/(\d+)\.png$/)?.[1]) - Number(b.match(/(\d+)\.png$/)?.[1]))
   .map((key) => prevFramesModules[key].default);
 
-// Render contenuto sezione attuale
 const renderSection = (section) => {
   switch (section) {
     case "home":
@@ -34,7 +34,13 @@ const renderSection = (section) => {
   }
 };
 
-const Dashboard = ({ section, isFlipping, flipDirection, onFlipEnd }) => (
+const Dashboard = ({
+  section,
+  isFlipping,
+  flipDirection,
+  onFlipEnd,
+  sidebarProps,
+}) => (
   <main
     style={{
       flex: 1,
@@ -47,21 +53,34 @@ const Dashboard = ({ section, isFlipping, flipDirection, onFlipEnd }) => (
   >
     <div
       style={{
-        width: 608,
-        height: 512,
+        width: 730,
+        height: 615,
         position: "relative",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
       }}
     >
-      {/* Dashboard pixel art (immagine cornice) */}
+      {/* Sidebar posizionata esattamente al bordo sinistro della dashboard */}
+      <div
+        style={{
+          position: "absolute",
+          left: "-20px", // <- Modifica questo valore per avvicinare perfettamente
+          top: "50%",
+          transform: "translateY(-50%)",
+          zIndex: 3,
+        }}
+      >
+        <Sidebar {...sidebarProps} />
+      </div>
+
+      {/* Dashboard pixel art (immagine centrale) */}
       <img
         src={dashboardImg}
         alt="dashboard"
         style={{
-          width: 608,
-          height: 512,
+          width: 730,
+          height: 615,
           position: "absolute",
           left: 0,
           top: 0,
@@ -73,19 +92,18 @@ const Dashboard = ({ section, isFlipping, flipDirection, onFlipEnd }) => (
         draggable={false}
       />
 
-      {/* Animazione flip o contenuto */}
+      {/* Contenuto sezioni e animazioni flip */}
       <div
         style={{
-          width: 480, // oppure come preferisci per il "contenuto"
-          height: 360,
+          width: 560,
+          height: 420,
           zIndex: 2,
           position: "absolute",
-          left: 64,
-          top: 76,
+          left: 80,
+          top: 90,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "none",
         }}
       >
         {isFlipping ? (
@@ -93,7 +111,7 @@ const Dashboard = ({ section, isFlipping, flipDirection, onFlipEnd }) => (
             frames={flipDirection === "next" ? nextFrames : prevFrames}
             frameRate={16}
             loop={false}
-            style={{ width: 320, height: 320 }}
+            style={{ width: 400, height: 400 }}
             onAnimationEnd={onFlipEnd}
           />
         ) : (

@@ -1,21 +1,12 @@
-import React from "react";
-
-// Props:
-// - sections: [{key, label}, ...]
-// - selected: key attualmente selezionato
-// - onSelect: funzione chiamata quando clicchi su una sezione
-// - disabled: se true, disabilita tutti i bottoni
-const Sidebar = ({ sections, selected, onSelect, disabled }) => (
+const Sidebar = ({ sections, selected, onSelect, disabled, btnBg, btnBgActive }) => (
   <nav
     style={{
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      background: "#161a20",
-      minWidth: 100,
-      padding: "32px 12px",
-      borderRight: "2px solid #333c",
-      gap: 24,
+      background: "transparent",
+      padding: "10px",
+      gap: 16,
     }}
   >
     {sections.map((section) => (
@@ -26,21 +17,55 @@ const Sidebar = ({ sections, selected, onSelect, disabled }) => (
         style={{
           width: 64,
           height: 64,
-          marginBottom: 10,
-          border: selected === section.key ? "3px solid #f8d23c" : "2px solid #222",
-          background: selected === section.key ? "#232" : "#111",
-          color: "#fff",
-          fontWeight: "bold",
-          fontSize: 14,
-          borderRadius: 16,
+          padding: 0,
+          border: "none",
+          background: "none",
           cursor: disabled ? "not-allowed" : "pointer",
+          position: "relative",
           outline: "none",
-          boxShadow: selected === section.key ? "0 0 12px #f8d23c88" : "0 0 6px #2228",
-          transition: "all 0.2s",
         }}
       >
-        {/* Qui puoi mettere una icona pixel art o la label */}
-        {section.label}
+        <img
+          src={selected === section.key ? btnBgActive : btnBg}
+          alt=""
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: 64,
+            height: 64,
+            imageRendering: "pixelated",
+            pointerEvents: "none",
+          }}
+          draggable={false}
+        />
+        <img
+          src={section.icon}
+          alt={section.label}
+          style={{
+            width: 36,
+            height: 36,
+            position: "absolute",
+            left: 14,
+            top: 14,
+            imageRendering: "pixelated",
+            pointerEvents: "none",
+          }}
+          draggable={false}
+        />
+        <span
+          style={{
+            position: "absolute",
+            left: 0,
+            bottom: -20,
+            width: "100%",
+            textAlign: "center",
+            fontSize: 12,
+            color: "#fff",
+          }}
+        >
+          {section.label}
+        </span>
       </button>
     ))}
   </nav>

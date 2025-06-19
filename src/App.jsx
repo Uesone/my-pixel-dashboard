@@ -1,41 +1,40 @@
 import React, { useState } from "react";
-import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
+import bgPattern from "./assets/content/background/0.png";
 
+// Asset sidebar
+import btnBg from "./assets/content/side-tabs/0.png";
+import btnBgActive from "./assets/content/side-tabs/1.png";
+import homeIcon from "./assets/content/side-tabs/4.png";
+import aboutIcon from "./assets/content/side-tabs/5.png";
+import contactsIcon from "./assets/content/side-tabs/6.png";
+import projectsIcon from "./assets/content/side-tabs/8.png";
 
-
-// Elenco delle sezioni disponibili (puoi aggiungere/rinominare)
 const SECTIONS = [
-  { key: "home", label: "Home" },
-  { key: "about", label: "About" },
-  { key: "projects", label: "Projects" },
-  { key: "contacts", label: "Contacts" },
+  { key: "home", label: "Home", icon: homeIcon },
+  { key: "about", label: "About", icon: aboutIcon },
+  { key: "projects", label: "Projects", icon: projectsIcon },
+  { key: "contacts", label: "Contacts", icon: contactsIcon },
 ];
 
 function App() {
-  // Sezione attualmente visibile
   const [selectedSection, setSelectedSection] = useState("home");
-  // Sezione che sto per visualizzare (destinazione)
   const [pendingSection, setPendingSection] = useState(null);
-  // True durante la flip animation
   const [isFlipping, setIsFlipping] = useState(false);
-  // Direzione flip ("next" o "previous")
   const [flipDirection, setFlipDirection] = useState("next");
 
-  // Gestore click su Sidebar: parte flip SOLO se cambio sezione
   const handleSidebarSelect = (sectionKey) => {
     if (isFlipping || sectionKey === selectedSection) return;
     setPendingSection(sectionKey);
     setFlipDirection(
       SECTIONS.findIndex((s) => s.key === sectionKey) >
-      SECTIONS.findIndex((s) => s.key === selectedSection)
+        SECTIONS.findIndex((s) => s.key === selectedSection)
         ? "next"
         : "previous"
     );
     setIsFlipping(true);
   };
 
-  // Quando la flip animation termina, cambio effettivamente sezione
   const handleFlipEnd = () => {
     setSelectedSection(pendingSection);
     setPendingSection(null);
@@ -45,25 +44,46 @@ function App() {
   return (
     <div
       style={{
-        display: "flex",
         minHeight: "100vh",
-        background: "#202a33",
+        width: "100vw",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "#121212",
         fontFamily: "monospace",
+        overflow: "hidden",
       }}
     >
-      <Sidebar
-        sections={SECTIONS}
-        selected={selectedSection}
-        disabled={isFlipping}
-        onSelect={handleSidebarSelect}
-      />
-
-      <Dashboard
-        section={isFlipping ? pendingSection : selectedSection}
-        isFlipping={isFlipping}
-        flipDirection={flipDirection}
-        onFlipEnd={handleFlipEnd}
-      />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "20px",
+          backgroundImage: `url(${bgPattern})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          borderRadius: 12,
+          transform: "scale(1.2)",
+        }}
+      >
+        <Dashboard
+          section={isFlipping ? pendingSection : selectedSection}
+          isFlipping={isFlipping}
+          flipDirection={flipDirection}
+          onFlipEnd={handleFlipEnd}
+          sidebarProps={{
+            sections: SECTIONS,
+            selected: selectedSection,
+            disabled: isFlipping,
+            onSelect: handleSidebarSelect,
+            btnBg,
+            btnBgActive,
+          }}
+        />
+      </div>
     </div>
   );
 }
