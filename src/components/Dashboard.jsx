@@ -3,6 +3,8 @@ import SpriteAnimator from "./SpriteAnimator";
 import HomeSection from "../pages/HomeSection";
 import AboutSection from "../pages/AboutSection";
 import ProjectsSection from "../pages/ProjectsSection";
+import ContactsSection from "../pages/ContactsSection";
+
 
 // Import dei frame per flip avanti
 const nextFramesModules = import.meta.glob("../assets/page-flip/next-page/*.png", { eager: true });
@@ -25,6 +27,8 @@ const renderSection = (section) => {
       return <AboutSection />;
     case "projects":
       return <ProjectsSection />;
+          case "contacts":  
+      return <ContactsSection />;
     default:
       return <div>Unknown section</div>;
   }

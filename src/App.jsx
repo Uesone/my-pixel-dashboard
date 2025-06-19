@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 
+
+
 // Elenco delle sezioni disponibili (puoi aggiungere/rinominare)
 const SECTIONS = [
   { key: "home", label: "Home" },
   { key: "about", label: "About" },
   { key: "projects", label: "Projects" },
+  { key: "contacts", label: "Contacts" },
 ];
 
 function App() {
