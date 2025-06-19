@@ -31,19 +31,24 @@ import clockBase from "../assets/pixel-map-sprites/clock/0.png"; // la base del 
 import clockDigitsMask from "../assets/pixel-map-sprites/clock/1.png"; //decorazioni, simboli bianchi
 import clockDigit0 from "../assets/pixel-map-sprites/clock/clock-digits/0/0.png"; //la prima cifra (0)
 
-const DashboardBase = () =>
-     /* BASE DELLA DASHBOARD */
-( 
+const DashboardBase = ({ scale = 1.4 }) => (
+  // Questo wrapper scala tutta la dashboard in un colpo solo!
   <div
     style={{
-      position: "relative",
-      width: "487px",   // Non toccare: è la base del frame!
-      height: "399px",
-      background: "#222",
-      imageRendering: "pixelated",
-      overflow: "hidden",
+      transform: `scale(${scale})`,      // 👈 Cambia qui il fattore di scala (es: 1.4, 1.6, 2)
+      transformOrigin: "top left",       // 👈 Puoi mettere anche "center" se vuoi scalare dal centro
+      display: "inline-block",           // 👈 Tiene il box compatto
     }}
   >
+    <div
+      style={{
+        position: "relative",
+        width: "487px",   // Non toccare: è la base del frame!
+        height: "399px",
+        imageRendering: "pixelated",
+        overflow: "hidden",
+      }}
+      ></div>
     {/* FRAME ESTERNO */}
     <img
       src={frame}
