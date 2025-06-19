@@ -15,7 +15,7 @@ function App() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#23242b",
+        background: "#23242b", //qui è dove c'è il background di tutto il resto.
         overflow: "hidden",
       }}
     >
