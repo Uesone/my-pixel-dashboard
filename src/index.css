@@ -2,7 +2,6 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-overflow: hidden;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
@@ -24,10 +23,12 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background: #242424;
+  display: flex;
+  justify-content: center;   /* centra orizzontalmente */
+  align-items: center;       /* centra verticalmente */
 }
 
 h1 {
@@ -54,6 +55,18 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* IMMAGINI PIXEL ART: NO BLUR, NO SCALING GLOBALE */
+img {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -webkit-user-drag: none;
+  user-select: none;
+  /* Rimuovi max-width/height auto se c'è */
+  max-width: unset;
+  height: unset;
+}
+
+/* MEDIA QUERY PER LIGHT MODE */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -66,3 +79,4 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
