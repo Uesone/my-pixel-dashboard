@@ -15,7 +15,25 @@ import powerHubBtnOff from "../assets/pixel-map-sprites/power-hub/6.png";    // 
 import powerHubBtnOn from "../assets/pixel-map-sprites/power-hub/7.png";     // pulsante acceso (rosso)
 import powerHubBtnError from "../assets/pixel-map-sprites/power-hub/8.png";  // pulsante errore (marrone/scuro)
 
-const DashboardBase = () => (
+//Compass assets
+import compassBase from "../assets/pixel-map-sprites/compass/0.png"; // base della bussola
+import compassShadow from "../assets/pixel-map-sprites/compass/1.png"; //effetto ombra "sotto" la bussola, per profondità
+import compassDeco from "../assets/pixel-map-sprites/compass/2.png"; //decorazione punti cardinali,overlay sopra la base
+import compassNeedle from "../assets/pixel-map-sprites/compass/3.png"; //lancetta
+
+//Bulb assets
+
+import bulbBase from "../assets/pixel-map-sprites/bulb/0.png"; // bulb(luce) spenta
+import bulbGlass from "../assets/pixel-map-sprites/bulb/1.png"; //bulb (luce) accesa
+
+//Clock assets
+import clockBase from "../assets/pixel-map-sprites/clock/0.png"; // la base del clock
+import clockDigitsMask from "../assets/pixel-map-sprites/clock/1.png"; //decorazioni, simboli bianchi
+import clockDigit0 from "../assets/pixel-map-sprites/clock/clock-digits/0/0.png"; //la prima cifra (0)
+
+const DashboardBase = () =>
+     /* BASE DELLA DASHBOARD */
+( 
   <div
     style={{
       position: "relative",
@@ -65,8 +83,8 @@ const DashboardBase = () => (
       style={{
         position: "absolute",
         top: "5px",     // Cambia questo per SU/GIÙ
-        left: "92px",   // Cambia questo per DESTRA/SINISTRA
-        width: "383px",
+        left: "103px",   // Cambia questo per DESTRA/SINISTRA
+        width: "370px",
         height: "380px",
         zIndex: 3,
         pointerEvents: "none",
@@ -81,14 +99,16 @@ const DashboardBase = () => (
       style={{
         position: "absolute",
         top: "3px",     // Cambia questo per SU/GIÙ
-        left: "105px",  // Cambia questo per DESTRA/SINISTRA
-        width: "355px",
+        left: "116px",  // Cambia questo per DESTRA/SINISTRA
+        width: "343px",
         height: "385px",
         zIndex: 4,
         pointerEvents: "none",
       }}
       draggable={false}
     />
+
+    {/* FINE BASE DELLA DASHBOARD */}
 
     {/* --- POWER HUB --- */}
     {/* TUBO PRINCIPALE */}
@@ -424,7 +444,215 @@ const DashboardBase = () => (
     /> */}
 
     {/* -- Fine Power Hub -- */}
+
+{/* INIZIO BUSSOLA */}
+
+    {/* --- COMPASS SHADOW --- */}
+<img
+  src={compassShadow}
+  alt="compass shadow"
+  style={{
+    position: "absolute",
+    top: "262px",   // Cambia per SU/GIÙ
+    left: "58px",  // Cambia per DX/SX
+    width: "71px",  // o la dimensione originale PNG
+    height: "80px",
+    zIndex: 30,
+    pointerEvents: "none",
+  }}
+  draggable={false}
+/>
+
+{/* --- COMPASS BASE --- */}
+<img
+  src={compassBase}
+  alt="compass base"
+  style={{
+    position: "absolute",
+    top: "260px", //Cambia per SU/GIU
+    left: "58px", // Cambia per DX/SX
+    width: "70px", 
+    height: "80px",
+    zIndex: 31,
+    pointerEvents: "none",
+  }}
+  draggable={false}
+/>
+
+{/* --- COMPASS NEEDLE --- */}
+<img
+  src={compassNeedle}
+  alt="compass needle"
+  style={{
+    position: "absolute",
+    top: "278px",     // micro-offset se serve
+    left: "70px",   //Cambia DX/SX
+    width: "48px",
+    height: "48px",
+    zIndex: 32,
+    pointerEvents: "none",
+    // puoi aggiungere qui la rotazione!
+    // transform: "rotate(0deg)",
+    // transformOrigin: "center center",
+  }}
+  draggable={false}
+/>
+
+{/* --- COMPASS DECO --- */}
+<img
+  src={compassDeco}
+  alt="compass deco"
+  style={{
+    position: "absolute",
+    top: "280px", //CAMBIA SU/GIU
+    left: "74px", //CAMBIA DESTRA/SINISTRA
+    width: "39px",
+    height: "48px",
+    zIndex: 33,
+    pointerEvents: "none",
+  }}
+  draggable={false}
+/>
+
+{/* FINE BUSSOLA */}
+
+{/* INIZIO BULB */}
+
+{/* BULB BASE (filamento + zoccolo) */}
+<img
+  src={bulbBase}
+  alt="bulb base"
+  style={{
+    position: "absolute",
+    top: "84px",   // CAMBIA QUESTO per SU/GIÙ
+    left: "34px",   // CAMBIA QUESTO per DX/SX
+    width: "112px", // oppure lascia "auto" per le proporzioni originali
+    height: "240px",
+    zIndex: 40,
+    pointerEvents: "none",
+  }}
+  draggable={false}
+/>
+
+{/* BULB GLASS (bulbo traslucido bianco) 
+<img
+  src={bulbGlass}
+  alt="bulb glass"
+  style={{
+    position: "absolute",
+    top: "120px",   // Stessi valori della base per sovrapporre preciso
+    left: "60px",
+    width: "112px",
+    height: "240px",
+    zIndex: 41,
+    pointerEvents: "none",
+    // puoi aggiungere animazioni qui (es: opacity per “accendere” il bulbo)
+  }}
+  draggable={false}
+/>*/}
+{/* FINE BULB */}
+
+{/* INIZIO CLOCK */}
+{/* CLOCK BASE */}
+<img
+  src={clockBase}
+  alt="clock base"
+  style={{
+    position: "absolute",
+    top: "60px",   // CAMBIA QUESTO per SU/GIÙ
+    left: "45px",  // CAMBIA QUESTO per DX/SX
+    width: "96px",
+    height: "64px",
+    zIndex: 50,
+    pointerEvents: "none",
+  }}
+  draggable={false}
+/>
+
+{/* CLOCK MASK (digit mask) */}
+<img
+  src={clockDigitsMask}
+  alt="clock mask"
+  style={{
+    position: "absolute",
+    top: "60px",
+    left: "45px",
+    width: "96px",
+    height: "64px",
+    zIndex: 51,
+    pointerEvents: "none",
+  }}
+  draggable={false}
+/>
+
+{/* CLOCK DIGITs STATICi "0" */}
+{/* DIGIT 1 */}
+<img
+  src={clockDigit0}
+  alt="clock digit 1"
+  style={{
+    position: "absolute",
+    top: "66px",   // MICRO-OFFSET per centrare sul mask
+    left: "52px",
+    width: "28px", // o la dimensione originale PNG (controlla proporzione!)
+    height: "32px",
+    zIndex: 52,
+    pointerEvents: "none",
+  }}
+  draggable={false}
+/>
+{/* DIGIT 2 */}
+<img
+  src={clockDigit0}
+  alt="clock digit 2"
+  style={{
+    position: "absolute",
+    top: "66px",
+    left: "69px",   // Sposta a destra rispetto al primo
+    width: "28px",
+    height: "32px",
+    zIndex: 52,
+    pointerEvents: "none",
+  }}
+  draggable={false}
+/>
+{/* DIGIT 3 */}
+<img
+  src={clockDigit0}
+  alt="clock digit 3"
+  style={{
+    position: "absolute",
+    top: "66px",
+    left: "88px",  // Sposta ancora più a destra
+    width: "28px",
+    height: "32px",
+    zIndex: 52,
+    pointerEvents: "none",
+  }}
+  draggable={false}
+/>
+{/* DIGIT 4 */}
+<img
+  src={clockDigit0}
+  alt="clock digit 4"
+  style={{
+    position: "absolute",
+    top: "66px",
+    left: "105px",  // Sposta ancora più a destra
+    width: "28px",
+    height: "32px",
+    zIndex: 52,
+    pointerEvents: "none",
+  }}
+  draggable={false}
+/>
+
+{/* FINE CLOCK */}
+
   </div>
+
+  
+  
 );
 
 export default DashboardBase;
