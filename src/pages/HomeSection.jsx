@@ -3,6 +3,7 @@ import React from "react";
 import holder0 from "../assets/page-content-sprites/holders/8.png";
 import icon0 from "../assets/page-content-sprites/icons/14.png";
 import linePng from "../assets/page-content-sprites/holders/0.png";
+import balloonPng from "../assets/ui/dialog/steampunk_dialogbox.png"; // AGGIUNGI QUESTO
 
 const HomeSection = () => (
   <div
@@ -19,8 +20,8 @@ const HomeSection = () => (
       alt="holder"
       style={{
         position: "absolute",
-        top: 180,      // ▼ Cambia Y rispetto a HomeSection
-        left: 210,     // ▶ Cambia X rispetto a HomeSection
+        top: 180,
+        left: 210,
         width: 125,
         height: 125,
         zIndex: 2,
@@ -33,8 +34,8 @@ const HomeSection = () => (
     <div
       style={{
         position: "absolute",
-        top: 190,      // ▼ Cambia Y (10px sotto la cornice)
-        left: 220,     // ▶ Cambia X
+        top: 190,
+        left: 220,
         width: 105,
         height: 105,
         borderRadius: "50%",
@@ -58,14 +59,14 @@ const HomeSection = () => (
       />
     </div>
 
-        {/* PRIMA LINEA (originale) */}
+    {/* PRIMA LINEA (originale) */}
     <img
       src={linePng}
       alt="linea"
       style={{
         position: "absolute",
-        top: 50,      // ▼ Cambia Y
-        left: 200,     // ▶ Cambia X
+        top: 50,
+        left: 200,
         width: 120,
         height: 100,
         zIndex: 3,
@@ -75,76 +76,91 @@ const HomeSection = () => (
     />
 
     {/* SECONDA LINEA (specchiata) */}
-<img
-  src={linePng}
-  alt="linea specchiata"
-  style={{
-    position: "absolute",
-    top: 50,
-    left: 452,
-    width: 120,
-    height: 100,
-    zIndex: 3,
-    pointerEvents: "none",
-    transform: "scaleX(-1)", // SPECCHIATURA ORIZZONTALE
-    transformOrigin: "center center",
-  }}
-  draggable={false}
-/>
-    {/* Testo con font PixelOperator */}
-<div
-  style={{
-    position: "absolute",
-    top: 32,
-    left: 313,
-    fontFamily: "'VT323', monospace",
-    fontSize:72,
-    color: "#24170b",
-    letterSpacing: 0,
-    padding: "3px 16px",
-    zIndex: 10,
-    textShadow: `
-
-      -2px 2px 0 #e7d7b6,  
-      2px 2px 0 #e7d7b6,    
-      2px 4px 2px #7e6643
-    `,
-  }}
->
-  Home
-</div>
-
-    {/* === AGGIUNGI ALTRI PNG QUI COME VUOI! === */}
-    {/* Esempio altro PNG:
     <img
-      src={tuoAltroPng}
+      src={linePng}
+      alt="linea specchiata"
       style={{
         position: "absolute",
-        top: 30,
-        left: 40,
-        width: 80,
-        height: 80,
-        zIndex: 5,
+        top: 50,
+        left: 452,
+        width: 120,
+        height: 100,
+        zIndex: 3,
+        pointerEvents: "none",
+        transform: "scaleX(-1)",
+        transformOrigin: "center center",
       }}
       draggable={false}
     />
-    */}
 
-    {/* === TESTO LIBERO, SE VUOI === */}
-    {/* 
+    {/* Testo con font PixelOperator */}
     <div
       style={{
         position: "absolute",
-        top: 40,
-        left: 30,
-        color: "#333",
-        fontSize: 18,
+        top: 32,
+        left: 313,
+        fontFamily: "'VT323', monospace",
+        fontSize: 72,
+        color: "#24170b",
+        letterSpacing: 0,
+        padding: "3px 16px",
         zIndex: 10,
+        textShadow: `
+          -2px 2px 0 #e7d7b6,  
+          2px 2px 0 #e7d7b6,    
+          2px 4px 2px #7e6643
+        `,
       }}
     >
-      Benvenuto sulla mia Dashboard!
+      Home
     </div>
-    */}
+
+    {/* === BALLOON PNG con overlay testo === */}
+    <div
+      style={{
+        position: "absolute",
+        top: 92,      // Cambia a piacere
+        left: 320,     // Cambia a piacere
+        width: 290,   // Balloon PNG 250px
+        height: 300,   // Balloon PNG 90px
+        zIndex: 20,
+        pointerEvents: "none"
+      }}
+    >
+      <img
+        src={balloonPng}
+        alt="balloon"
+        style={{
+          width: "100%",
+          height: "100%",
+          imageRendering: "pixelated",
+          pointerEvents: "none"
+        }}
+        draggable={false}
+      />
+      {/* Overlay testo centrato */}
+      <div
+        style={{
+          position: "absolute",
+          top: 124,         // Cambia per centrare verticalmente
+          left: 38,        // Cambia per centrare orizzontalmente
+          width: 215,      // (250 - padding x2)
+          height: 40,
+          fontFamily: "'VT323', monospace",
+          fontSize: 22,
+          whiteSpace: "pre-line",
+          pointerEvents: "none",
+          textAlign: "center", // Centra il testo
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        Ciao! Benvenuto nel mio sito portfolio.
+      </div>
+    </div>
+
+    {/* === AGGIUNGI ALTRI PNG QUI COME VUOI! === */}
   </div>
 );
 
