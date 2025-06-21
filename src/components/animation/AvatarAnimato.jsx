@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import avatarIdle from "../assets/page-content-sprites/icons/14.png";
-import avatarTalk from "../assets/page-content-sprites/icons/15.png";
+import avatarIdle from "../../assets/page-content-sprites/icons/14.png";
+import avatarTalk from "../../assets/page-content-sprites/icons/15.png";
 
 export default function AvatarAnimato({ talking }) {
   const [isOpen, setIsOpen] = useState(false);

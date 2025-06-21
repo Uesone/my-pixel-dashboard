@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import holder0 from "../assets/page-content-sprites/holders/8.png";
 import linePng from "../assets/page-content-sprites/holders/0.png";
-import HomeDialogBox from "../components/HomeDialogBox";
-import AvatarAnimato from "../components/AvatarAnimato";
+import HomeDialogBox from "../components/animation/HomeDialogBox.jsx";
+import AvatarAnimato from "../components/animation/AvatarAnimato.jsx";
 
 const HomeSection = () => {
   const [talking, setTalking] = useState(false);

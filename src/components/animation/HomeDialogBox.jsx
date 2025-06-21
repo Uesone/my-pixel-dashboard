@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import nextArrowPng from "../assets/ui/dialog/arrow_next.png";
-import prevArrowPng from "../assets/ui/dialog/arrow_prev.png";
-import balloonPng from "../assets/ui/dialog/steampunk_dialogbox.png";
+import nextArrowPng from "../../assets/ui/dialog/arrow_next.png";
+import prevArrowPng from "../../assets/ui/dialog/arrow_prev.png";
+import balloonPng from "../../assets/ui/dialog/steampunk_dialogbox.png";
 
 // Dialoghi da mostrare
 const lines = [
