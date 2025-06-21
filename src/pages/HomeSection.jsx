@@ -2,6 +2,7 @@ import React from "react";
 // Importa i tuoi asset PNG (avatar, holder, ecc)
 import holder0 from "../assets/page-content-sprites/holders/8.png";
 import icon0 from "../assets/page-content-sprites/icons/14.png";
+import linePng from "../assets/page-content-sprites/holders/0.png";
 
 const HomeSection = () => (
   <div
@@ -56,6 +57,62 @@ const HomeSection = () => (
         draggable={false}
       />
     </div>
+
+        {/* PRIMA LINEA (originale) */}
+    <img
+      src={linePng}
+      alt="linea"
+      style={{
+        position: "absolute",
+        top: 50,      // ▼ Cambia Y
+        left: 200,     // ▶ Cambia X
+        width: 120,
+        height: 100,
+        zIndex: 3,
+        pointerEvents: "none",
+      }}
+      draggable={false}
+    />
+
+    {/* SECONDA LINEA (specchiata) */}
+<img
+  src={linePng}
+  alt="linea specchiata"
+  style={{
+    position: "absolute",
+    top: 50,
+    left: 452,
+    width: 120,
+    height: 100,
+    zIndex: 3,
+    pointerEvents: "none",
+    transform: "scaleX(-1)", // SPECCHIATURA ORIZZONTALE
+    transformOrigin: "center center",
+  }}
+  draggable={false}
+/>
+    {/* Testo con font PixelOperator */}
+<div
+  style={{
+    position: "absolute",
+    top: 32,
+    left: 313,
+    fontFamily: "'VT323', monospace",
+    fontSize:72,
+    color: "#24170b",
+    letterSpacing: 0,
+    padding: "3px 16px",
+    zIndex: 10,
+    textShadow: `
+
+      -2px 2px 0 #e7d7b6,  
+      2px 2px 0 #e7d7b6,    
+      2px 4px 2px #7e6643
+    `,
+  }}
+>
+  Home
+</div>
 
     {/* === AGGIUNGI ALTRI PNG QUI COME VUOI! === */}
     {/* Esempio altro PNG:
