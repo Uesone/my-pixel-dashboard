@@ -143,7 +143,7 @@ const HomeSection = () => {
       <div
         style={{
           position: "absolute",
-          top: 10,     // ↓ posizione verticale del balloon
+          top: 20,     // ↓ posizione verticale del balloon
           left: 100,    // → posizione orizzontale
           width: 180,  // larghezza balloon
           height: 80,  // altezza balloon
@@ -152,18 +152,21 @@ const HomeSection = () => {
         }}
       >
         <HomeDialogBox
-          balloonWidth={210}
-          balloonHeight={290}
-          fontSize={15}
-          textTop={135}
-          textLeft={30}
-          textWidth={150}
-          textHeight={20}
-          arrowPrevTop={200}
-          arrowPrevLeft={8}
-          arrowNextTop={202}
-          arrowNextLeft={158}
-          onTalkingChange={setTalking}
+  balloonWidth={210}
+  balloonHeight={255}
+  fontSize={15}
+  textTop={115}
+  textLeft={30}
+  textWidth={150}
+  textHeight={20}
+  arrowPrevTop={180}
+  arrowPrevLeft={8}
+  arrowNextTop={183}
+  arrowNextLeft={160}
+  letterSpacing={0}    // 👈 aggiunto!
+  fontWeight="400"    // 👈 aggiunto!
+  color="#f5ecd7"      // 👈 aggiunto!
+  onTalkingChange={setTalking}
         />
       </div>
     </PageWrapper>

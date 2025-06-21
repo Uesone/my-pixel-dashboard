@@ -17,11 +17,17 @@ export default function HomeDialogBox({
   balloonWidth = 290,
   balloonHeight = 124,
   fontSize = 22,
-  // Testo
+  // Testo (nuove props personalizzabili!)
   textTop = 38,
   textLeft = 38,
   textWidth = 215,
   textHeight = 40,
+  letterSpacing = 0,     // 👈 aggiunto
+  fontWeight = "normal", // 👈 aggiunto
+  color = "#24170b",     // 👈 aggiunto
+  lineHeight = 1.1,      // 👈 aggiunto (default per testo compatto)
+  fontFamily = "'VT323', monospace", // 👈 aggiunto
+  textAlign = "center",  // 👈 aggiunto
   // Frecce
   arrowPrevTop = 85,
   arrowPrevLeft = -55,
@@ -110,10 +116,14 @@ export default function HomeDialogBox({
           left: textLeft,
           width: textWidth,
           height: textHeight,
-          fontFamily: "'VT323', monospace",
+          fontFamily,
           fontSize,
+          fontWeight,     // 👈 USATO!
+          color,          // 👈 USATO!
+          letterSpacing,  // 👈 USATO!
+          lineHeight,     // 👈 USATO!
+          textAlign,      // 👈 USATO!
           whiteSpace: "pre-line",
-          textAlign: "center",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
