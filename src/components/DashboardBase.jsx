@@ -107,8 +107,8 @@ const DashboardBase = ({ scale = 1.4, children }) => (
         height: "290px",
         zIndex: 10,
         overflow: "hidden",
-       border: "2px dashed red", // <- Scommenta per debugare l'area attiva
-       background: "rgba(0,255,0,0.07)", // <- Scommenta per evidenziare l'area
+       //border: "2px dashed red", // <- Scommenta per debugare l'area attiva
+       //background: "rgba(0,255,0,0.07)", // <- Scommenta per evidenziare l'area
       }}
     >
       {children}

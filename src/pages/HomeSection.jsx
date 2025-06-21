@@ -1,47 +1,55 @@
+// pages/HomeSection.jsx
 import React, { useState } from "react";
-import holder0 from "../assets/page-content-sprites/holders/8.png";
-import linePng from "../assets/page-content-sprites/holders/0.png";
-import HomeDialogBox from "../components/animation/HomeDialogBox.jsx";
-import AvatarAnimato from "../components/animation/AvatarAnimato.jsx";
+import PageWrapper from "../components/PageWrapper";
+import holder0 from "../assets/page-content-sprites/holders/8.png";         // Cornice rotonda avatar
+import linePng from "../assets/page-content-sprites/holders/0.png";         // Linee decorative
+import HomeDialogBox from "../components/animation/HomeDialogBox.jsx";      // Baloon/dialogo
+import AvatarAnimato from "../components/animation/AvatarAnimato.jsx";      // Avatar animato
 
 const HomeSection = () => {
-  const [talking, setTalking] = useState(false);
+  const [talking, setTalking] = useState(false);   // Stato per animazione bocca
 
   return (
-    <div
-      style={{
-        position: "relative",
-        width: 360,
-        height: 300,
-      }}
-    >
-      {/* Cornice tonda (holder PNG) */}
+    // Wrapper che occupa TUTTA l'area beige (310x290) e serve da canvas per posizionare tutto!
+    <PageWrapper>
+      {/* 
+        --- CORNICE TONDA AVATAR ---
+        PNG circolare sopra cui metti l'avatar (vedi sotto)
+        - top/left: posizione nell'area beige
+        - width/height: dimensione della cornice
+      */}
       <img
         src={holder0}
         alt="holder"
         style={{
           position: "absolute",
-          top: 180,
-          left: 210,
-          width: 125,
-          height: 125,
-          zIndex: 2,
-          pointerEvents: "none",
+          top: 90,    // ↓ più alto o basso
+          left: 10,   // → più a sinistra o destra
+          width: 100,  // larghezza della cornice
+          height: 100, // altezza della cornice
+          zIndex: 2,   // sopra l'avatar animato
+          pointerEvents: "none", // così non la selezioni mai col mouse
         }}
         draggable={false}
       />
 
-      {/* Avatar ANIMATO dentro il cerchio */}
+      {/*
+        --- AVATAR ANIMATO ---
+        Sprite o animazione dentro la cornice tonda.
+        - top/left: posizione (fallo combaciare alla cornice)
+        - width/height: grandezza avatar (meglio leggermente più piccolo della cornice)
+        - borderRadius: "50%" lo rende circolare
+      */}
       <div
         style={{
           position: "absolute",
-          top: 190,
-          left: 220,
-          width: 105,
-          height: 105,
+          top: 103,    // ↓ posizione verticale (regola per centrare bene)
+          left: 22,   // → posizione orizzontale (regola per centrare bene)
+          width: 78,   // larghezza avatar (deve stare dentro la cornice)
+          height: 76,  // altezza avatar
           borderRadius: "50%",
           overflow: "hidden",
-          zIndex: 1,
+          zIndex: 1,   // sotto la cornice
           display: "flex",
           alignItems: "flex-end",
           justifyContent: "center",
@@ -50,52 +58,68 @@ const HomeSection = () => {
         <AvatarAnimato talking={talking} />
       </div>
 
-      {/* PRIMA LINEA (originale) */}
+      {/*
+        --- LINEA DECORATIVA SINISTRA ---
+        PNG "curva" decorativa.
+        - top/left: posizione nell'area beige
+        - width/height: dimensione linea
+      */}
       <img
         src={linePng}
         alt="linea"
         style={{
           position: "absolute",
-          top: 50,
-          left: 200,
-          width: 120,
-          height: 100,
-          zIndex: 3,
+          top: 20,     // ↓ distanza dal top
+          left: 20,   // → distanza da sinistra
+          width: 90,   // larghezza
+          height: 70,  // altezza
+          zIndex: 3,   // sopra avatar/cornice
           pointerEvents: "none",
         }}
         draggable={false}
       />
 
-      {/* SECONDA LINEA (specchiata) */}
+      {/*
+        --- LINEA DECORATIVA DESTRA ---
+        Stessa PNG, specchiata orizzontalmente
+        - Cambia solo left/top per posizionarla dall'altro lato
+      */}
       <img
         src={linePng}
         alt="linea specchiata"
         style={{
           position: "absolute",
-          top: 50,
-          left: 452,
-          width: 120,
-          height: 100,
+          top: 20,
+          left: 200,  // → più a destra rispetto alla precedente
+          width: 90,
+          height: 70,
           zIndex: 3,
           pointerEvents: "none",
-          transform: "scaleX(-1)",
-          transformOrigin: "center center",
+          transform: "scaleX(-1)",          // specchiata orizzontale
+          transformOrigin: "center center", // riflessa dal centro
         }}
         draggable={false}
       />
 
-      {/* Testo con font VT323 */}
+      {/*
+        --- TITOLO TESTO ("Home") ---
+        Testo grande, pixel font, con ombra.
+        - top/left: posizione del titolo
+        - fontSize: dimensione del titolo
+        - color: colore testo
+        - textShadow: effetto ombra/pixel outline
+      */}
       <div
         style={{
           position: "absolute",
-          top: 32,
-          left: 313,
-          fontFamily: "'VT323', monospace",
-          fontSize: 72,
+          top: 0,         // ↓ distanza dall'alto (0 = bordo superiore area beige)
+          left: 98,      // → distanza da sinistra
+          fontFamily: "'VT323', monospace", // pixel font
+          fontSize: 52,   // dimensione testo
           color: "#24170b",
           letterSpacing: 0,
           padding: "3px 16px",
-          zIndex: 10,
+          zIndex: 10,     // sempre davanti
           textShadow: `
             -2px 2px 0 #e7d7b6,  
             2px 2px 0 #e7d7b6,    
@@ -106,34 +130,43 @@ const HomeSection = () => {
         Home
       </div>
 
-      {/* === BALLOON DIALOG ANIMATO: lo centri dove vuoi tu === */}
+      {/*
+        --- BALLOON / DIALOG BOX ---
+        Box/nuvoletta per dialogo/benvenuto animato
+        - top/left: posizione del balloon
+        - width/height: dimensione box balloon
+        - I parametri passati a HomeDialogBox controllano
+          - balloonWidth, balloonHeight: dimensione balloon interna
+          - fontSize, textTop, textLeft...: posizionamento del testo dentro il balloon
+        - onTalkingChange: callback per animare avatar quando parla
+      */}
       <div
         style={{
           position: "absolute",
-          top: 50,
-          left: 320,
-          width: 290,
-          height: 124,
+          top: 10,     // ↓ posizione verticale del balloon
+          left: 100,    // → posizione orizzontale
+          width: 180,  // larghezza balloon
+          height: 80,  // altezza balloon
           zIndex: 20,
           pointerEvents: "auto"
         }}
       >
         <HomeDialogBox
-          balloonWidth={290}
-          balloonHeight={390}
-          fontSize={20}
-          textTop={175}
-          textLeft={38}
-          textWidth={215}
-          textHeight={40}
-          arrowPrevTop={280}
-          arrowPrevLeft={34}
-          arrowNextTop={281}
-          arrowNextLeft={215}
+          balloonWidth={210}
+          balloonHeight={290}
+          fontSize={15}
+          textTop={135}
+          textLeft={30}
+          textWidth={150}
+          textHeight={20}
+          arrowPrevTop={200}
+          arrowPrevLeft={8}
+          arrowNextTop={202}
+          arrowNextLeft={158}
           onTalkingChange={setTalking}
         />
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

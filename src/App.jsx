@@ -1,11 +1,24 @@
 import React, { useState } from "react";
 import Sidebar from "./components/Sidebar/SideBar";
 import DashboardBase from "./components/DashboardBase";
-import HomeSection from "./pages/HomeSection"; // <-- Importa la tua pagina Home
-import bgPattern from "./assets/content/background/0.png"; // <-- PNG reticolato
+import HomeSection from "./pages/HomeSection";
+import AboutSection from "./pages/AboutSection";
+import ProjectsSection from "./pages/ProjectsSection";
+import ContactsSection from "./pages/ContactsSection";
+import bgPattern from "./assets/content/background/0.png";
 
 function App() {
   const [selectedSection, setSelectedSection] = useState("home");
+
+  const renderSection = () => {
+    switch (selectedSection) {
+      case "home": return <HomeSection />;
+      case "about": return <AboutSection />;
+      case "projects": return <ProjectsSection />;
+      case "contacts": return <ContactsSection />;
+      default: return <HomeSection />;
+    }
+  };
 
   return (
     <div
@@ -19,7 +32,6 @@ function App() {
         overflow: "hidden",
       }}
     >
-      {/* CARD centrale con bordo legno e sfondo PNG */}
       <div
         style={{
           position: "relative",
@@ -29,7 +41,7 @@ function App() {
           borderRadius: 28,
           backgroundImage: `url(${bgPattern})`,
           backgroundRepeat: "no-repeat",
-          backgroundSize: "stretch", // oppure "100% 100%"
+          backgroundSize: "stretch",
           backgroundPosition: "center",
           boxShadow: "0 8px 32px #000c",
           padding: 36,
@@ -45,7 +57,7 @@ function App() {
           height={500}
         />
 
-        {/* DASHBOARD + PAGINE */}
+        {/* DASHBOARD + PAGINA */}
         <div
           style={{
             flex: 0,
@@ -54,31 +66,12 @@ function App() {
             justifyContent: "center",
             minHeight: 300,
             minWidth: 450,
-            position: "relative", // Serve per l'absolute della pagina
+            position: "relative",
           }}
         >
-          <DashboardBase scale={1.5} />
-
-          {/* PAGINE: Mostra HomeSection SOLO se selezionata */}
-          {selectedSection === "home" && (
-            <div
-              style={{
-                position: "absolute", // Sovrappone la pagina alla dashboard
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                zIndex: 99,
-                pointerEvents: "auto",
-                display: "flex", // permette centrare il contenuto
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <HomeSection />
-            </div>
-          )}
-          {/* Qui in futuro altre pagine (AboutSection, ProjectsSection, ecc) */}
+          <DashboardBase scale={1.5}>
+            {renderSection()}
+          </DashboardBase>
         </div>
       </div>
     </div>
