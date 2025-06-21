@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "./components/Sidebar/SideBar";
 import DashboardBase from "./components/DashboardBase";
+import HomeSection from "./pages/HomeSection"; // <--- IMPORTA la tua pagina
 // 👉 IMPORTA il PNG del reticolato
 import bgPattern from "./assets/content/background/0.png"; // correggi il path se necessario
 
@@ -15,7 +16,7 @@ function App() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#23242b", //qui è dove c'è il background di tutto il resto.
+        background: "#23242b",
         overflow: "hidden",
       }}
     >
@@ -26,11 +27,9 @@ function App() {
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "flex-start",
-          // 👉 BORDO LEGNO (scegli il colore che preferisci)
           borderRadius: 28,
-          // 👉 SFONDO PNG reticolato
           backgroundImage: `url(${bgPattern})`,
-          backgroundRepeat:"no-repeat" ,
+          backgroundRepeat: "no-repeat",
           backgroundSize: "stretch", // oppure "100% 100%"
           backgroundPosition: "center",
           boxShadow: "0 8px 32px #000c",
@@ -47,7 +46,7 @@ function App() {
           height={500}
         />
 
-        {/* DASHBOARD */}
+        {/* DASHBOARD + PAGINE */}
         <div
           style={{
             flex: 0,
@@ -56,9 +55,30 @@ function App() {
             justifyContent: "center",
             minHeight: 300,
             minWidth: 450,
+            position: "relative", // Serve per l'absolute della pagina
           }}
         >
           <DashboardBase scale={1.5} section={selectedSection} />
+          {/* PAGINE: Mostra HomeSection SOLO se selezionata */}
+          {selectedSection === "home" && (
+            <div
+              style={{
+                position: "absolute", // Sovrappone la pagina alla dashboard
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                zIndex: 99,
+                pointerEvents: "auto",
+                display: "flex", // permette centrare il contenuto
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <HomeSection />
+            </div>
+          )}
+          {/* Aggiungi qui AboutSection, ProjectsSection ecc con lo stesso schema */}
         </div>
       </div>
     </div>
