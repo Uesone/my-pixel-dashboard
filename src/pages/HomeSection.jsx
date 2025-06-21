@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import holder0 from "../assets/page-content-sprites/holders/8.png";
 import linePng from "../assets/page-content-sprites/holders/0.png";
-import balloonPng from "../assets/ui/dialog/steampunk_dialogbox.png";
 import HomeDialogBox from "../components/HomeDialogBox";
 import AvatarAnimato from "../components/AvatarAnimato";
 
@@ -107,50 +106,33 @@ const HomeSection = () => {
         Home
       </div>
 
-      {/* --- BALLOON PNG e DIALOGBOX in overlay pixel-perfect --- */}
+      {/* === BALLOON DIALOG ANIMATO: lo centri dove vuoi tu === */}
       <div
         style={{
           position: "absolute",
-          top: 92,      // LA POSIZIONE CHE USAVI GIÀ!
+          top: 50,
           left: 320,
           width: 290,
-          height: 300,
+          height: 124,
           zIndex: 20,
-          pointerEvents: "none"
+          pointerEvents: "auto"
         }}
       >
-        <img
-          src={balloonPng}
-          alt="balloon"
-          style={{
-            width: "100%",
-            height: "100%",
-            imageRendering: "pixelated",
-            pointerEvents: "none"
-          }}
-          draggable={false}
+        <HomeDialogBox
+          balloonWidth={290}
+          balloonHeight={390}
+          fontSize={20}
+          textTop={175}
+          textLeft={38}
+          textWidth={215}
+          textHeight={40}
+          arrowPrevTop={280}
+          arrowPrevLeft={34}
+          arrowNextTop={281}
+          arrowNextLeft={215}
+          onTalkingChange={setTalking}
         />
-        <div
-          style={{
-            position: "absolute",
-            top: 127,   // Le stesse coordinate di prima per il box testo
-            left: 60,
-            width: 215,
-            height: 40,
-            zIndex: 22,
-            pointerEvents: "auto"
-          }}
-        >
-          <HomeDialogBox
-            width={215}
-            height={40}
-            fontSize={22}
-            onTalkingChange={setTalking}
-          />
-        </div>
       </div>
-
-      {/* === AGGIUNGI ALTRI PNG QUI COME VUOI! === */}
     </div>
   );
 };
