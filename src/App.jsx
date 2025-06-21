@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import Sidebar from "./components/Sidebar/SideBar";
 import DashboardBase from "./components/DashboardBase";
-import HomeSection from "./pages/HomeSection"; // <--- IMPORTA la tua pagina
-// 👉 IMPORTA il PNG del reticolato
-import bgPattern from "./assets/content/background/0.png"; // correggi il path se necessario
+import HomeSection from "./pages/HomeSection"; // <-- Importa la tua pagina Home
+import bgPattern from "./assets/content/background/0.png"; // <-- PNG reticolato
 
 function App() {
   const [selectedSection, setSelectedSection] = useState("home");
@@ -58,7 +57,8 @@ function App() {
             position: "relative", // Serve per l'absolute della pagina
           }}
         >
-          <DashboardBase scale={1.5} section={selectedSection} />
+          <DashboardBase scale={1.5} />
+
           {/* PAGINE: Mostra HomeSection SOLO se selezionata */}
           {selectedSection === "home" && (
             <div
@@ -78,7 +78,7 @@ function App() {
               <HomeSection />
             </div>
           )}
-          {/* Aggiungi qui AboutSection, ProjectsSection ecc con lo stesso schema */}
+          {/* Qui in futuro altre pagine (AboutSection, ProjectsSection, ecc) */}
         </div>
       </div>
     </div>

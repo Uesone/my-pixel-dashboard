@@ -1,46 +1,46 @@
 import React from "react";
-// Importa il bordo del cerchio (holder) e l’avatar (icon)
+// Importa i tuoi asset PNG (avatar, holder, ecc)
 import holder0 from "../assets/page-content-sprites/holders/8.png";
 import icon0 from "../assets/page-content-sprites/icons/14.png";
 
 const HomeSection = () => (
   <div
     style={{
-      position: "relative",
-      width: 360,   // Modifica la larghezza totale della sezione
-      height: 300,  // Modifica l’altezza totale della sezione
+      position: "relative", // Permette ai figli assoluti di essere posizionati qui
+      width: 360,           // Larghezza area utile (cambiala se vuoi)
+      height: 300,          // Altezza area utile (cambiala se vuoi)
+      // background: "#ffe", // Debug: mostra area HomeSection
     }}
   >
-    {/* Cornice cerchio */}
+    {/* Cornice tonda (holder PNG) */}
     <img
       src={holder0}
       alt="holder"
       style={{
         position: "absolute",
-        top: 180,    // Modifica la posizione verticale della cornice
-        left: 210,   // Modifica la posizione orizzontale della cornice
-        width: 125,  // Modifica la dimensione della cornice
+        top: 180,      // ▼ Cambia Y rispetto a HomeSection
+        left: 210,     // ▶ Cambia X rispetto a HomeSection
+        width: 125,
         height: 125,
-        zIndex: 2,   // Il bordo sopra l’avatar
+        zIndex: 2,
         pointerEvents: "none",
       }}
       draggable={false}
     />
 
-    {/* Avatar mascherato in cerchio */}
+    {/* Avatar dentro il cerchio */}
     <div
       style={{
         position: "absolute",
-        top: 190,         // Modifica per allineare verticalmente l’avatar (10px sotto la cornice in questo esempio)
-        left: 220,        // Modifica per centrare l’avatar nella cornice
-        width: 105,       // Un po’ più piccolo della cornice (125)
+        top: 190,      // ▼ Cambia Y (10px sotto la cornice)
+        left: 220,     // ▶ Cambia X
+        width: 105,
         height: 105,
         borderRadius: "50%",
         overflow: "hidden",
-        zIndex: 1,        // L’avatar sotto il bordo
-        background: "", // Sfondo di riempimento (opzionale, come la pagina)
+        zIndex: 1,
         display: "flex",
-        alignItems: "flex-end", // Per far “salire” l’avatar dal basso se vuoi animare
+        alignItems: "flex-end",
         justifyContent: "center",
       }}
     >
@@ -51,14 +51,43 @@ const HomeSection = () => (
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          // objectPosition: "bottom", // attiva questa riga se vuoi che il personaggio sia sempre “in piedi” sul bordo basso
           pointerEvents: "none",
         }}
         draggable={false}
       />
     </div>
 
-    {/* Qui aggiungi altri PNG o testo se vuoi */}
+    {/* === AGGIUNGI ALTRI PNG QUI COME VUOI! === */}
+    {/* Esempio altro PNG:
+    <img
+      src={tuoAltroPng}
+      style={{
+        position: "absolute",
+        top: 30,
+        left: 40,
+        width: 80,
+        height: 80,
+        zIndex: 5,
+      }}
+      draggable={false}
+    />
+    */}
+
+    {/* === TESTO LIBERO, SE VUOI === */}
+    {/* 
+    <div
+      style={{
+        position: "absolute",
+        top: 40,
+        left: 30,
+        color: "#333",
+        fontSize: 18,
+        zIndex: 10,
+      }}
+    >
+      Benvenuto sulla mia Dashboard!
+    </div>
+    */}
   </div>
 );
 
