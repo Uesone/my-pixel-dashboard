@@ -6,32 +6,28 @@ import AboutSection from "./pages/AboutSection";
 import ProjectsSection from "./pages/ProjectsSection";
 import ContactsSection from "./pages/ContactsSection";
 import bgPattern from "./assets/content/background/0.png";
+import PageFlipTransition from "./components/PageFlipTransition";
 
-// IMPORTA il nuovo componente animazione globale!
-import PageFlipTransition from "./components/PageFlipTransition"; // <-- crea questo file!
-
-// Ordine delle sezioni, serve per sapere se vai avanti/indietro
 const SECTIONS = ["home", "about", "projects", "contacts"];
 
 function App() {
-  // Stato per la pagina selezionata
   const [selectedSection, setSelectedSection] = useState("home");
-  // Stato per la direzione (avanti/indietro)
   const [flipDirection, setFlipDirection] = useState("forward");
-  // Ref per ricordare la sezione precedente (NO re-render)
+  const [hasInteracted, setHasInteracted] = useState(false); // <--- new state!
   const prevSectionRef = useRef("home");
 
-  // Cambio pagina con direzione
   const handleSectionChange = (newSection) => {
+    // Non far nulla se clicchi la stessa pagina
+    if (newSection === selectedSection) return;
+
+    setHasInteracted(true); // <--- da ora in poi flip è attiva
     const prevIdx = SECTIONS.indexOf(prevSectionRef.current);
     const newIdx = SECTIONS.indexOf(newSection);
-    // Setta la direzione della flip
     setFlipDirection(newIdx > prevIdx ? "forward" : "backward");
     setSelectedSection(newSection);
     prevSectionRef.current = newSection;
   };
 
-  // Funzione che ritorna il componente giusto
   const renderSection = () => {
     switch (selectedSection) {
       case "home": return <HomeSection />;
@@ -42,7 +38,6 @@ function App() {
     }
   };
 
-  // Mostra il foglio arrotolato SOLO se NON sei in Home
   const showPageRoll = selectedSection !== "home";
 
   return (
@@ -74,15 +69,12 @@ function App() {
           minHeight: 600,
         }}
       >
-        {/* SIDEBAR */}
         <Sidebar
           selected={selectedSection}
           onSelect={handleSectionChange}
           width={140}
           height={500}
         />
-
-        {/* DASHBOARD + PAGINA */}
         <div
           style={{
             flex: 0,
@@ -94,18 +86,16 @@ function App() {
             position: "relative",
           }}
         >
-          {/* 
-            DashboardBase ora ha la nuova prop "pageFlipOverlay":
-            tutto quello che ci passi viene renderizzato come overlay pixel-perfect sopra la pagina.
-          */}
           <DashboardBase
             scale={1.5}
             showPageRoll={showPageRoll}
             pageFlipOverlay={
-              <PageFlipTransition
-                trigger={selectedSection}
-                direction={flipDirection}
-              />
+              hasInteracted ? ( // <--- Flip solo DOPO la prima interazione
+                <PageFlipTransition
+                  trigger={selectedSection}
+                  direction={flipDirection}
+                />
+              ) : null
             }
           >
             {renderSection()}
