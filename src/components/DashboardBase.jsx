@@ -39,7 +39,7 @@ import pageRollPng from "../assets/content/page-flip/next-page/11.png";
   - Di default: false (non viene mostrato)
   - Passa showPageRoll={true} da App.jsx/Section per mostrarlo sulle pagine che vuoi!
 */
-const DashboardBase = ({ scale = 1.4, children, showPageRoll = false }) => (
+const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOverlay = null }) => (
   // Wrapper che scala tutto il dashboard (puoi regolare scale per zoom)
   <div
     style={{
@@ -145,6 +145,7 @@ const DashboardBase = ({ scale = 1.4, children, showPageRoll = false }) => (
       }}
     >
       {children}
+      {pageFlipOverlay}
     </div>
 
     {/* --- DECORAZIONI ANGOLI --- */}
