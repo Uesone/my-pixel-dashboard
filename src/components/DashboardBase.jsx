@@ -30,7 +30,16 @@ import clockBase from "../assets/pixel-map-sprites/clock/0.png";
 import clockDigitsMask from "../assets/pixel-map-sprites/clock/1.png";
 import clockDigit0 from "../assets/pixel-map-sprites/clock/clock-digits/0/0.png";
 
-const DashboardBase = ({ scale = 1.4, children }) => (
+// --- FOGLIO ARROTOLATO (top page flip PNG) ---
+// IMPORTA QUI il frame 11 della tua animazione
+import pageRollPng from "../assets/content/page-flip/next-page/11.png";
+
+/*
+  La prop showPageRoll controlla se il foglio arrotolato in alto va visualizzato.
+  - Di default: false (non viene mostrato)
+  - Passa showPageRoll={true} da App.jsx/Section per mostrarlo sulle pagine che vuoi!
+*/
+const DashboardBase = ({ scale = 1.4, children, showPageRoll = false }) => (
   // Wrapper che scala tutto il dashboard (puoi regolare scale per zoom)
   <div
     style={{
@@ -42,6 +51,30 @@ const DashboardBase = ({ scale = 1.4, children }) => (
       height: "399px",
     }}
   >
+    {/* --- FOGLIO ARROTOLATO IN ALTO --- */}
+    {/* 
+      - PNG che spunta dall’alto (fuori dalla zona beige)
+      - Si vede SEMPRE sopra tutto, ma solo se showPageRoll === true
+      - Puoi cambiare top/left/width/height per sistemare la posizione a pixel-perfect!
+    */}
+    {showPageRoll && (
+      <img
+        src={pageRollPng}
+        alt="Foglio arrotolato in alto"
+        style={{
+          position: "absolute",
+          top: -65,    // <--- REGOLA qui per farlo “sporgere” sopra la dashboard (prova a cambiare!)
+          left: -85,   // <--- REGOLA qui per centrarlo orizzontalmente sopra la zona beige
+          width: 650,  // <--- Larghezza PNG (prova a matchare con la tua reference/gif)
+          height: 500,  // <--- Altezza PNG (idem)
+          zIndex: 9999, // <--- Altissimo: SEMPRE sopra tutto!
+          pointerEvents: "none", // Non interagisce col mouse
+          imageRendering: "pixelated",
+        }}
+        draggable={false}
+      />
+    )}
+
     {/* --- FRAME ESTERNO --- */}
     <img
       src={frame}
@@ -107,8 +140,8 @@ const DashboardBase = ({ scale = 1.4, children }) => (
         height: "290px",
         zIndex: 10,
         overflow: "hidden",
-       //border: "2px dashed red", // <- Scommenta per debugare l'area attiva
-       //background: "rgba(0,255,0,0.07)", // <- Scommenta per evidenziare l'area
+        //border: "2px dashed red", // <- Scommenta per debugare l'area attiva
+        //background: "rgba(0,255,0,0.07)", // <- Scommenta per evidenziare l'area
       }}
     >
       {children}

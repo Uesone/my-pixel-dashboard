@@ -10,6 +10,7 @@ import bgPattern from "./assets/content/background/0.png";
 function App() {
   const [selectedSection, setSelectedSection] = useState("home");
 
+  // Funzione che ritorna il componente giusto in base alla sezione selezionata
   const renderSection = () => {
     switch (selectedSection) {
       case "home": return <HomeSection />;
@@ -19,6 +20,9 @@ function App() {
       default: return <HomeSection />;
     }
   };
+
+  // --- Mostra il foglio arrotolato SOLO se NON sei in Home ---
+  const showPageRoll = selectedSection !== "home";
 
   return (
     <div
@@ -69,7 +73,11 @@ function App() {
             position: "relative",
           }}
         >
-          <DashboardBase scale={1.5}>
+          {/* 
+            Passa showPageRoll={showPageRoll}!
+            - DashboardBase ora può visualizzare il PNG arrotolato in alto se serve
+          */}
+          <DashboardBase scale={1.5} showPageRoll={showPageRoll}>
             {renderSection()}
           </DashboardBase>
         </div>
