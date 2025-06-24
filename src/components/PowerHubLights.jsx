@@ -118,13 +118,13 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
       // Inizia dalla lucina più in alto (i=4)
       animateLight(4);
     } else {
-      // SPEGNIMENTO: tutto spento, lucina in basso smette di blinkare
+      // SPEGNIMENTO: ora dal basso (i=0) verso l’alto (i=4)
       setAnimating(true);
       setBtnOn(false);
       setBlinkingLightOn(false);
       setBulbOn(false);
-      // Fade-out luci a cascata (dall'alto al basso)
-      [4,3,2,1,0].forEach((i, idx) =>
+      // Fade-out luci a cascata (dal basso verso l’alto)
+      [0,1,2,3,4].forEach((i, idx) =>
         timeoutsRef.current.push(
           setTimeout(() => setLights((arr) => {
             const copy = [...arr];
