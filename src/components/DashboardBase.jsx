@@ -39,7 +39,7 @@ import pageRollPng from "../assets/content/page-flip/next-page/11.png";
   - Di default: false (non viene mostrato)
   - Passa showPageRoll={true} da App.jsx/Section per mostrarlo sulle pagine che vuoi!
 */
-const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOverlay = null }) => (
+const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOverlay = null, isFlipping = false }) => (
   // Wrapper che scala tutto il dashboard (puoi regolare scale per zoom)
   <div
     style={{
@@ -148,22 +148,23 @@ const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOv
       {pageFlipOverlay}
     </div>
 
-    {/* --- DECORAZIONI ANGOLI --- */}
-    <img
-      src={corners}
-      alt="corners"
-      style={{
-        position: "absolute",
-        top: "3px",
-        left: "116px",
-        width: "343px",
-        height: "385px",
-        zIndex: 20,
-        pointerEvents: "none",
-      }}
-      draggable={false}
-    />
-
+{/* --- DECORAZIONI ANGOLI --- */}
+{!isFlipping && (
+  <img
+    src={corners}
+    alt="corners"
+    style={{
+      position: "absolute",
+      top: "3px",
+      left: "116px",
+      width: "343px",
+      height: "385px",
+      zIndex: 20,
+      pointerEvents: "none",
+    }}
+    draggable={false}
+  />
+)}
     {/* --- POWER HUB --- */}
     <img src={powerHubTube} alt="power hub tube" style={{
       position: "absolute", top: "23px", left: "25px", width: "438px", height: "325px", zIndex: 30, pointerEvents: "none"
