@@ -1,5 +1,5 @@
 // src/components/PowerHubLights.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import bulbBase from "../assets/pixel-map-sprites/bulb/0.png";
 import bulbGlass from "../assets/pixel-map-sprites/bulb/1.png";
 import powerHubLightOff from "../assets/pixel-map-sprites/power-hub/4.png";
@@ -7,48 +7,157 @@ import powerHubLightOn from "../assets/pixel-map-sprites/power-hub/5.png";
 import powerHubBtnOff from "../assets/pixel-map-sprites/power-hub/6.png";
 import powerHubBtnOn from "../assets/pixel-map-sprites/power-hub/7.png";
 
-export default function PowerHubLights({ animated = true }) {
-  // Stato: lampadina accesa/spenta, array di luci on/off, pulsante acceso
+const LIGHT_COUNT = 5;
+
+export default function PowerHubLights({ animated = true, onPowerClick }) {
+  const [isOn, setIsOn] = useState(false);
+  const [animating, setAnimating] = useState(false);
+
   const [bulbOn, setBulbOn] = useState(false);
   const [lights, setLights] = useState([false, false, false, false, false]);
   const [btnOn, setBtnOn] = useState(false);
+  const [btnPressed, setBtnPressed] = useState(false);
 
+  // Lucina che lampeggia: ora è la più in basso (indice 0)
+  const [blinkingLightOn, setBlinkingLightOn] = useState(false);
+  const blinkingLightTimeout = useRef(null);
+
+  // Blocca doppio click rapido
+  const canClick = !animating && animated;
+  const timeoutsRef = useRef([]);
+
+  // Cleanup totale on unmount o toggle rapido
   useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+      clearTimeout(blinkingLightTimeout.current);
+    };
+  }, []);
+
+  // Gestione accensione/spegnimento (con nuova sequenza)
+  useEffect(() => {
+    timeoutsRef.current.forEach((t) => clearTimeout(t));
+    timeoutsRef.current = [];
+    clearTimeout(blinkingLightTimeout.current);
+
+    // STATIC MODE
     if (!animated) {
-      setBulbOn(true);
-      setLights([true, true, true, true, true]);
-      setBtnOn(true);
+      setBulbOn(isOn);
+      setLights(isOn ? [true, true, true, true, true] : [false, false, false, false, false]);
+      setBtnOn(isOn);
+      setAnimating(false);
+      setBlinkingLightOn(isOn);
       return;
     }
 
-    setBulbOn(false);
-    setBtnOn(false);
-    setLights([false, false, false, false, false]);
+    // ACCENSIONE
+    if (isOn) {
+      setAnimating(true);
+      setBulbOn(false);
+      setBtnOn(false);
+      setLights([false, false, false, false, false]);
+      setBlinkingLightOn(false);
 
-    // Effetto "flicker" della lampadina (accensione neon)
-    const flickerSeq = [100, 90, 60, 120, 40, 60, 200, 60, 500];
-    let step = 0;
-    function flicker() {
-      setBulbOn((on) => !on);
-      if (step < flickerSeq.length) {
-        setTimeout(flicker, flickerSeq[step++]);
-      } else {
-        setBulbOn(true);
-        // Accende luci a scorrimento
-        lights.forEach((_, i) =>
-          setTimeout(() => setLights((l) => {
-            const copy = [...l];
-            copy[i] = true;
+      // Sequenza lucine gialle dall’alto (i=4) verso il basso (i=0)
+      let step = 0;
+      const BLINKS = [7, 5, 4, 4, 3]; // Più blink in alto, meno in basso (invertiti)
+      const BLINK_INTERVAL = 90;
+      function animateLight(i) {
+        let blinkCount = 0;
+        function blink() {
+          setLights((arr) => {
+            const copy = [...arr];
+            copy[i] = blinkCount % 2 === 1; // acceso nei dispari
             return copy;
-          }), 120 * i)
-        );
-        // Accendi pulsante dopo tutte le luci
-        setTimeout(() => setBtnOn(true), 700);
+          });
+          blinkCount++;
+          if (blinkCount < BLINKS[4 - i] * 2) {
+            timeoutsRef.current.push(setTimeout(blink, BLINK_INTERVAL));
+          } else {
+            // Fine blink: lascia accesa!
+            setLights((arr) => {
+              const copy = [...arr];
+              copy[i] = true;
+              return copy;
+            });
+            if (i > 0) {
+              // Avanti con la successiva lucina (più in basso)
+              timeoutsRef.current.push(setTimeout(() => animateLight(i - 1), 80));
+            } else {
+              // Tutte accese, ora parte la lampadina: più flicker!
+              timeoutsRef.current.push(setTimeout(() => flickerBulb(), 220));
+            }
+          }
+        }
+        blink();
       }
+
+      // Più flicker per la lampadina!
+      function flickerBulb() {
+        // 10 blink con intervalli variabili (da neon che sfarfalla)
+        const flickerSeq = [80, 65, 50, 110, 30, 70, 40, 130, 50, 160, 55, 110, 40, 100, 190];
+        let step = 0;
+        function flick() {
+          setBulbOn((on) => !on);
+          if (step < flickerSeq.length) {
+            timeoutsRef.current.push(setTimeout(flick, flickerSeq[step++]));
+          } else {
+            setBulbOn(true);
+            // Accendi pulsante dopo un altro attimo
+            timeoutsRef.current.push(setTimeout(() => {
+              setBtnOn(true);
+              setAnimating(false);
+              startBlinkingLight();
+            }, 500));
+          }
+        }
+        flick();
+      }
+
+      // Inizia dalla lucina più in alto (i=4)
+      animateLight(4);
+    } else {
+      // SPEGNIMENTO: tutto spento, lucina in basso smette di blinkare
+      setAnimating(true);
+      setBtnOn(false);
+      setBlinkingLightOn(false);
+      setBulbOn(false);
+      // Fade-out luci a cascata (dall'alto al basso)
+      [4,3,2,1,0].forEach((i, idx) =>
+        timeoutsRef.current.push(
+          setTimeout(() => setLights((arr) => {
+            const copy = [...arr];
+            copy[i] = false;
+            return copy;
+          }), idx * 50)
+        )
+      );
+      timeoutsRef.current.push(setTimeout(() => setAnimating(false), 350));
     }
-    setTimeout(flicker, 300);
-    return () => {};
-  }, [animated]);
+    // eslint-disable-next-line
+  }, [isOn, animated]);
+
+  // Funzione blink randomico lucina che lampeggia (indice 0, la più in basso)
+  function startBlinkingLight() {
+    setBlinkingLightOn(true);
+    function blink() {
+      setBlinkingLightOn((prev) => !prev);
+      const next = 900 + Math.random() * 800;
+      blinkingLightTimeout.current = setTimeout(blink, next);
+    }
+    blinkingLightTimeout.current = setTimeout(blink, 950 + Math.random() * 400);
+  }
+
+  // Click: toggle ON/OFF
+  function handleBtnClick(e) {
+    e.stopPropagation();
+    if (!canClick || btnPressed) return;
+    setBtnPressed(true);
+    setTimeout(() => setBtnPressed(false), 140);
+    setIsOn((prev) => !prev);
+    if (typeof onPowerClick === "function") onPowerClick(!isOn);
+  }
 
   // --- Render
   return (
@@ -58,13 +167,13 @@ export default function PowerHubLights({ animated = true }) {
         position: "absolute", top: "84px", left: "34px",
         width: "112px", height: "240px", zIndex: 40, pointerEvents: "none"
       }} draggable={false} />
-      {/* BULB LIGHT (overlay, visibile solo se accesa) */}
+      {/* BULB LIGHT */}
       {bulbOn && (
         <img src={bulbGlass} alt="bulb glow" style={{
           position: "absolute", top: "84px", left: "34px",
           width: "112px", height: "240px", zIndex: 41, pointerEvents: "none",
           opacity: bulbOn ? 1 : 0,
-          transition: "opacity 0.10s",
+          transition: "opacity 0.17s",
           filter: "drop-shadow(0 0 12px #fff8) drop-shadow(0 0 28px #ffe7)"
         }} draggable={false} />
       )}
@@ -73,37 +182,61 @@ export default function PowerHubLights({ animated = true }) {
       {lights.map((on, i) => (
         <img
           key={i}
-          src={on ? powerHubLightOn : powerHubLightOff}
+          src={
+            // Ora è la lucina in basso (i=0) che lampeggia
+            i === 0
+              ? (blinkingLightOn && on ? powerHubLightOn : powerHubLightOff)
+              : (on ? powerHubLightOn : powerHubLightOff)
+          }
           alt={`light-${i}`}
           style={{
             position: "absolute",
-            top: `${275 + i * 10}px`, // Adatta se serve!
+            top: `${275 + i * 10}px`,
             left: "437px",
             width: "16px",
             height: "16px",
             zIndex: 34,
             pointerEvents: "none",
-            filter: on
-              ? "drop-shadow(0 0 6px #ffe070) drop-shadow(0 0 14px #fff6)"
+            filter: (i === 0 ? (blinkingLightOn && on) : on)
+              ? "drop-shadow(0 0 9px #ffe080) drop-shadow(0 0 20px #fff7)"
               : undefined,
-            opacity: on ? 1 : 0.7,
-            transition: "opacity 0.13s"
+            opacity: (i === 0 ? (blinkingLightOn && on) : on) ? 1 : 0.68,
+            transition: "opacity 0.16s"
           }}
           draggable={false}
         />
       ))}
 
-      {/* POWER BUTTON */}
+      {/* POWER BUTTON IMMAGINE */}
       <img
         src={btnOn ? powerHubBtnOn : powerHubBtnOff}
         alt="power btn"
         style={{
           position: "absolute", top: "317px", left: "454px",
           width: "16px", height: "16px", zIndex: 35, pointerEvents: "none",
-          transition: "filter 0.2s",
-          filter: btnOn ? "drop-shadow(0 0 8px #f66)" : undefined
+          transition: "filter 0.22s, box-shadow 0.16s",
+          filter: btnOn
+            ? (btnPressed ? "drop-shadow(0 0 4px #f66) brightness(0.88)" : "drop-shadow(0 0 8px #f66)")
+            : undefined,
+          boxShadow: btnPressed ? "0 1px 8px #a11" : undefined,
         }}
         draggable={false}
+      />
+      {/* POWER BUTTON CLICCABILE */}
+      <button
+        aria-label={isOn ? "Spegni Power Hub" : "Accendi Power Hub"}
+        onClick={handleBtnClick}
+        disabled={!canClick || btnPressed}
+        style={{
+          position: "absolute", top: "317px", left: "454px",
+          width: "16px", height: "16px", zIndex: 40,
+          opacity: 0, // invisibile ma cliccabile!
+          cursor: (canClick && !btnPressed) ? "pointer" : "default",
+          background: "none", border: "none", outline: "none", padding: 0,
+          pointerEvents: "auto",
+          userSelect: "none",
+        }}
+        tabIndex={0}
       />
     </>
   );
