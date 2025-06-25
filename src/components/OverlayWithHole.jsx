@@ -3,12 +3,6 @@ import React, { useEffect, useState } from "react";
 /**
  * Overlay nero con buco arrotondato, *ancorato* alla dashboard tramite ref!
  * Il buco resta sempre nella stessa posizione rispetto alla dashboard (anche se la pagina si sposta, scali o scrolli).
- *
- * Props:
- * - containerRef: ref del contenitore (dashboard)
- * - holeTop/Left/Width/Height: posizione/size del buco RELATIVI alla dashboard
- * - borderRadius: rende il buco tondo (default 40px)
- * - opacity/zIndex/transition: regolazioni overlay
  */
 export default function OverlayWithHole({
   visible = true,
@@ -26,9 +20,9 @@ export default function OverlayWithHole({
     top: 0, left: 0, width: holeWidth, height: holeHeight,
   });
 
-  // Aggiorna la posizione assoluta del buco ogni volta che la dashboard si muove/scala/resize
   useEffect(() => {
     if (!containerRef?.current) return;
+
     function updateHole() {
       const rect = containerRef.current.getBoundingClientRect();
       setHoleAbs({
@@ -38,10 +32,16 @@ export default function OverlayWithHole({
         height: holeHeight
       });
     }
+
+    // --- PATCH: Aggiorna subito e dopo un frame ---
     updateHole();
+    const timeoutId = setTimeout(updateHole, 0); // Garantisce che la scale/layout siano già applicate
+
     window.addEventListener("resize", updateHole);
     window.addEventListener("scroll", updateHole);
+
     return () => {
+      clearTimeout(timeoutId);
       window.removeEventListener("resize", updateHole);
       window.removeEventListener("scroll", updateHole);
     };
@@ -97,7 +97,6 @@ export default function OverlayWithHole({
           pointerEvents: "none", // lascia cliccabile!
           borderRadius: borderRadius,
           boxShadow: `0 0 0 9999px rgba(0,0,0,${opacity})`,
-          // questo "trucco" crea il buco tondo!
         }}
       />
     </div>
