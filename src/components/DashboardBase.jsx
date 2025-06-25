@@ -1,39 +1,46 @@
 import React from "react";
-// Asset principali
+// --- ASSET principali ---
 import frame from "../assets/pixel-map-sprites/base/3.png";       // 487 x 399
 import background from "../assets/pixel-map-sprites/base/0.png"; // 383 x 357 (beige centrale)
 import corners from "../assets/pixel-map-sprites/base/1.png";    // 383 x 325
 import leftBar from "../assets/pixel-map-sprites/base/2.png";    // 129 x 373
 
-// Power Hub assets
+// --- POWER HUB ---
 import powerHubTube from "../assets/pixel-map-sprites/power-hub/1.png";
 import powerHubGlow from "../assets/pixel-map-sprites/power-hub/2.png";
 import powerHubBox from "../assets/pixel-map-sprites/power-hub/3.png";
-// Luci, lampadina, pulsante animati (ora da componente)
-import PowerHubLights from "./PowerHubLights"; // <-- AGGIUNTO
+import PowerHubLights from "./PowerHubLights"; // <-- animazioni/pulsanti/lampadina
 
-// Compass assets
+// --- BUSSOLA & OROLOGIO ---
 import compassBase from "../assets/pixel-map-sprites/compass/0.png";
 import compassShadow from "../assets/pixel-map-sprites/compass/1.png";
 import compassDeco from "../assets/pixel-map-sprites/compass/2.png";
 import compassNeedle from "../assets/pixel-map-sprites/compass/3.png";
-
-// Clock assets
 import clockBase from "../assets/pixel-map-sprites/clock/0.png";
 import clockDigitsMask from "../assets/pixel-map-sprites/clock/1.png";
 import clockDigit0 from "../assets/pixel-map-sprites/clock/clock-digits/0/0.png";
 
-// --- FOGLIO ARROTOLATO (top page flip PNG) ---
+// --- FOGLIO ARROTOLATO (Page roll) ---
 import pageRollPng from "../assets/content/page-flip/next-page/11.png";
 
-/*
-  La prop showPageRoll controlla se il foglio arrotolato in alto va visualizzato.
-  - Di default: false (non viene mostrato)
-  - Passa showPageRoll={true} da App.jsx/Section per mostrarlo sulle pagine che vuoi!
-  La prop isFlipping oscura gli angoli durante il flip.
-*/
-const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOverlay = null, isFlipping = false }) => (
-  // Wrapper che scala tutto il dashboard (puoi regolare scale per zoom)
+/**
+ * DashboardBase:
+ * - Incapsula tutti gli asset pixel art statici (cornici, background ecc).
+ * - Incorpora PowerHubLights animato (luci, pulsante e lampadina) in overlay pixel-perfect.
+ * - Riceve `PowerHubProps` per passare prop dinamiche/animate.
+ * - children = il contenuto centrale (pagina).
+ * - showPageRoll = mostra foglio arrotolato in alto (es. in flip di pagina).
+ * - pageFlipOverlay = overlay animazione flip (se presente).
+ * - isFlipping = oscura angoli durante il flip.
+ */
+const DashboardBase = ({
+  scale = 1.4,
+  children,
+  showPageRoll = false,
+  pageFlipOverlay = null,
+  isFlipping = false,
+  PowerHubProps = {}    // <-- oggetto props per PowerHubLights
+}) => (
   <div
     style={{
       transform: `scale(${scale})`,
@@ -51,8 +58,8 @@ const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOv
         alt="Foglio arrotolato in alto"
         style={{
           position: "absolute",
-          top: -65,    // Sporgente sopra la dashboard
-          left: -85,   // Centra il foglio
+          top: -65,
+          left: -85,
           width: 650,
           height: 500,
           zIndex: 9999,
@@ -63,7 +70,7 @@ const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOv
       />
     )}
 
-    {/* --- FRAME ESTERNO --- */}
+    {/* --- FRAME ESTERNO DASHBOARD --- */}
     <img
       src={frame}
       alt="frame"
@@ -79,7 +86,7 @@ const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOv
       draggable={false}
     />
 
-    {/* --- BARRA SINISTRA --- */}
+    {/* --- BARRA LATERALE SINISTRA --- */}
     <img
       src={leftBar}
       alt="left bar"
@@ -111,7 +118,7 @@ const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOv
       draggable={false}
     />
 
-    {/* === AREA CONTENUTI E ANIMAZIONI === */}
+    {/* --- CONTENUTI INTERNI (children + overlay flip) --- */}
     <div
       style={{
         position: "absolute",
@@ -127,7 +134,7 @@ const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOv
       {pageFlipOverlay}
     </div>
 
-    {/* --- DECORAZIONI ANGOLI --- */}
+    {/* --- DECORAZIONI ANGOLI (se non sta flippando) --- */}
     {!isFlipping && (
       <img
         src={corners}
@@ -145,7 +152,7 @@ const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOv
       />
     )}
 
-    {/* --- POWER HUB --- */}
+    {/* --- POWER HUB: tubo, glow, box --- */}
     <img src={powerHubTube} alt="power hub tube" style={{
       position: "absolute", top: "23px", left: "25px", width: "438px", height: "325px", zIndex: 30, pointerEvents: "none"
     }} draggable={false} />
@@ -164,11 +171,11 @@ const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOv
     <img src={powerHubGlow} alt="glow vertical 4" style={{ position: "absolute", top: "36px", left: "160px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
     <img src={powerHubGlow} alt="glow vertical 5" style={{ position: "absolute", top: "36px", left: "80px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
 
-    {/* BOX BASE */}
+    {/* --- BOX BASE POWER HUB --- */}
     <img src={powerHubBox} alt="power hub box" style={{ position: "absolute", top: "230px", left: "418px", width: "77px", height: "123px", zIndex: 33, pointerEvents: "none" }} draggable={false} />
 
     {/* --- POWER HUB ANIMATED LIGHTS & BULB --- */}
-    <PowerHubLights animated={true} />
+    <PowerHubLights {...PowerHubProps} /> {/* <-- Solo qui, una volta sola! */}
 
     {/* --- COMPASS --- */}
     <img src={compassShadow} alt="compass shadow" style={{ position: "absolute", top: "262px", left: "58px", width: "71px", height: "80px", zIndex: 36, pointerEvents: "none" }} draggable={false} />
@@ -183,7 +190,6 @@ const DashboardBase = ({ scale = 1.4, children, showPageRoll = false, pageFlipOv
     <img src={clockDigit0} alt="clock digit 2" style={{ position: "absolute", top: "66px", left: "69px", width: "28px", height: "32px", zIndex: 52, pointerEvents: "none" }} draggable={false} />
     <img src={clockDigit0} alt="clock digit 3" style={{ position: "absolute", top: "66px", left: "88px", width: "28px", height: "32px", zIndex: 52, pointerEvents: "none" }} draggable={false} />
     <img src={clockDigit0} alt="clock digit 4" style={{ position: "absolute", top: "66px", left: "105px", width: "28px", height: "32px", zIndex: 52, pointerEvents: "none" }} draggable={false} />
-
   </div>
 );
 

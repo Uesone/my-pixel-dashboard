@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import Sidebar from "./components/Sidebar/SideBar";
 import DashboardBase from "./components/DashboardBase";
 import HomeSection from "./pages/HomeSection";
@@ -8,7 +8,6 @@ import ContactsSection from "./pages/ContactsSection";
 import bgPattern from "./assets/content/background/0.png";
 import PageFlipTransition from "./components/PageFlipTransition";
 import OverlayWithHole from "./components/OverlayWithHole";
-import PowerHubLights from "./components/PowerHubLights"; // <-- Aggiungi la tua animazione qui!
 
 const SECTIONS = ["home", "about", "projects", "contacts"];
 const FLIP_DURATION = 820;
@@ -36,8 +35,10 @@ function App() {
   const HOLE_WIDTH = 61;
   const HOLE_HEIGHT = 140;
 
-  // Quando la power hub animation è finita, nascondi overlay
-  const handlePowerOnFinished = () => setOverlayVisible(false);
+  // ✅ IMPORTANTE: useCallback per evitare loop overlay/animazione
+  const handlePowerOnFinished = useCallback(() => {
+    setOverlayVisible(false);
+  }, []);
 
   // Ricevi lo stato della lampadina (true/false): accesa/spenta, per fare lampeggio overlay
   const handleBulbChange = (on) => setBulbLight(on);
@@ -87,14 +88,14 @@ function App() {
       {/* Overlay bucato, opacità dinamica per effetto lampeggio */}
       <OverlayWithHole
         visible={overlayVisible}
-        opacity={bulbLight ? 0.12 : 0.77} // <-- Cambia qui per simulare la stanza che si illumina col bulb!
+        opacity={bulbLight ? 0.12 : 0.77}
         zIndex={10003}
         containerRef={dashboardRef}
         holeTop={HOLE_TOP}
         holeLeft={HOLE_LEFT}
         holeWidth={HOLE_WIDTH}
         holeHeight={HOLE_HEIGHT}
-        borderRadius={9} // <--- Regola per cerchio più o meno tondo
+        borderRadius={9}
       />
 
       <div
@@ -133,13 +134,7 @@ function App() {
             position: "relative"
           }}
         >
-          {/* PowerHubLights animata: chiama onBulbChange e onPowerOnFinished */}
-          <PowerHubLights
-            animated={true}
-            onPowerOnFinished={handlePowerOnFinished}
-            onBulbChange={handleBulbChange}
-          />
-
+          {/* DashboardBase ora riceve le prop per la PowerHub */}
           <DashboardBase
             scale={1.5}
             showPageRoll={showPageRoll}
@@ -152,6 +147,11 @@ function App() {
                 />
               ) : null
             }
+            PowerHubProps={{
+              animated: true,
+              onBulbChange: handleBulbChange,
+              onPowerOnFinished: handlePowerOnFinished,
+            }}
           >
             {!isFlipping && renderSection()}
           </DashboardBase>

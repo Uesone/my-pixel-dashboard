@@ -7,26 +7,43 @@ import powerHubLightOn from "../assets/pixel-map-sprites/power-hub/5.png";
 import powerHubBtnOff from "../assets/pixel-map-sprites/power-hub/6.png";
 import powerHubBtnOn from "../assets/pixel-map-sprites/power-hub/7.png";
 
-const LIGHT_COUNT = 5;
-
-export default function PowerHubLights({ animated = true, onPowerClick }) {
+/**
+ * PowerHubLights
+ * - Gestisce animazioni ON/OFF del power hub e sincronizza effetto overlay con lo stato della lampadina
+ * Props:
+ * - animated: se true fa l'animazione (default: true)
+ * - onPowerClick: callback quando viene premuto il bottone ON/OFF
+ * - onBulbChange: callback ogni volta che la lampadina cambia stato (usata per overlay)
+ * - onPowerOnFinished: callback **una sola volta** alla fine dell'accensione (per sbloccare la dashboard)
+ */
+export default function PowerHubLights({
+  animated = true,
+  onPowerClick,
+  onBulbChange,
+  onPowerOnFinished,
+}) {
+  // Stato ON/OFF generale
   const [isOn, setIsOn] = useState(false);
   const [animating, setAnimating] = useState(false);
 
+  // Stato animazione e luci
   const [bulbOn, setBulbOn] = useState(false);
   const [lights, setLights] = useState([false, false, false, false, false]);
   const [btnOn, setBtnOn] = useState(false);
   const [btnPressed, setBtnPressed] = useState(false);
 
-  // Lucina che lampeggia: ora è la più in basso (indice 0)
+  // Lucina in basso che lampeggia random
   const [blinkingLightOn, setBlinkingLightOn] = useState(false);
   const blinkingLightTimeout = useRef(null);
 
-  // Blocca doppio click rapido
-  const canClick = !animating && animated;
+  // Timer per animazioni
   const timeoutsRef = useRef([]);
+  const canClick = !animating && animated;
 
-  // Cleanup totale on unmount o toggle rapido
+  // === Fix anti-loop: chiamata callback UNA SOLA VOLTA ===
+  const hasCalledOnFinished = useRef(false);
+
+  // Pulizia timer all'unmount/reset
   useEffect(() => {
     return () => {
       timeoutsRef.current.forEach((t) => clearTimeout(t));
@@ -35,23 +52,40 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
     };
   }, []);
 
-  // Gestione accensione/spegnimento (con nuova sequenza)
+  // Reset la ref quando ON/OFF cambia
   useEffect(() => {
+    hasCalledOnFinished.current = false;
+  }, [isOn, animated, onPowerOnFinished]);
+
+  // Notifica stato lampadina (safe pattern)
+  useEffect(() => {
+    if (typeof onBulbChange === "function") onBulbChange(bulbOn);
+    // eslint-disable-next-line
+  }, [bulbOn]);
+
+  // --- Animazione accensione/spegnimento
+  useEffect(() => {
+    // Pulisci animazioni precedenti
     timeoutsRef.current.forEach((t) => clearTimeout(t));
     timeoutsRef.current = [];
     clearTimeout(blinkingLightTimeout.current);
 
-    // STATIC MODE
+    // STATIC: nessuna animazione
     if (!animated) {
       setBulbOn(isOn);
       setLights(isOn ? [true, true, true, true, true] : [false, false, false, false, false]);
       setBtnOn(isOn);
       setAnimating(false);
       setBlinkingLightOn(isOn);
+      // Chiamata immediata se in static mode e ON
+      if (isOn && typeof onPowerOnFinished === "function" && !hasCalledOnFinished.current) {
+        hasCalledOnFinished.current = true;
+        onPowerOnFinished();
+      }
       return;
     }
 
-    // ACCENSIONE
+    // ACCENSIONE (animazione)
     if (isOn) {
       setAnimating(true);
       setBulbOn(false);
@@ -59,33 +93,31 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
       setLights([false, false, false, false, false]);
       setBlinkingLightOn(false);
 
-      // Sequenza lucine gialle dall’alto (i=4) verso il basso (i=0)
-      let step = 0;
-      const BLINKS = [7, 5, 4, 4, 3]; // Più blink in alto, meno in basso (invertiti)
+      // Sequenza blink luci dall’alto al basso
+      const BLINKS = [7, 5, 4, 4, 3];
       const BLINK_INTERVAL = 90;
+
       function animateLight(i) {
         let blinkCount = 0;
         function blink() {
           setLights((arr) => {
             const copy = [...arr];
-            copy[i] = blinkCount % 2 === 1; // acceso nei dispari
+            copy[i] = blinkCount % 2 === 1;
             return copy;
           });
           blinkCount++;
           if (blinkCount < BLINKS[4 - i] * 2) {
             timeoutsRef.current.push(setTimeout(blink, BLINK_INTERVAL));
           } else {
-            // Fine blink: lascia accesa!
             setLights((arr) => {
               const copy = [...arr];
               copy[i] = true;
               return copy;
             });
             if (i > 0) {
-              // Avanti con la successiva lucina (più in basso)
               timeoutsRef.current.push(setTimeout(() => animateLight(i - 1), 80));
             } else {
-              // Tutte accese, ora parte la lampadina: più flicker!
+              // Tutte accese: lampadina flicker
               timeoutsRef.current.push(setTimeout(() => flickerBulb(), 220));
             }
           }
@@ -93,9 +125,8 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
         blink();
       }
 
-      // Più flicker per la lampadina!
+      // Neon flicker lampadina
       function flickerBulb() {
-        // 10 blink con intervalli variabili (da neon che sfarfalla)
         const flickerSeq = [80, 65, 50, 110, 30, 70, 40, 130, 50, 160, 55, 110, 40, 100, 190];
         let step = 0;
         function flick() {
@@ -103,8 +134,15 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
           if (step < flickerSeq.length) {
             timeoutsRef.current.push(setTimeout(flick, flickerSeq[step++]));
           } else {
-            setBulbOn(true);
-            // Accendi pulsante dopo un altro attimo
+            setBulbOn(true); // <=== Qui la lampadina rimane accesa
+
+            // === Callback: appena la lampadina resta accesa, sblocca la dashboard SOLO UNA VOLTA! ===
+            if (typeof onPowerOnFinished === "function" && !hasCalledOnFinished.current) {
+              hasCalledOnFinished.current = true;
+              onPowerOnFinished();
+            }
+
+            // Poi accendi bottone e parti con la lucina lampeggiante
             timeoutsRef.current.push(setTimeout(() => {
               setBtnOn(true);
               setAnimating(false);
@@ -115,16 +153,17 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
         flick();
       }
 
-      // Inizia dalla lucina più in alto (i=4)
       animateLight(4);
+
     } else {
-      // SPEGNIMENTO: ora dal basso (i=0) verso l’alto (i=4)
+      // SPEGNIMENTO
       setAnimating(true);
       setBtnOn(false);
       setBlinkingLightOn(false);
       setBulbOn(false);
-      // Fade-out luci a cascata (dal basso verso l’alto)
-      [0,1,2,3,4].forEach((i, idx) =>
+
+      // Luci off a cascata
+      [0, 1, 2, 3, 4].forEach((i, idx) =>
         timeoutsRef.current.push(
           setTimeout(() => setLights((arr) => {
             const copy = [...arr];
@@ -136,9 +175,9 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
       timeoutsRef.current.push(setTimeout(() => setAnimating(false), 350));
     }
     // eslint-disable-next-line
-  }, [isOn, animated]);
+  }, [isOn, animated, onPowerOnFinished]);
 
-  // Funzione blink randomico lucina che lampeggia (indice 0, la più in basso)
+  // Lampeggio random lucina bassa (solo ON)
   function startBlinkingLight() {
     setBlinkingLightOn(true);
     function blink() {
@@ -149,7 +188,7 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
     blinkingLightTimeout.current = setTimeout(blink, 950 + Math.random() * 400);
   }
 
-  // Click: toggle ON/OFF
+  // Gestione click bottone
   function handleBtnClick(e) {
     e.stopPropagation();
     if (!canClick || btnPressed) return;
@@ -159,31 +198,30 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
     if (typeof onPowerClick === "function") onPowerClick(!isOn);
   }
 
-  // --- Render
+  // --- Render componenti pixel art e bottone
   return (
     <>
-      {/* BULB BASE */}
+      {/* BASE LAMPADINA */}
       <img src={bulbBase} alt="bulb base" style={{
         position: "absolute", top: "84px", left: "34px",
         width: "112px", height: "240px", zIndex: 40, pointerEvents: "none"
       }} draggable={false} />
-      {/* BULB LIGHT */}
+      {/* LAMPADINA ACCESA */}
       {bulbOn && (
         <img src={bulbGlass} alt="bulb glow" style={{
           position: "absolute", top: "84px", left: "34px",
           width: "112px", height: "240px", zIndex: 41, pointerEvents: "none",
-          opacity: bulbOn ? 1 : 0,
+          opacity: 1,
           transition: "opacity 0.17s",
           filter: "drop-shadow(0 0 12px #fff8) drop-shadow(0 0 28px #ffe7)"
         }} draggable={false} />
       )}
 
-      {/* POWER HUB LIGHTS */}
+      {/* LUCI GIALLE */}
       {lights.map((on, i) => (
         <img
           key={i}
           src={
-            // Ora è la lucina in basso (i=0) che lampeggia
             i === 0
               ? (blinkingLightOn && on ? powerHubLightOn : powerHubLightOff)
               : (on ? powerHubLightOn : powerHubLightOff)
@@ -207,14 +245,14 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
         />
       ))}
 
-      {/* POWER BUTTON IMMAGINE */}
+      {/* POWER BUTTON (immagine) */}
       <img
         src={btnOn ? powerHubBtnOn : powerHubBtnOff}
         alt="power btn"
         style={{
           position: "absolute", top: "317px", left: "454px",
           width: "16px", height: "16px", zIndex: 35, pointerEvents: "none",
-          transition: "filter 0.22s, box-shadow 0.16s",
+          transition: "filter 0.22s, boxShadow 0.16s",
           filter: btnOn
             ? (btnPressed ? "drop-shadow(0 0 4px #f66) brightness(0.88)" : "drop-shadow(0 0 8px #f66)")
             : undefined,
@@ -222,7 +260,7 @@ export default function PowerHubLights({ animated = true, onPowerClick }) {
         }}
         draggable={false}
       />
-      {/* POWER BUTTON CLICCABILE */}
+      {/* POWER BUTTON (cliccabile invisibile) */}
       <button
         aria-label={isOn ? "Spegni Power Hub" : "Accendi Power Hub"}
         onClick={handleBtnClick}
