@@ -11,16 +11,14 @@ import powerHubGlow from "../assets/pixel-map-sprites/power-hub/2.png";
 import powerHubBox from "../assets/pixel-map-sprites/power-hub/3.png";
 import PowerHubLights from "./PowerHubLights";
 
-// --- OROLOGIO ---
-import clockBase from "../assets/pixel-map-sprites/clock/0.png";
-import clockDigitsMask from "../assets/pixel-map-sprites/clock/1.png";
-import clockDigit0 from "../assets/pixel-map-sprites/clock/clock-digits/0/0.png";
-
 // --- FOGLIO ARROTOLATO (Page roll) ---
 import pageRollPng from "../assets/content/page-flip/next-page/11.png";
 
 // --- BUSSOLA (COMPASS) ---
 import Compass from "./Compass";
+
+// --- CLOCK ANIMATED ---
+import ClockAnimated from "./ClockAnimated"; // <--- Usa il nuovo componente animato!
 
 const DashboardBase = ({
   scale = 1.4,
@@ -123,7 +121,7 @@ const DashboardBase = ({
       {pageFlipOverlay}
     </div>
 
-    {/* --- DECORAZIONI ANGOLI (se non sta flippando) --- */}
+    {/* --- DECORAZIONI ANGOLI (solo se non sta flippando) --- */}
     {!isFlipping && (
       <img
         src={corners}
@@ -166,16 +164,12 @@ const DashboardBase = ({
     {/* --- POWER HUB ANIMATED LIGHTS & BULB --- */}
     <PowerHubLights {...PowerHubProps} />
 
-    {/* --- COMPASS (componentizzato, posizione identica) --- */}
+    {/* --- COMPASS --- */}
     <Compass />
 
-    {/* --- CLOCK --- */}
-    <img src={clockBase} alt="clock base" style={{ position: "absolute", top: "60px", left: "45px", width: "96px", height: "64px", zIndex: 50, pointerEvents: "none" }} draggable={false} />
-    <img src={clockDigitsMask} alt="clock mask" style={{ position: "absolute", top: "60px", left: "45px", width: "96px", height: "64px", zIndex: 51, pointerEvents: "none" }} draggable={false} />
-    <img src={clockDigit0} alt="clock digit 1" style={{ position: "absolute", top: "66px", left: "52px", width: "28px", height: "32px", zIndex: 52, pointerEvents: "none" }} draggable={false} />
-    <img src={clockDigit0} alt="clock digit 2" style={{ position: "absolute", top: "66px", left: "69px", width: "28px", height: "32px", zIndex: 52, pointerEvents: "none" }} draggable={false} />
-    <img src={clockDigit0} alt="clock digit 3" style={{ position: "absolute", top: "66px", left: "88px", width: "28px", height: "32px", zIndex: 52, pointerEvents: "none" }} draggable={false} />
-    <img src={clockDigit0} alt="clock digit 4" style={{ position: "absolute", top: "66px", left: "105px", width: "28px", height: "32px", zIndex: 52, pointerEvents: "none" }} draggable={false} />
+    {/* --- CLOCK ANIMATED --- */}
+    <ClockAnimated /> {/* <--- Animazione digitale! */}
+
   </div>
 );
 
