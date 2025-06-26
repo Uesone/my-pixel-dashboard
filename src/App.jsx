@@ -25,6 +25,8 @@ function App() {
   const [overlayVisible, setOverlayVisible] = useState(true);
   // Stato per il "lampeggio": true = stanza illuminata, false = buio
   const [bulbLight, setBulbLight] = useState(false);
+  // Stato visibilità dialog box home (NEW)
+  const [dialogBoxVisible, setDialogBoxVisible] = useState(false);
 
   // Ref per la dashboard (per allineare il buco)
   const dashboardRef = useRef();
@@ -35,13 +37,22 @@ function App() {
   const HOLE_WIDTH = 61;
   const HOLE_HEIGHT = 140;
 
-  // ✅ IMPORTANTE: useCallback per evitare loop overlay/animazione
+  // Callback: termina overlay e mostra dialog dopo accensione
   const handlePowerOnFinished = useCallback(() => {
     setOverlayVisible(false);
+    setDialogBoxVisible(true); // MOSTRA la dialog box
   }, []);
 
-  // Ricevi lo stato della lampadina (true/false): accesa/spenta, per fare lampeggio overlay
-  const handleBulbChange = (on) => setBulbLight(on);
+  // Ogni volta che accendi o spegni, overlay ON subito e HIDE dialog
+  const handlePowerClick = useCallback((on) => {
+    setOverlayVisible(true);
+    setDialogBoxVisible(false); // Nasconde la dialog se spegni/riaccendi
+  }, []);
+
+  // Lampadina ON/OFF: solo per lampeggio (nessun controllo overlay qui)
+  const handleBulbChange = useCallback((on) => {
+    setBulbLight(on);
+  }, []);
 
   // Navigazione con flip
   const handleSectionChange = (newSection) => {
@@ -60,14 +71,14 @@ function App() {
     }, FLIP_DURATION);
   };
 
-  // Render sezione attuale
+  // Render sezione attuale, passa la prop a HomeSection
   const renderSection = () => {
     switch (selectedSection) {
-      case "home": return <HomeSection />;
+      case "home": return <HomeSection dialogBoxVisible={dialogBoxVisible} />;
       case "about": return <AboutSection />;
       case "projects": return <ProjectsSection />;
       case "contacts": return <ContactsSection />;
-      default: return <HomeSection />;
+      default: return <HomeSection dialogBoxVisible={dialogBoxVisible} />;
     }
   };
 
@@ -151,6 +162,7 @@ function App() {
               animated: true,
               onBulbChange: handleBulbChange,
               onPowerOnFinished: handlePowerOnFinished,
+              onPowerClick: handlePowerClick, // <--- patch!
             }}
           >
             {!isFlipping && renderSection()}

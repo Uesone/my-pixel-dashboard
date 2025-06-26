@@ -6,16 +6,8 @@ import powerHubLightOff from "../assets/pixel-map-sprites/power-hub/4.png";
 import powerHubLightOn from "../assets/pixel-map-sprites/power-hub/5.png";
 import powerHubBtnOff from "../assets/pixel-map-sprites/power-hub/6.png";
 import powerHubBtnOn from "../assets/pixel-map-sprites/power-hub/7.png";
+import arrowPng from "../assets/ui/arrow/arrow.png"; // <-- IMPORTA LA FRECCIA PNG
 
-/**
- * PowerHubLights
- * - Gestisce animazioni ON/OFF del power hub e sincronizza effetto overlay con lo stato della lampadina
- * Props:
- * - animated: se true fa l'animazione (default: true)
- * - onPowerClick: callback quando viene premuto il bottone ON/OFF
- * - onBulbChange: callback ogni volta che la lampadina cambia stato (usata per overlay)
- * - onPowerOnFinished: callback **una sola volta** alla fine dell'accensione (per sbloccare la dashboard)
- */
 export default function PowerHubLights({
   animated = true,
   onPowerClick,
@@ -25,6 +17,9 @@ export default function PowerHubLights({
   // Stato ON/OFF generale
   const [isOn, setIsOn] = useState(false);
   const [animating, setAnimating] = useState(false);
+
+  // Freccia animata 8bit sopra il pulsante (sparisce al primo click)
+  const [showArrow, setShowArrow] = useState(true);
 
   // Stato animazione e luci
   const [bulbOn, setBulbOn] = useState(false);
@@ -127,7 +122,7 @@ export default function PowerHubLights({
 
       // Neon flicker lampadina
       function flickerBulb() {
-        const flickerSeq = [80, 65, 50, 110, 30, 70, 40, 130, 50, 160, 55, 110, 40, 100, 190];
+        const flickerSeq = [90, 120, 70, 135, 95, 170, 260];
         let step = 0;
         function flick() {
           setBulbOn((on) => !on);
@@ -193,12 +188,20 @@ export default function PowerHubLights({
     e.stopPropagation();
     if (!canClick || btnPressed) return;
     setBtnPressed(true);
+    setShowArrow(false); // Sparisce la freccia al primo click!
     setTimeout(() => setBtnPressed(false), 140);
     setIsOn((prev) => !prev);
     if (typeof onPowerClick === "function") onPowerClick(!isOn);
   }
 
-  // --- Render componenti pixel art e bottone
+  // --- Render componenti pixel art, freccia e bottone
+  // ----- FRECCIA PNG: Modifica qui valori come vuoi -----
+  const arrowTop = "284px";    // posizione verticale
+  const arrowLeft = "452px";   // posizione orizzontale
+  const arrowWidth = "19px";   // larghezza PNG
+  const arrowHeight = "19px";  // altezza PNG
+  const arrowRotation = "0deg"; // 0=giù, 180=su, 90=dx, -90=sx
+
   return (
     <>
       {/* BASE LAMPADINA */}
@@ -245,6 +248,29 @@ export default function PowerHubLights({
         />
       ))}
 
+      {/* FRECCIA PNG ANIMATA */}
+      {showArrow && !isOn && (
+        <img
+          src={arrowPng}
+          alt="arrow"
+          style={{
+            position: "absolute",
+            top: arrowTop,
+            left: arrowLeft,
+            width: arrowWidth,
+            height: arrowHeight,
+            zIndex: 42,
+            pointerEvents: "none",
+            userSelect: "none",
+            animation: "tooltipArrow 0.72s ease-in-out infinite",
+            transform: `rotate(${arrowRotation})`,
+            transition: "transform 0.18s",
+            filter: "drop-shadow(1px 2px 0 #bbb)",
+          }}
+          draggable={false}
+        />
+      )}
+
       {/* POWER BUTTON (immagine) */}
       <img
         src={btnOn ? powerHubBtnOn : powerHubBtnOff}
@@ -276,6 +302,15 @@ export default function PowerHubLights({
         }}
         tabIndex={0}
       />
+      {/* CSS ANIMATION KEYFRAMES */}
+      <style>
+        {`
+          @keyframes tooltipArrow {
+            0%, 100% { transform: translateY(0);}
+            50% { transform: translateY(8px);}
+          }
+        `}
+      </style>
     </>
   );
 }

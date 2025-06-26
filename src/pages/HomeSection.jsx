@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageWrapper from "../components/PageWrapper";
 
 // --- Elementi decorativi ---
@@ -7,16 +7,18 @@ import linePng from "../assets/page-content-sprites/holders/0.png";         // L
 import HomeDialogBox from "../components/animation/HomeDialogBox.jsx";      // Baloon/dialogo
 import AvatarAnimato from "../components/animation/AvatarAnimato.jsx";      // Avatar animato
 
-const HomeSection = () => {
-  const [talking, setTalking] = useState(false);   // Stato per animazione bocca/avatar
+// Ricevi dialogBoxVisible come prop da App.jsx
+const HomeSection = ({ dialogBoxVisible }) => {
+  const [talking, setTalking] = useState(false);
+
+  // Se vuoi che l’avatar parli SOLO quando la dialog box è visibile
+  useEffect(() => {
+    setTalking(dialogBoxVisible);
+  }, [dialogBoxVisible]);
 
   return (
     // === Wrapper che occupa tutta l'area beige (310x290) ===
     <PageWrapper>
-      {/* 
-        ========== ELEMENTI STATICI DECORATIVI ==========
-        (avatar, balloon, cornici ecc. — puoi modificare a piacere)
-      */}
       {/* --- CORNICE TONDA AVATAR --- */}
       <img
         src={holder0}
@@ -109,36 +111,37 @@ const HomeSection = () => {
       </div>
 
       {/* --- BALLOON / DIALOG BOX --- */}
-      <div
-        style={{
-          position: "absolute",
-          top: 20,
-          left: 100,
-          width: 180,
-          height: 80,
-          zIndex: 21,
-          pointerEvents: "auto"
-        }}
-      >
-        <HomeDialogBox
-          balloonWidth={210}
-          balloonHeight={255}
-          fontSize={15}
-          textTop={115}
-          textLeft={30}
-          textWidth={150}
-          textHeight={20}
-          arrowPrevTop={180}
-          arrowPrevLeft={8}
-          arrowNextTop={183}
-          arrowNextLeft={160}
-          letterSpacing={0}
-          fontWeight="400"
-          color="#f5ecd7"
-          onTalkingChange={setTalking}
-        />
-      </div>
-
+      {dialogBoxVisible && (
+        <div
+          style={{
+            position: "absolute",
+            top: 20,
+            left: 100,
+            width: 180,
+            height: 80,
+            zIndex: 21,
+            pointerEvents: "auto"
+          }}
+        >
+          <HomeDialogBox
+            balloonWidth={210}
+            balloonHeight={255}
+            fontSize={15}
+            textTop={115}
+            textLeft={30}
+            textWidth={150}
+            textHeight={20}
+            arrowPrevTop={180}
+            arrowPrevLeft={8}
+            arrowNextTop={183}
+            arrowNextLeft={160}
+            letterSpacing={0}
+            fontWeight="400"
+            color="#f5ecd7"
+            onTalkingChange={setTalking}
+          />
+        </div>
+      )}
     </PageWrapper>
   );
 };
