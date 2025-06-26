@@ -1,21 +1,17 @@
 import React from "react";
 // --- ASSET principali ---
-import frame from "../assets/pixel-map-sprites/base/3.png";       // 487 x 399
-import background from "../assets/pixel-map-sprites/base/0.png"; // 383 x 357 (beige centrale)
-import corners from "../assets/pixel-map-sprites/base/1.png";    // 383 x 325
-import leftBar from "../assets/pixel-map-sprites/base/2.png";    // 129 x 373
+import frame from "../assets/pixel-map-sprites/base/3.png";
+import background from "../assets/pixel-map-sprites/base/0.png";
+import corners from "../assets/pixel-map-sprites/base/1.png";
+import leftBar from "../assets/pixel-map-sprites/base/2.png";
 
 // --- POWER HUB ---
 import powerHubTube from "../assets/pixel-map-sprites/power-hub/1.png";
 import powerHubGlow from "../assets/pixel-map-sprites/power-hub/2.png";
 import powerHubBox from "../assets/pixel-map-sprites/power-hub/3.png";
-import PowerHubLights from "./PowerHubLights"; // <-- animazioni/pulsanti/lampadina
+import PowerHubLights from "./PowerHubLights";
 
-// --- BUSSOLA & OROLOGIO ---
-import compassBase from "../assets/pixel-map-sprites/compass/0.png";
-import compassShadow from "../assets/pixel-map-sprites/compass/1.png";
-import compassDeco from "../assets/pixel-map-sprites/compass/2.png";
-import compassNeedle from "../assets/pixel-map-sprites/compass/3.png";
+// --- OROLOGIO ---
 import clockBase from "../assets/pixel-map-sprites/clock/0.png";
 import clockDigitsMask from "../assets/pixel-map-sprites/clock/1.png";
 import clockDigit0 from "../assets/pixel-map-sprites/clock/clock-digits/0/0.png";
@@ -23,23 +19,16 @@ import clockDigit0 from "../assets/pixel-map-sprites/clock/clock-digits/0/0.png"
 // --- FOGLIO ARROTOLATO (Page roll) ---
 import pageRollPng from "../assets/content/page-flip/next-page/11.png";
 
-/**
- * DashboardBase:
- * - Incapsula tutti gli asset pixel art statici (cornici, background ecc).
- * - Incorpora PowerHubLights animato (luci, pulsante e lampadina) in overlay pixel-perfect.
- * - Riceve `PowerHubProps` per passare prop dinamiche/animate.
- * - children = il contenuto centrale (pagina).
- * - showPageRoll = mostra foglio arrotolato in alto (es. in flip di pagina).
- * - pageFlipOverlay = overlay animazione flip (se presente).
- * - isFlipping = oscura angoli durante il flip.
- */
+// --- BUSSOLA (COMPASS) ---
+import Compass from "./Compass";
+
 const DashboardBase = ({
   scale = 1.4,
   children,
   showPageRoll = false,
   pageFlipOverlay = null,
   isFlipping = false,
-  PowerHubProps = {}    // <-- oggetto props per PowerHubLights
+  PowerHubProps = {}
 }) => (
   <div
     style={{
@@ -175,13 +164,10 @@ const DashboardBase = ({
     <img src={powerHubBox} alt="power hub box" style={{ position: "absolute", top: "230px", left: "418px", width: "77px", height: "123px", zIndex: 33, pointerEvents: "none" }} draggable={false} />
 
     {/* --- POWER HUB ANIMATED LIGHTS & BULB --- */}
-    <PowerHubLights {...PowerHubProps} /> {/* <-- Solo qui, una volta sola! */}
+    <PowerHubLights {...PowerHubProps} />
 
-    {/* --- COMPASS --- */}
-    <img src={compassShadow} alt="compass shadow" style={{ position: "absolute", top: "262px", left: "58px", width: "71px", height: "80px", zIndex: 36, pointerEvents: "none" }} draggable={false} />
-    <img src={compassBase} alt="compass base" style={{ position: "absolute", top: "260px", left: "58px", width: "70px", height: "80px", zIndex: 37, pointerEvents: "none" }} draggable={false} />
-    <img src={compassNeedle} alt="compass needle" style={{ position: "absolute", top: "278px", left: "70px", width: "48px", height: "48px", zIndex: 38, pointerEvents: "none" }} draggable={false} />
-    <img src={compassDeco} alt="compass deco" style={{ position: "absolute", top: "280px", left: "74px", width: "39px", height: "48px", zIndex: 39, pointerEvents: "none" }} draggable={false} />
+    {/* --- COMPASS (componentizzato, posizione identica) --- */}
+    <Compass />
 
     {/* --- CLOCK --- */}
     <img src={clockBase} alt="clock base" style={{ position: "absolute", top: "60px", left: "45px", width: "96px", height: "64px", zIndex: 50, pointerEvents: "none" }} draggable={false} />
