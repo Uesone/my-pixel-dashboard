@@ -61,7 +61,7 @@ const HomeSection = ({ dialogBoxVisible }) => {
         style={{
           position: "absolute",
           top: 20,
-          left: 20,
+          left: 10,
           width: 90,
           height: 70,
           zIndex: 13,
@@ -77,7 +77,7 @@ const HomeSection = ({ dialogBoxVisible }) => {
         style={{
           position: "absolute",
           top: 20,
-          left: 200,
+          left: 214,
           width: 90,
           height: 70,
           zIndex: 13,
@@ -92,12 +92,12 @@ const HomeSection = ({ dialogBoxVisible }) => {
       <div
         style={{
           position: "absolute",
-          top: 0,
-          left: 98,
+          top: 4,
+          left: 95,
           fontFamily: "'VT323', monospace",
           fontSize: 52,
           color: "#24170b",
-          letterSpacing: 0,
+          letterSpacing: 2,
           padding: "3px 16px",
           zIndex: 20,
           textShadow: `
