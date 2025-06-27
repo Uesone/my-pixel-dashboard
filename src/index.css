@@ -2,17 +2,16 @@
 /* === FONT PIXELOPERATOR (REGULAR e BOLD) === */
 @font-face {
   font-family: 'PixelOperator';
-  src: url('/src/assets/fonts/PixelOperator.ttf') format('truetype');
+  src: url('/fonts/PixelOperator.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
   font-family: 'PixelOperator';
-  src: url('/src/assets/fonts/PixelOperator-Bold.ttf') format('truetype');
+  src: url('/fonts/PixelOperator-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
 }
-
 /* ================================== */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
