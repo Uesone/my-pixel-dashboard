@@ -33,14 +33,14 @@ const INFOBAR_ARROW_WIDTH = 24, INFOBAR_ARROW_HEIGHT = 28;
 const INFOBAR_ARROW_TOP_OFFSET = -35, INFOBAR_ARROW_LEFT_OFFSET = -45;
 const TYPEWRITER_SPEED = 15, CHAR_PER_PAGE = 300;
 
-// DEFAULTS GLOBALI
+// === DEFAULT PNG HOVER (ogni social può sovrascrivere)
 const CIRCLE_HOVER_DEFAULT_PNG = circleActivePng;
 const CIRCLE_HOVER_DEFAULT_TOP_OFFSET = -15;
 const CIRCLE_HOVER_DEFAULT_LEFT_OFFSET = -14;
 const CIRCLE_HOVER_DEFAULT_WIDTH = 70;
 const CIRCLE_HOVER_DEFAULT_HEIGHT = 70;
 
-// === DATI SOCIAL (modifica qui le impostazioni hover per ogni social) ===
+// === DATI SOCIAL (modifica qui i props di hover PNG per ogni social!) ===
 const SOCIALS = [
   {
     id: 1,
@@ -116,16 +116,17 @@ const SOCIALS = [
     desc: [
       "Profilo personale IG: foto di viaggi, pixel art, aggiornamenti tech e lifestyle.",
       "Seguimi per vedere il lato creativo o per DM informali!",
-      "Click sull'icona a sinistra per maggiori dettagli!"    ]
+      "Click sull'icona a sinistra per maggiori dettagli!"
+    ]
   }
 ];
 
-// === MAX_SCROLL PATCHATO (mancava!) ===
+// === SCROLL: calcola quante righe si possono scrollare (patch!)
 const TOTAL_ROWS = SOCIALS.length;
 const GRID_ROWS_TOTAL = TOTAL_ROWS;
 const MAX_SCROLL = Math.max(0, GRID_ROWS_TOTAL - GRID_ROWS_VISIBLE);
 
-// --- FUNZIONE per PNG hover ---
+// === FUNZIONE UTILITY: restituisce posizione/size PNG hover per ogni social
 function getCircleHoverProps(social) {
   return {
     png: social.circleHoverPng ?? CIRCLE_HOVER_DEFAULT_PNG,
@@ -140,6 +141,7 @@ function getCircleHoverProps(social) {
   };
 }
 
+// === HOOK animazione testo a macchina/paginazione ===
 function useTypewriterText(lines, charPerPage, resetKey = 0) {
   const [page, setPage] = useState(0);
   const [displayed, setDisplayed] = useState("");
@@ -171,25 +173,33 @@ function useTypewriterText(lines, charPerPage, resetKey = 0) {
 }
 
 const ContactsSection = () => {
-  const [scrollTop, setScrollTop] = useState(0);
-  const [selected, setSelected] = useState(null);
-  const [resetKey, setResetKey] = useState(0);
-  const [tooltip, setTooltip] = useState({ visible: false, text: "", x: 0, y: 0 });
-  const [iconHovered, setIconHovered] = useState(false);
+  // === STATI PRINCIPALI ===
+  const [scrollTop, setScrollTop] = useState(0);        // scroll per lista social
+  const [selected, setSelected] = useState(null);       // social selezionato (indice)
+  const [resetKey, setResetKey] = useState(0);          // forza reset animazione typewriter
+  const [tooltip, setTooltip] = useState({ visible: false, text: "", x: 0, y: 0 }); // tooltip social
+  const [iconHovered, setIconHovered] = useState(false); // hover icona grande
 
+  // --- Per "Direct/Contacts" buttons: aggiungi qui stato tab se vuoi i pulsanti ---
+  // const [activeTab, setActiveTab] = useState("contacts");
+
+  // Socials attualmente visibili nella lista scrollabile
   const start = scrollTop;
   const end = start + GRID_ROWS_VISIBLE;
   const visibleSocials = SOCIALS.slice(start, end);
 
+  // Descrizione del social selezionato
   const selectedDesc =
     selected !== null && SOCIALS[selected] && SOCIALS[selected].desc
       ? SOCIALS[selected].desc
       : [""];
 
+  // Hook per animazione testo a macchina e paginazione
   const { displayed, done, hasNext, hasPrev, next, prev } = useTypewriterText(
     selectedDesc, CHAR_PER_PAGE, resetKey
   );
 
+  // Gestione scroll lista social (con rotella mouse)
   const handleWheel = e => {
     if (MAX_SCROLL > 0) {
       setScrollTop(prev =>
@@ -198,6 +208,7 @@ const ContactsSection = () => {
     }
   };
 
+  // Tooltip handlers
   const handleMouseEnter = (e, social) => {
     if (!social) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -224,7 +235,7 @@ const ContactsSection = () => {
         overflow: "visible"
       }}
     >
-      {/* --- LINEE E TITOLO --- */}
+      {/* --- LINEE DECORATIVE E TITOLO --- */}
       <img src={linePng} alt="decorative line left"
         style={{
           position: "absolute", top: LINE_LEFT_TOP, left: LINE_LEFT_LEFT,
@@ -244,7 +255,7 @@ const ContactsSection = () => {
         userSelect: "none"
       }}>Contacts</div>
 
-      {/* --- GRIGLIA SLOT + SCROLLBAR --- */}
+      {/* --- GRIGLIA SOCIALS + SCROLLBAR --- */}
       <div style={{
         position: "absolute", top: 72, left: 20,
         width: SLOT_WIDTH + 28,
@@ -275,6 +286,7 @@ const ContactsSection = () => {
               onMouseMove={e => handleMouseEnter(e, social)}
               onMouseLeave={handleMouseLeave}
             >
+              {/* Sfondo slot: hover (se selezionato) o normale */}
               <img
                 src={selected === i + start ? holderHoverPng : holderPng}
                 alt=""
@@ -289,6 +301,7 @@ const ContactsSection = () => {
                 }}
                 draggable={false}
               />
+              {/* Icona social piccola */}
               <img
                 src={social.icon}
                 alt={social.name}
@@ -304,6 +317,7 @@ const ContactsSection = () => {
                 }}
                 draggable={false}
               />
+              {/* Nome social */}
               <div style={{
                 position: "absolute",
                 left: NAME_LEFT,
@@ -326,6 +340,7 @@ const ContactsSection = () => {
             </div>
           ))}
         </div>
+        {/* Scrollbar custom pixel art */}
         {MAX_SCROLL > 0 && (
           <PixelScrollbar
             height={GRID_ROWS_VISIBLE * SLOT_HEIGHT + (GRID_ROWS_VISIBLE - 1) * SLOTS_GAP}
@@ -340,9 +355,10 @@ const ContactsSection = () => {
         )}
       </div>
 
-      {/* --- INFO BAR SOTTO: solo se selezionato --- */}
+      {/* --- INFO BAR SOTTO (SOLO SE SOCIAL SELEZIONATO) --- */}
       {selected !== null && SOCIALS[selected] && (
         <>
+          {/* Info bar sfondo */}
           <img
             src={infoBarPng}
             alt="info bar"
@@ -359,7 +375,7 @@ const ContactsSection = () => {
             draggable={false}
           />
 
-          {/* Cerchio hover personalizzabile */}
+          {/* Cerchio PNG hover: personalizzabile per ogni social */}
           {iconHovered && (() => {
             const props = getCircleHoverProps(SOCIALS[selected]);
             return (
@@ -422,6 +438,7 @@ const ContactsSection = () => {
             />
           </a>
 
+          {/* Descrizione typewriter */}
           <div
             style={{
               position: "absolute",
@@ -443,6 +460,7 @@ const ContactsSection = () => {
             {displayed}
           </div>
 
+          {/* Freccia avanti (paginazione) */}
           {done && hasNext && (
             <img
               src={INFOBAR_ARROW_PNG}
@@ -464,7 +482,7 @@ const ContactsSection = () => {
         </>
       )}
 
-      {/* --- TOOLTIP PIXEL ART SOCIAL --- */}
+      {/* --- TOOLTIP SOCIAL --- */}
       {tooltip.visible && (
         <div style={{
           position: "fixed",
@@ -485,6 +503,8 @@ const ContactsSection = () => {
           {tooltip.text}
         </div>
       )}
+
+      {/* === QUI PUOI INSERIRE I DUE BOTTONI "Contacts" E "Direct" (guarda esempio risposte precedenti) === */}
     </div>
   );
 };
