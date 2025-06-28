@@ -195,9 +195,9 @@ const ProjectsSection = () => {
           transform: "scaleX(-1)", transformOrigin: "center center"
         }} draggable={false} />
       <div style={{
-        position: "absolute", top: 4, left: 58,
+        position: "absolute", top: 4, left: 55,
         fontFamily: "'VT323', monospace", fontSize: 52, color: "#24170b",
-        letterSpacing: 1, padding: "3px 16px", zIndex: 20,
+        letterSpacing: 1.5, padding: "3px 16px", zIndex: 20,
         textShadow: "-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643"
       }}>Projects</div>
 
