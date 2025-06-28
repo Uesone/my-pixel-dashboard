@@ -78,7 +78,7 @@ const ProjectsSection = () => {
         style={{
           position: "absolute",
           top: 4,
-          left: 65,
+          left: 64,
           fontFamily: "'VT323', monospace",
           fontSize: 52,
           color: "#24170b",
