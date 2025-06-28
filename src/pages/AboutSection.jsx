@@ -192,7 +192,7 @@ const AboutSection = () => (
         textAlign: "left",
       }}
     >
-      <b>Age:</b> <span style={{ color: "#d98e42" }}>33</span>
+      <b>Age:</b> <span style={{ color: "#b89254" }}>33</span>
     </div>
 
     {/* --- XP BAR (PNG filled + empty + valori) --- */}

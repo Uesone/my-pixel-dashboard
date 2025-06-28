@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PageWrapper from "../components/PageWrapper";
 import PixelTooltip from "../components/PixelTooltip";
+import PixelScrollbar from "../components/PixelScrollbar";
 
 // === Assets grafici ===
 import linePng from "../assets/page-content-sprites/holders/0.png";
@@ -8,6 +9,8 @@ import holderPng from "../assets/content/holders/3.png";
 import holderFilledPng from "../assets/content/holders/4.png";
 import infoBarPng from "../assets/content/holders/10.png";
 import nextArrowPng from "../assets/content/buttons/2.png";
+import scrollbarBarPng from "../assets/content/holders/9.png";    // Barra SCROLL
+import scrollbarHandlePng from "../assets/content/buttons/1.png"; // Handle SCROLL
 import item0 from "../assets/content/items/0.png";
 import item1 from "../assets/content/items/1.png";
 import item2 from "../assets/content/items/2.png";
@@ -16,10 +19,10 @@ import item4 from "../assets/content/items/4.png";
 import item5 from "../assets/content/items/5.png";
 
 // === CONFIGURAZIONI LAYOUT & ANIMAZIONE ===
-const SLOT_SIZE = 32, GRID_COLS = 4, GRID_ROWS = 3, GRID_GAP = 15, TOTAL_SLOTS = GRID_COLS * GRID_ROWS;
+const SLOT_SIZE = 32, GRID_COLS = 4, GRID_ROWS_VISIBLE = 3, GRID_GAP = 15;
 const WRAPPER_TOP = 80, WRAPPER_LEFT = 73;
 const WRAPPER_WIDTH = GRID_COLS * SLOT_SIZE + (GRID_COLS - 1) * GRID_GAP;
-const WRAPPER_HEIGHT = GRID_ROWS * SLOT_SIZE + (GRID_ROWS - 1) * GRID_GAP;
+const WRAPPER_HEIGHT = GRID_ROWS_VISIBLE * SLOT_SIZE + (GRID_ROWS_VISIBLE - 1) * GRID_GAP;
 const INFOBAR_TOP = 205, INFOBAR_LEFT = 20, INFOBAR_WIDTH = 275, INFOBAR_HEIGHT = 80;
 const CIRCLE_SIZE = 36, CIRCLE_ICON_OFFSET_TOP = 23, CIRCLE_ICON_OFFSET_LEFT = 19;
 const DESC_TOP = 14, DESC_LEFT = 70, DESC_WIDTH = 180, DESC_HEIGHT = 50, DESC_FONT_SIZE = 12;
@@ -33,7 +36,7 @@ const PROJECTS = [
     id: 1,
     name: "PokeCard Collector",
     icon: item0,
-    tooltip: "PokeCard Collector",
+    tooltip: "PokèDecks Frontend",
     desc: [
       "Frontend React per collezionare e cercare carte Pokémon con filtri e pixel art.",
       "Interfaccia moderna, ricerca in tempo reale, connessione al backend personalizzato.",
@@ -45,7 +48,7 @@ const PROJECTS = [
     id: 2,
     name: "PokeCard Collector Backend",
     icon: item1,
-    tooltip: "PokeCard Collector Backend",
+    tooltip: "PokèDecks Backend",
     desc: [
       "Backend Java Spring Boot dedicato all’app PokeCard Collector.",
       "Gestione database, API RESTful, autenticazione e ottimizzazione performance.",
@@ -100,10 +103,7 @@ function useTypewriterText(lines, charPerPage, resetKey = 0) {
   const [done, setDone] = useState(false);
   const timerRef = useRef();
 
-  // Reset pagina se cambia selezione progetto
   useEffect(() => { setPage(0); }, [resetKey]);
-
-  // Animazione scrittura testo
   useEffect(() => {
     setDisplayed(""); setDone(false);
     let i = 0;
@@ -127,29 +127,39 @@ function useTypewriterText(lines, charPerPage, resetKey = 0) {
   return { displayed, done, page, hasNext, hasPrev, next, prev };
 }
 
+// === IMPOSTAZIONE GRIGLIA (righe virtuali totali e slot totali) ===
+const GRID_ROWS_TOTAL = Math.ceil(PROJECTS.length / GRID_COLS) + 3; // aggiungi slot vuoti in fondo
+const TOTAL_SLOTS = GRID_ROWS_TOTAL * GRID_COLS;
+
 const ProjectsSection = () => {
-  // Slots (array progetti + slot vuoti)
+  // 1. Array slot: progetti + slot vuoti per scorrere la griglia
   const slots = Array(TOTAL_SLOTS).fill(null).map((_, i) => PROJECTS[i] || null);
 
-  // Stato selezione e key per reset animazione
+  // 2. Stato scroll (indice della riga in alto, 0 = prima riga)
+  const [scrollTop, setScrollTop] = useState(0);
+  const maxScroll = GRID_ROWS_TOTAL - GRID_ROWS_VISIBLE;
+
+  // 3. Selezione progetto (e reset animazione)
   const [selected, setSelected] = useState(null);
   const [resetKey, setResetKey] = useState(0);
 
-  // Stato tooltip custom SOLO per questa pagina
+  // 4. Stato tooltip
   const [tooltip, setTooltip] = useState({ visible: false, text: "", x: 0, y: 0 });
 
-  // Descrizione paginata (array di stringhe, una per pagina)
+  // 5. Testo descrizione selezionata
   const selectedDesc =
     selected !== null && slots[selected] && slots[selected].desc
       ? slots[selected].desc
       : [""];
 
-  // Hook per animazione typewriter
+  // 6. Hook animazione testo
   const { displayed, done, hasNext, hasPrev, next, prev } = useTypewriterText(
     selectedDesc, CHAR_PER_PAGE, resetKey
   );
 
-  // Tooltip handlers: posizione e testo (offset Y = -50, puoi cambiare)
+  // 7. Tooltip handlers: posizione e testo
+  // Offset Y: se vuoi il tooltip SOPRA la cella, usa (rect.top - 50)
+  //           se lo vuoi SOTTO, usa (rect.bottom + 10)
   const handleMouseEnter = (e, project) => {
     if (!project) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -157,10 +167,18 @@ const ProjectsSection = () => {
       visible: true,
       text: project.tooltip || project.name,
       x: rect.left + rect.width / 2,
-      y: rect.top - -50,
+      y: rect.top - -50, // <- questo è equivalente a (rect.top + 50)
+      // Consiglio: per "tooltip sopra", meglio rect.top - 50
+      //            per "tooltip sotto", meglio rect.bottom + 10
+      // Lasciato come da tua richiesta!
     });
   };
   const handleMouseLeave = () => setTooltip({ visible: false, text: "", x: 0, y: 0 });
+
+  // 8. Calcolo slot da mostrare (3 righe visibili)
+  const start = scrollTop * GRID_COLS;
+  const end = start + GRID_ROWS_VISIBLE * GRID_COLS;
+  const visibleSlots = slots.slice(start, end);
 
   return (
     <PageWrapper>
@@ -183,25 +201,40 @@ const ProjectsSection = () => {
         textShadow: "-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643"
       }}>Projects</div>
 
-      {/* --- INVENTARIO: griglia slot selezionabili --- */}
+      {/* --- INVENTARIO: griglia slot + SCROLLBAR custom pixel art --- */}
       <div style={{
         position: "absolute", top: WRAPPER_TOP, left: WRAPPER_LEFT,
-        width: WRAPPER_WIDTH, height: WRAPPER_HEIGHT, zIndex: 12
+        width: WRAPPER_WIDTH + 28, // lascia spazio per la scrollbar
+        height: WRAPPER_HEIGHT, zIndex: 12,
+        overflow: "visible",
+        display: "flex",
+        flexDirection: "row"
       }}>
-        <div style={{
-          width: "100%", height: "100%",
-          display: "grid",
-          gridTemplateColumns: `repeat(${GRID_COLS}, ${SLOT_SIZE}px)`,
-          gridTemplateRows: `repeat(${GRID_ROWS}, ${SLOT_SIZE}px)`,
-          gap: `${GRID_GAP}px`, background: "none"
-        }}>
-          {slots.map((project, i) => {
+        {/* GRIGLIA ICON INVENTARIO con onWheel */}
+        <div
+          style={{
+            width: WRAPPER_WIDTH, height: WRAPPER_HEIGHT,
+            display: "grid",
+            gridTemplateColumns: `repeat(${GRID_COLS}, ${SLOT_SIZE}px)`,
+            gridTemplateRows: `repeat(${GRID_ROWS_VISIBLE}, ${SLOT_SIZE}px)`,
+            gap: `${GRID_GAP}px`, background: "none"
+          }}
+          // === SCROLL CON LA ROTELLA DEL MOUSE SULLA GRIGLIA ===
+          onWheel={e => {
+            if (maxScroll > 0) {
+              setScrollTop(prev =>
+                Math.max(0, Math.min(maxScroll, prev + (e.deltaY > 0 ? 1 : -1)))
+              );
+            }
+          }}
+        >
+          {visibleSlots.map((project, i) => {
             const size = project?.iconSize || SLOT_SIZE - 8;
             const top = project?.iconTop !== undefined ? project.iconTop : 4;
             const left = project?.iconLeft !== undefined ? project.iconLeft : 4;
             return (
               <div
-                key={i}
+                key={i + start}
                 style={{
                   width: SLOT_SIZE, height: SLOT_SIZE, position: "relative",
                   background: "none", cursor: project ? "pointer" : "default"
@@ -209,8 +242,8 @@ const ProjectsSection = () => {
                 tabIndex={project ? 0 : -1}
                 onClick={() => {
                   if (project) {
-                    setSelected(i);
-                    setResetKey(k => k + 1); // reset animazione/pagina
+                    setSelected(i + start);
+                    setResetKey(k => k + 1);
                   }
                 }}
                 onMouseEnter={e => handleMouseEnter(e, project)}
@@ -218,7 +251,7 @@ const ProjectsSection = () => {
                 onMouseLeave={handleMouseLeave}
               >
                 <img
-                  src={project && selected === i ? holderFilledPng : holderPng}
+                  src={project && selected === i + start ? holderFilledPng : holderPng}
                   alt="slot"
                   style={{
                     width: SLOT_SIZE, height: SLOT_SIZE,
@@ -243,12 +276,24 @@ const ProjectsSection = () => {
             );
           })}
         </div>
+        {/* SCROLLBAR PIXEL ART */}
+        {maxScroll > 0 && (
+          <PixelScrollbar
+            height={WRAPPER_HEIGHT}
+            scrollTop={scrollTop}
+            maxScroll={maxScroll}
+            onScrollChange={setScrollTop}
+            barPng={scrollbarBarPng}
+            handlePng={scrollbarHandlePng}
+            left={WRAPPER_WIDTH + 4} // a destra della griglia (regola per il tuo layout)
+            top={0}
+          />
+        )}
       </div>
 
       {/* --- INFO BAR + ICONA + DESCRIZIONE: SOLO SE SLOT SELEZIONATO --- */}
       {selected !== null && slots[selected] && (
         <>
-          {/* --- INFO BAR PNG --- */}
           <img src={infoBarPng} alt="info bar"
             style={{
               position: "absolute", top: INFOBAR_TOP, left: INFOBAR_LEFT,
@@ -256,7 +301,6 @@ const ProjectsSection = () => {
               imageRendering: "pixelated", zIndex: 15, pointerEvents: "none"
             }} draggable={false} />
 
-          {/* --- ICONA NEL CERCHIO --- */}
           <img
             src={slots[selected].icon}
             alt={slots[selected].name}
@@ -273,7 +317,6 @@ const ProjectsSection = () => {
             draggable={false}
           />
 
-          {/* --- BOX DESCRIZIONE: testo animato --- */}
           <div
             style={{
               position: "absolute",
@@ -295,7 +338,6 @@ const ProjectsSection = () => {
             {displayed}
           </div>
 
-          {/* --- FRECCIA AVANTI: solo se c'è una pagina dopo --- */}
           {done && hasNext && (
             <img
               src={nextArrowPng}
@@ -317,7 +359,7 @@ const ProjectsSection = () => {
         </>
       )}
 
-      {/* --- TOOLTIP PIXEL ART STEAMPUNK (gestione SOLO qui) --- */}
+      {/* --- TOOLTIP PIXEL ART --- */}
       <PixelTooltip
         visible={tooltip.visible}
         text={tooltip.text}
