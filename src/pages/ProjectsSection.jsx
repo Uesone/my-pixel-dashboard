@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import PageWrapper from "../components/PageWrapper";
-import PixelTooltip from "../components/PixelTooltip"; // Assicurati che il path sia corretto
+import PixelTooltip from "../components/PixelTooltip";
 
-// Assets grafici
+// === Assets grafici ===
 import linePng from "../assets/page-content-sprites/holders/0.png";
 import holderPng from "../assets/content/holders/3.png";
 import holderFilledPng from "../assets/content/holders/4.png";
@@ -15,7 +15,7 @@ import item3 from "../assets/content/items/3.png";
 import item4 from "../assets/content/items/4.png";
 import item5 from "../assets/content/items/5.png";
 
-// --- CONFIGURAZIONI LAYOUT E ANIMAZIONE ---
+// === CONFIGURAZIONI LAYOUT & ANIMAZIONE ===
 const SLOT_SIZE = 32, GRID_COLS = 4, GRID_ROWS = 3, GRID_GAP = 15, TOTAL_SLOTS = GRID_COLS * GRID_ROWS;
 const WRAPPER_TOP = 80, WRAPPER_LEFT = 73;
 const WRAPPER_WIDTH = GRID_COLS * SLOT_SIZE + (GRID_COLS - 1) * GRID_GAP;
@@ -27,7 +27,7 @@ const DESC_FONT_FAMILY = "'VT323', monospace", DESC_COLOR = "#4b2d11", DESC_LETT
 const TYPEWRITER_SPEED = 19, CHAR_PER_PAGE = 300;
 const ARROW_NEXT_TOP = 298, ARROW_NEXT_LEFT = 375, ARROW_NEXT_WIDTH = 32, ARROW_NEXT_HEIGHT = 38;
 
-// --- OGGETTI PORTFOLIO (aggiungi tooltip qui) ---
+// === OGGETTI PORTFOLIO ===
 const PROJECTS = [
   {
     id: 1,
@@ -93,16 +93,17 @@ const PROJECTS = [
   },
 ];
 
-// --- HOOK: Typewriter + paginazione (con resetKey su cambio selezione) ---
+// === HOOK typewriter & paginazione (reset su cambio selezione) ===
 function useTypewriterText(lines, charPerPage, resetKey = 0) {
   const [page, setPage] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [done, setDone] = useState(false);
   const timerRef = useRef();
 
-  // Resetta a pagina 0 su cambio progetto selezionato
+  // Reset pagina se cambia selezione progetto
   useEffect(() => { setPage(0); }, [resetKey]);
 
+  // Animazione scrittura testo
   useEffect(() => {
     setDisplayed(""); setDone(false);
     let i = 0;
@@ -127,28 +128,28 @@ function useTypewriterText(lines, charPerPage, resetKey = 0) {
 }
 
 const ProjectsSection = () => {
-  // Slots inventario (primi N progetti, altri vuoti)
+  // Slots (array progetti + slot vuoti)
   const slots = Array(TOTAL_SLOTS).fill(null).map((_, i) => PROJECTS[i] || null);
 
-  // Stato: slot selezionato e chiave di reset per animazione/pagina
+  // Stato selezione e key per reset animazione
   const [selected, setSelected] = useState(null);
   const [resetKey, setResetKey] = useState(0);
 
-  // Tooltip stato (custom solo in questa pagina)
+  // Stato tooltip custom SOLO per questa pagina
   const [tooltip, setTooltip] = useState({ visible: false, text: "", x: 0, y: 0 });
 
-  // Descrizione paginata (array di stringhe per progetto)
+  // Descrizione paginata (array di stringhe, una per pagina)
   const selectedDesc =
     selected !== null && slots[selected] && slots[selected].desc
       ? slots[selected].desc
       : [""];
 
-  // Hook animazione typewriter e paginazione
+  // Hook per animazione typewriter
   const { displayed, done, hasNext, hasPrev, next, prev } = useTypewriterText(
     selectedDesc, CHAR_PER_PAGE, resetKey
   );
 
-  // --- Tooltip handlers: cambia posizione SOLO qui (offset y = -12px sopra, puoi variare come vuoi)
+  // Tooltip handlers: posizione e testo (offset Y = -50, puoi cambiare)
   const handleMouseEnter = (e, project) => {
     if (!project) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -244,75 +245,76 @@ const ProjectsSection = () => {
         </div>
       </div>
 
-      {/* --- INFO BAR (PNG unica) --- */}
-      <img src={infoBarPng} alt="info bar"
-        style={{
-          position: "absolute", top: INFOBAR_TOP, left: INFOBAR_LEFT,
-          width: INFOBAR_WIDTH, height: INFOBAR_HEIGHT,
-          imageRendering: "pixelated", zIndex: 15, pointerEvents: "none"
-        }} draggable={false} />
-
-      {/* --- ICONA NEL CERCHIO --- */}
-      {selected !== null && slots[selected]?.icon && (
-        <img
-          src={slots[selected].icon}
-          alt={slots[selected].name}
-          style={{
-            position: "absolute",
-            top: INFOBAR_TOP + CIRCLE_ICON_OFFSET_TOP,
-            left: INFOBAR_LEFT + CIRCLE_ICON_OFFSET_LEFT,
-            width: CIRCLE_SIZE - 4,
-            height: CIRCLE_SIZE - 4,
-            imageRendering: "pixelated",
-            zIndex: 16,
-            pointerEvents: "none"
-          }}
-          draggable={false}
-        />
-      )}
-
-      {/* --- BOX DESCRIZIONE: testo animato --- */}
+      {/* --- INFO BAR + ICONA + DESCRIZIONE: SOLO SE SLOT SELEZIONATO --- */}
       {selected !== null && slots[selected] && (
-        <div
-          style={{
-            position: "absolute",
-            top: INFOBAR_TOP + DESC_TOP,
-            left: INFOBAR_LEFT + DESC_LEFT,
-            width: DESC_WIDTH,
-            height: DESC_HEIGHT,
-            fontFamily: DESC_FONT_FAMILY,
-            fontSize: DESC_FONT_SIZE,
-            color: DESC_COLOR,
-            letterSpacing: DESC_LETTER_SPACING,
-            zIndex: 16,
-            overflow: "hidden",
-            whiteSpace: "pre-line",
-            wordBreak: "break-word",
-            userSelect: "none"
-          }}
-        >
-          {displayed}
-        </div>
-      )}
+        <>
+          {/* --- INFO BAR PNG --- */}
+          <img src={infoBarPng} alt="info bar"
+            style={{
+              position: "absolute", top: INFOBAR_TOP, left: INFOBAR_LEFT,
+              width: INFOBAR_WIDTH, height: INFOBAR_HEIGHT,
+              imageRendering: "pixelated", zIndex: 15, pointerEvents: "none"
+            }} draggable={false} />
 
-      {/* --- FRECCIA AVANTI: solo se c'è una pagina dopo --- */}
-      {selected !== null && done && hasNext && (
-        <img
-          src={nextArrowPng}
-          alt="continua"
-          onClick={next}
-          style={{
-            position: "fixed",
-            top: ARROW_NEXT_TOP,
-            left: ARROW_NEXT_LEFT,
-            width: ARROW_NEXT_WIDTH,
-            height: ARROW_NEXT_HEIGHT,
-            zIndex: 9999,
-            cursor: "pointer",
-            transition: "opacity 0.15s"
-          }}
-          draggable={false}
-        />
+          {/* --- ICONA NEL CERCHIO --- */}
+          <img
+            src={slots[selected].icon}
+            alt={slots[selected].name}
+            style={{
+              position: "absolute",
+              top: INFOBAR_TOP + CIRCLE_ICON_OFFSET_TOP,
+              left: INFOBAR_LEFT + CIRCLE_ICON_OFFSET_LEFT,
+              width: CIRCLE_SIZE - 4,
+              height: CIRCLE_SIZE - 4,
+              imageRendering: "pixelated",
+              zIndex: 16,
+              pointerEvents: "none"
+            }}
+            draggable={false}
+          />
+
+          {/* --- BOX DESCRIZIONE: testo animato --- */}
+          <div
+            style={{
+              position: "absolute",
+              top: INFOBAR_TOP + DESC_TOP,
+              left: INFOBAR_LEFT + DESC_LEFT,
+              width: DESC_WIDTH,
+              height: DESC_HEIGHT,
+              fontFamily: DESC_FONT_FAMILY,
+              fontSize: DESC_FONT_SIZE,
+              color: DESC_COLOR,
+              letterSpacing: DESC_LETTER_SPACING,
+              zIndex: 16,
+              overflow: "hidden",
+              whiteSpace: "pre-line",
+              wordBreak: "break-word",
+              userSelect: "none"
+            }}
+          >
+            {displayed}
+          </div>
+
+          {/* --- FRECCIA AVANTI: solo se c'è una pagina dopo --- */}
+          {done && hasNext && (
+            <img
+              src={nextArrowPng}
+              alt="continua"
+              onClick={next}
+              style={{
+                position: "fixed",
+                top: ARROW_NEXT_TOP,
+                left: ARROW_NEXT_LEFT,
+                width: ARROW_NEXT_WIDTH,
+                height: ARROW_NEXT_HEIGHT,
+                zIndex: 9999,
+                cursor: "pointer",
+                transition: "opacity 0.15s"
+              }}
+              draggable={false}
+            />
+          )}
+        </>
       )}
 
       {/* --- TOOLTIP PIXEL ART STEAMPUNK (gestione SOLO qui) --- */}
