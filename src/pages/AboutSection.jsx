@@ -143,12 +143,12 @@ const AboutSection = () => (
     <div
       style={{
         position: "absolute",
-        top: 8,
-        left: 92,
+        top: 3,
+        left: 90,
         fontFamily: "'VT323', monospace",
-        fontSize: 48,
+        fontSize: 52,
         color: "#24170b",
-        letterSpacing: 2,
+        letterSpacing: 0,
         padding: "3px 16px",
         zIndex: 20,
         textShadow: `
@@ -291,7 +291,7 @@ const AboutSection = () => (
       iconSize={20}
       gapX={4}
       gapY={8}
-      speed={0.3}
+      speed={0.1}
       top={186}
       left={26}
       zIndex={60}
