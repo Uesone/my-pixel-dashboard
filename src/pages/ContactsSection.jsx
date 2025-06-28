@@ -14,6 +14,10 @@ import githubIcon from "../assets/ui/tech-icons/16.png";
 import linkedinIcon from "../assets/ui/tech-icons/19.png";
 import mailIcon from "../assets/content/items/6.png";
 import instagramIcon from "../assets/ui/tech-icons/18.png";
+// === BOTTONI PIXEL ART ===
+import btnNormal from "../assets/content/buttons/11.png";
+import btnHover from "../assets/content/buttons/12.png";
+import btnClick from "../assets/content/buttons/13.png";
 
 // === COSTANTI LAYOUT ===
 const LINE_LEFT_TOP = 20, LINE_LEFT_LEFT = 13, LINE_LEFT_WIDTH = 60, LINE_LEFT_HEIGHT = 70;
@@ -33,6 +37,22 @@ const INFOBAR_ARROW_WIDTH = 24, INFOBAR_ARROW_HEIGHT = 28;
 const INFOBAR_ARROW_TOP_OFFSET = -35, INFOBAR_ARROW_LEFT_OFFSET = -45;
 const TYPEWRITER_SPEED = 15, CHAR_PER_PAGE = 300;
 
+// === BOTTONI LAYOUT E LABEL ===
+const BUTTONS_TOP = 87;
+const BUTTONS_LEFT = 220;
+const BUTTON_WIDTH = 70;
+const BUTTON_HEIGHT = 52;
+const BUTTON_GAP = 0;
+// Label tuning (puoi cambiare questi valori a piacere!)
+const BUTTON_LABEL_FONT_SIZE = 12;
+const BUTTON_LABEL_LETTER_SPACING = 0;
+const BUTTON_LABEL_COLOR_ACTIVE = "#1f1508";
+const BUTTON_LABEL_COLOR_INACTIVE = "#463319";
+const BUTTON_LABEL_SHADOW_ACTIVE = "0 2.5px 0 #ffeeb5, 0 -1.5px 0 #eedd8b, 2px 0 #e9d79c";
+const BUTTON_LABEL_SHADOW_INACTIVE = "0 1.2px 0 #d1c07f, 0 -1.5px 0 #e9d79c";
+const BUTTON_LABEL_TOP = 19;   // Posizione verticale label
+const BUTTON_LABEL_LEFT = 0;   // Posizione orizzontale label
+
 // === DEFAULT PNG HOVER (ogni social può sovrascrivere)
 const CIRCLE_HOVER_DEFAULT_PNG = circleActivePng;
 const CIRCLE_HOVER_DEFAULT_TOP_OFFSET = -15;
@@ -40,7 +60,7 @@ const CIRCLE_HOVER_DEFAULT_LEFT_OFFSET = -14;
 const CIRCLE_HOVER_DEFAULT_WIDTH = 70;
 const CIRCLE_HOVER_DEFAULT_HEIGHT = 70;
 
-// === DATI SOCIAL (modifica qui i props di hover PNG per ogni social!) ===
+// === DATI SOCIAL ===
 const SOCIALS = [
   {
     id: 1,
@@ -121,12 +141,12 @@ const SOCIALS = [
   }
 ];
 
-// === SCROLL: calcola quante righe si possono scrollare (patch!)
+// === SCROLL: calcola quante righe si possono scrollare
 const TOTAL_ROWS = SOCIALS.length;
 const GRID_ROWS_TOTAL = TOTAL_ROWS;
 const MAX_SCROLL = Math.max(0, GRID_ROWS_TOTAL - GRID_ROWS_VISIBLE);
 
-// === FUNZIONE UTILITY: restituisce posizione/size PNG hover per ogni social
+// === UTILITY: restituisce props PNG hover per ogni social
 function getCircleHoverProps(social) {
   return {
     png: social.circleHoverPng ?? CIRCLE_HOVER_DEFAULT_PNG,
@@ -141,7 +161,7 @@ function getCircleHoverProps(social) {
   };
 }
 
-// === HOOK animazione testo a macchina/paginazione ===
+// === HOOK: animazione testo typewriter + paginazione ===
 function useTypewriterText(lines, charPerPage, resetKey = 0) {
   const [page, setPage] = useState(0);
   const [displayed, setDisplayed] = useState("");
@@ -173,15 +193,17 @@ function useTypewriterText(lines, charPerPage, resetKey = 0) {
 }
 
 const ContactsSection = () => {
-  // === STATI PRINCIPALI ===
-  const [scrollTop, setScrollTop] = useState(0);        // scroll per lista social
-  const [selected, setSelected] = useState(null);       // social selezionato (indice)
-  const [resetKey, setResetKey] = useState(0);          // forza reset animazione typewriter
-  const [tooltip, setTooltip] = useState({ visible: false, text: "", x: 0, y: 0 }); // tooltip social
-  const [iconHovered, setIconHovered] = useState(false); // hover icona grande
+  // === STATE PRINCIPALI ===
+  const [scrollTop, setScrollTop] = useState(0);        
+  const [selected, setSelected] = useState(null);       
+  const [resetKey, setResetKey] = useState(0);          
+  const [tooltip, setTooltip] = useState({ visible: false, text: "", x: 0, y: 0 }); 
+  const [iconHovered, setIconHovered] = useState(false); 
 
-  // --- Per "Direct/Contacts" buttons: aggiungi qui stato tab se vuoi i pulsanti ---
-  // const [activeTab, setActiveTab] = useState("contacts");
+  // === STATE BOTTONI TABS ===
+  const [activeTab, setActiveTab] = useState("contacts");
+  const [hoveredBtn, setHoveredBtn] = useState(null);
+  const [pressedBtn, setPressedBtn] = useState(null);
 
   // Socials attualmente visibili nella lista scrollabile
   const start = scrollTop;
@@ -254,6 +276,99 @@ const ContactsSection = () => {
         textShadow: `-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643`,
         userSelect: "none"
       }}>Contacts</div>
+
+      {/* === BOTTONI PIXEL ART "Contacts" + "Direct" === */}
+      <div
+        style={{
+          position: "absolute",
+          top: BUTTONS_TOP,
+          left: BUTTONS_LEFT,
+          zIndex: 40,
+          display: "flex",
+          flexDirection: "column",
+          gap: BUTTON_GAP,
+        }}
+      >
+        {[
+          { key: "contacts", label: "Contacts" },
+          { key: "direct", label: "Direct" },
+        ].map(({ key, label }) => (
+          <button
+            key={key}
+            tabIndex={-1}
+            style={{
+              all: "unset",
+              position: "relative",
+              width: BUTTON_WIDTH,
+              height: BUTTON_HEIGHT,
+              cursor: activeTab === key ? "default" : "pointer",
+              userSelect: "none",
+              filter: activeTab === key ? "brightness(1.13)" : undefined,
+              opacity: activeTab === key ? 1 : 0.93,
+              transition: "filter 0.12s, opacity 0.12s",
+              // boxShadow: ... (RIMOSSO per look pixel art puro)
+              outline: "none",
+              background: "none",
+              padding: 0,
+            }}
+            onMouseEnter={() => setHoveredBtn(key)}
+            onMouseLeave={() => {
+              setHoveredBtn(null);
+              setPressedBtn(null);
+            }}
+            onMouseDown={() => setPressedBtn(key)}
+            onMouseUp={() => setPressedBtn(null)}
+            onClick={() => setActiveTab(key)}
+            disabled={activeTab === key}
+            aria-label={label}
+          >
+            <img
+              src={
+                activeTab === key
+                  ? btnNormal
+                  : pressedBtn === key
+                  ? btnClick
+                  : hoveredBtn === key
+                  ? btnHover
+                  : btnNormal
+              }
+              alt={label}
+              style={{
+                width: BUTTON_WIDTH,
+                height: BUTTON_HEIGHT,
+                imageRendering: "pixelated",
+                pointerEvents: "none",
+                userSelect: "none"
+              }}
+              draggable={false}
+            />
+            <span
+              style={{
+                position: "absolute",
+                left: BUTTON_LABEL_LEFT,
+                top: BUTTON_LABEL_TOP,
+                width: "100%",
+                height: "100%",
+                color: activeTab === key ? BUTTON_LABEL_COLOR_ACTIVE : BUTTON_LABEL_COLOR_INACTIVE,
+                fontFamily: "'VT323', monospace",
+                fontSize: BUTTON_LABEL_FONT_SIZE,
+                letterSpacing: BUTTON_LABEL_LETTER_SPACING,
+                textShadow:
+                  activeTab === key
+                    ? BUTTON_LABEL_SHADOW_ACTIVE
+                    : BUTTON_LABEL_SHADOW_INACTIVE,
+                pointerEvents: "none",
+                userSelect: "none",
+                transition: "color 0.16s, text-shadow 0.16s",
+                lineHeight: 1,
+                textAlign: "center",
+              }}
+            >
+              {label}
+            </span>
+          </button>
+        ))}
+      </div>
 
       {/* --- GRIGLIA SOCIALS + SCROLLBAR --- */}
       <div style={{
@@ -503,8 +618,6 @@ const ContactsSection = () => {
           {tooltip.text}
         </div>
       )}
-
-      {/* === QUI PUOI INSERIRE I DUE BOTTONI "Contacts" E "Direct" (guarda esempio risposte precedenti) === */}
     </div>
   );
 };
