@@ -20,12 +20,12 @@ import item5 from "../assets/content/items/5.png";
 
 // === CONFIGURAZIONI LAYOUT & ANIMAZIONE ===
 const SLOT_SIZE = 32, GRID_COLS = 4, GRID_ROWS_VISIBLE = 3, GRID_GAP = 15;
-const WRAPPER_TOP = 80, WRAPPER_LEFT = 73;
+const WRAPPER_TOP = 80, WRAPPER_LEFT = 72;
 const WRAPPER_WIDTH = GRID_COLS * SLOT_SIZE + (GRID_COLS - 1) * GRID_GAP;
 const WRAPPER_HEIGHT = GRID_ROWS_VISIBLE * SLOT_SIZE + (GRID_ROWS_VISIBLE - 1) * GRID_GAP;
 const INFOBAR_TOP = 205, INFOBAR_LEFT = 20, INFOBAR_WIDTH = 275, INFOBAR_HEIGHT = 80;
 const CIRCLE_SIZE = 36, CIRCLE_ICON_OFFSET_TOP = 23, CIRCLE_ICON_OFFSET_LEFT = 19;
-const DESC_TOP = 14, DESC_LEFT = 70, DESC_WIDTH = 180, DESC_HEIGHT = 50, DESC_FONT_SIZE = 12;
+const DESC_TOP = 14, DESC_LEFT = 70, DESC_WIDTH = 170, DESC_HEIGHT = 50, DESC_FONT_SIZE = 12;
 const DESC_FONT_FAMILY = "'VT323', monospace", DESC_COLOR = "#4b2d11", DESC_LETTER_SPACING = 0;
 const TYPEWRITER_SPEED = 19, CHAR_PER_PAGE = 300;
 const ARROW_NEXT_TOP = 298, ARROW_NEXT_LEFT = 375, ARROW_NEXT_WIDTH = 32, ARROW_NEXT_HEIGHT = 38;
@@ -185,19 +185,19 @@ const ProjectsSection = () => {
       {/* --- LINEE DECORATIVE + TITOLO --- */}
       <img src={linePng} alt="linea sinistra"
         style={{
-          position: "absolute", top: 20, left: 14,
-          width: 62, height: 70, zIndex: 13, pointerEvents: "none"
+          position: "absolute", top: 20, left: 15,
+          width: 50, height: 70, zIndex: 13, pointerEvents: "none"
         }} draggable={false} />
       <img src={linePng} alt="linea destra"
         style={{
-          position: "absolute", top: 20, left: 240,
-          width: 62, height: 70, zIndex: 13, pointerEvents: "none",
+          position: "absolute", top: 20, left: 251,
+          width: 50, height: 70, zIndex: 13, pointerEvents: "none",
           transform: "scaleX(-1)", transformOrigin: "center center"
         }} draggable={false} />
       <div style={{
-        position: "absolute", top: 4, left: 64,
+        position: "absolute", top: 4, left: 58,
         fontFamily: "'VT323', monospace", fontSize: 52, color: "#24170b",
-        letterSpacing: -1, padding: "3px 16px", zIndex: 20,
+        letterSpacing: 1, padding: "3px 16px", zIndex: 20,
         textShadow: "-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643"
       }}>Projects</div>
 
