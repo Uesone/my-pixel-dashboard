@@ -59,6 +59,7 @@ const SOCIALS = [
       "Tutti i miei progetti open source, side project, app React, backend Java e pixel art sono su GitHub.",
       "Scopri il mio codice, con README dettagliati e istruzioni per contribuire!",
       "Se vuoi vedere come lavoro o seguire i miei aggiornamenti, questo è il posto giusto!",
+      "Click sull'icona a sinistra per maggiori dettagli!",
     ]
   },
   {
@@ -76,7 +77,8 @@ const SOCIALS = [
     circleHoverHeight: 72,
     desc: [
       "Qui trovi il mio profilo LinkedIn con esperienze lavorative, formazione e competenze.",
-      "Aggiungimi alla rete per restare aggiornato o scrivimi in privato!"
+      "Aggiungimi alla rete per restare aggiornato o scrivimi in privato!",
+      "Click sull'icona a sinistra per maggiori dettagli!",
     ]
   },
   {
@@ -85,7 +87,7 @@ const SOCIALS = [
     url: "mailto:umberto12amoroso@gmail.com",
     tooltip: "Send me an email",
     icon: mailIcon,
-    iconWidth: 21, iconHeight: 21, iconLeft: 14, iconTop: 14,
+    iconWidth: 21, iconHeight: 21, iconLeft: 13, iconTop: 14,
     infoIconWidth: 35, infoIconHeight: 35, infoIconLeft: 16, infoIconTop: 20,
     circleHoverPng: circleActivePng,
     circleHoverTopOffset: -15,
@@ -94,7 +96,8 @@ const SOCIALS = [
     circleHoverHeight: 70,
     desc: [
       "Scrivimi una mail per collaborazioni, domande tecniche, offerte di lavoro o anche solo per due chiacchiere.",
-      "Cerco nuovi spunti e rispondo entro poche ore!"
+      "Cerco nuovi spunti e rispondo entro poche ore!",
+      "Click sull'icona a sinistra per maggiori dettagli!",
     ]
   },
   {
@@ -112,8 +115,8 @@ const SOCIALS = [
     circleHoverHeight: 70,
     desc: [
       "Profilo personale IG: foto di viaggi, pixel art, aggiornamenti tech e lifestyle.",
-      "Seguimi per vedere il lato creativo o per DM informali!"
-    ]
+      "Seguimi per vedere il lato creativo o per DM informali!",
+      "Click sull'icona a sinistra per maggiori dettagli!"    ]
   }
 ];
 
