@@ -24,13 +24,14 @@ const SpriteAnimator = ({
 
     timer.current = setInterval(() => {
       setCurrent((prev) => {
-        if (prev + 1 === frames.length) {
-          if (loop) return 0;
-          clearInterval(timer.current);
-          onAnimationEnd();
-          return prev;
-        }
-        return prev + 1;
+  if (prev + 1 === frames.length) {
+  if (loop) return 0;
+  clearInterval(timer.current);
+  // DEFER: chiama la callback dopo il render, non dentro setState!
+  setTimeout(() => onAnimationEnd(), 0);
+  return prev; }
+
+       return prev + 1;
       });
     }, 1000 / frameRate);
 

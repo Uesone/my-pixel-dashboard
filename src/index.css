@@ -1,12 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+/* === FONT PIXELOPERATOR (REGULAR e BOLD) === */
+@font-face {
+  font-family: 'PixelOperator';
+  src: url('/fonts/PixelOperator.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'PixelOperator';
+  src: url('/fonts/PixelOperator-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+/* ================================== */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  background-color: #242424; /* colore di fallback */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -24,15 +37,27 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background: #242424;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+/* IMMAGINI PIXEL ART: NO BLUR, NO SCALING GLOBALE */
+img {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -webkit-user-drag: none;
+  user-select: none;
+  max-width: unset;
+  height: unset;
 }
 
 button {
@@ -54,6 +79,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* MEDIA QUERY PER LIGHT MODE */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
