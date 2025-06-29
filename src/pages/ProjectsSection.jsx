@@ -24,38 +24,43 @@ const WRAPPER_TOP = 80, WRAPPER_LEFT = 72;
 const WRAPPER_WIDTH = GRID_COLS * SLOT_SIZE + (GRID_COLS - 1) * GRID_GAP;
 const WRAPPER_HEIGHT = GRID_ROWS_VISIBLE * SLOT_SIZE + (GRID_ROWS_VISIBLE - 1) * GRID_GAP;
 const INFOBAR_TOP = 205, INFOBAR_LEFT = 20, INFOBAR_WIDTH = 275, INFOBAR_HEIGHT = 80;
-const CIRCLE_SIZE = 36, CIRCLE_ICON_OFFSET_TOP = 23, CIRCLE_ICON_OFFSET_LEFT = 19;
+// --- Modifica qui per cambiare dimensione e posizione icona infobar! ---
+const INFOBAR_ICON_WIDTH = 45;    // larghezza icona infobar
+const INFOBAR_ICON_HEIGHT = 45;   // altezza icona infobar
+const INFOBAR_ICON_TOP = 17;      // distanza dal top di infobar
+const INFOBAR_ICON_LEFT = 12;     // distanza dal left di infobar
+// -----------------------------------------------------------------------
 const DESC_TOP = 14, DESC_LEFT = 70, DESC_WIDTH = 170, DESC_HEIGHT = 50, DESC_FONT_SIZE = 12;
 const DESC_FONT_FAMILY = "'VT323', monospace", DESC_COLOR = "#4b2d11", DESC_LETTER_SPACING = 0;
 const TYPEWRITER_SPEED = 19, CHAR_PER_PAGE = 300;
 const ARROW_NEXT_TOP = 298, ARROW_NEXT_LEFT = 375, ARROW_NEXT_WIDTH = 32, ARROW_NEXT_HEIGHT = 38;
 
-// === OGGETTI PORTFOLIO (SOLO dati tecnici, niente testo qui!) ===
+// === OGGETTI PORTFOLIO (solo dati tecnici, niente testo qui!) ===
 const PROJECTS = [
   {
     id: "pokecard",
     icon: item0,
-    iconSize: 20, iconTop: 6, iconLeft: 6
+    iconSize: 25, iconTop: 3, iconLeft: 3.6
   },
   {
     id: "pokecard-backend",
     icon: item1,
-    iconSize: 20, iconTop: 6, iconLeft: 6
+    iconSize: 25, iconTop: 3, iconLeft: 3.5
   },
   {
     id: "spotify",
     icon: item2,
-    iconSize: 16, iconTop: 7, iconLeft: 8
+    iconSize: 25, iconTop: 3, iconLeft: 3.5
   },
   {
     id: "meteo",
     icon: item3,
-    iconSize: 20, iconTop: 6, iconLeft: 6
+    iconSize: 25, iconTop: 3, iconLeft: 4
   },
   {
     id: "trasporti",
     icon: item4,
-    iconSize: 20, iconTop: 6, iconLeft: 6
+    iconSize: 25, iconTop: 2, iconLeft: 4
   }
 ];
 
@@ -104,7 +109,6 @@ const ProjectsSection = () => {
   // Mappa id -> testo tradotto
   const projectMap = Object.fromEntries(
     translatedProjects.map((p, idx) => {
-      // NB: Se i dati dei JSON sono sempre nella stessa posizione puoi anche usare PROJECTS[idx].id come id
       return [PROJECTS[idx]?.id, p];
     })
   );
@@ -278,15 +282,16 @@ const ProjectsSection = () => {
               imageRendering: "pixelated", zIndex: 15, pointerEvents: "none"
             }} draggable={false} />
 
+          {/* --- Icona del progetto selezionato nell'infobar --- */}
           <img
             src={slots[selected].icon}
             alt={slots[selected].name}
             style={{
               position: "absolute",
-              top: INFOBAR_TOP + CIRCLE_ICON_OFFSET_TOP,
-              left: INFOBAR_LEFT + CIRCLE_ICON_OFFSET_LEFT,
-              width: CIRCLE_SIZE - 4,
-              height: CIRCLE_SIZE - 4,
+              top: INFOBAR_TOP + INFOBAR_ICON_TOP,      // USO TOP CONFIGURABILE
+              left: INFOBAR_LEFT + INFOBAR_ICON_LEFT,   // USO LEFT CONFIGURABILE
+              width: INFOBAR_ICON_WIDTH,
+              height: INFOBAR_ICON_HEIGHT,
               imageRendering: "pixelated",
               zIndex: 16,
               pointerEvents: "none"
