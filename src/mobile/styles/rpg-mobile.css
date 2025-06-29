@@ -1,0 +1,201 @@
+/* === WRAPPER GENERALE MOBILE === */
+.umbybot-mobile-wrapper {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at center, #8a6840 0%, #40311b 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  font-family: 'VT323', 'Press Start 2P', monospace;
+  color: #ffe8ad;
+}
+
+/* === SPRITE BOT CON BORDO E SFONDO === */
+.umbybot-sprite-box {
+  margin-bottom: 12px;
+  border: 4px solid #ac7c3a;
+  border-radius: 20px;
+  background: #6d4b25b3;
+  box-shadow: 0 0 16px #ac7c3a44;
+  padding: 16px 24px 12px 24px;
+}
+.umbybot-sprite {
+  width: 164px;
+  height: 208px;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 12px #442504b0);
+}
+
+/* === DIALOGUE BOX (STEAMPUNK) === */
+.dialogue-box-steampunk {
+  width: 90vw;
+  max-width: 420px;
+  min-height: 120px;
+  border: 4px solid #ac7c3a;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #54391e 0%, #291a0d 100%);
+  box-shadow: 0 0 24px #2a1d0a70;
+  margin-bottom: 20px;
+  padding: 12px 20px;
+  position: relative;
+}
+.dialogue-header-steampunk {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.dialogue-npc-icon {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
+  border: 2px solid #ac7c3a;
+  border-radius: 7px;
+  background: #221203;
+  box-shadow: 0 0 6px #ac7c3a40;
+}
+.dialogue-npc-name {
+  font-size: 1.3em;
+  font-family: 'Press Start 2P', monospace;
+  color: #f6c972;
+  letter-spacing: 0.09em;
+  filter: drop-shadow(0 0 4px #ac7c3a60);
+}
+.dialogue-content-steampunk {
+  margin-top: 6px;
+  font-size: 1.19em;
+  line-height: 1.6em;
+  color: #ffe9ad;
+  text-shadow: 0 1px 6px #402405b0;
+}
+
+/* === BOTTONI RPG PIXEL ART === */
+.rpg-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
+}
+.rpg-btn {
+  background: linear-gradient(180deg, #83602b 0%, #55401e 100%);
+  border: 3px solid #ac7c3a;
+  border-radius: 10px;
+  font-family: 'VT323', 'Press Start 2P', monospace;
+  color: #ffe8ad;
+  font-size: 1.1em;
+  min-width: 140px;
+  min-height: 48px;
+  box-shadow: 0 4px 0 #5c421e, 0 2px 8px #2a1d0a50;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: filter 0.1s, box-shadow 0.1s;
+  outline: none;
+  text-shadow: 0 2px 8px #2d1402;
+}
+.rpg-btn:active {
+  filter: brightness(0.88);
+  box-shadow: 0 2px 0 #3e2a14;
+}
+
+/* === CHATBOT STEAMPUNK (CHAT GPT STYLE) === */
+.chatbot-steampunk-wrapper {
+  width: 92vw;
+  max-width: 430px;
+  background: #3c250e;
+  border: 4px solid #a16e2f;
+  border-radius: 13px;
+  box-shadow: 0 0 16px #271d0a80;
+  margin: 0 auto 24px auto;
+  padding: 12px 10px 4px 10px;
+  display: flex;
+  flex-direction: column;
+  font-family: 'VT323', monospace;
+  min-height: 240px;
+}
+.chat-messages {
+  flex: 1;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.chat-message {
+  padding: 7px 13px;
+  border-radius: 9px;
+  font-size: 1.1em;
+  white-space: pre-line;
+  word-break: break-word;
+  text-shadow: 0 1px 5px #3d1d04d2;
+  line-height: 1.48;
+}
+.chat-message.bot {
+  background: #705023;
+  align-self: flex-start;
+  color: #ffeaad;
+  border: 2px solid #ac7c3a;
+}
+.chat-message.user {
+  background: #2a1b0c;
+  align-self: flex-end;
+  color: #d7c897;
+  border: 2px solid #7e6544;
+}
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.chat-input-steampunk {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 2px solid #ac7c3a;
+  background: #231607;
+  color: #ffecb1;
+  font-size: 1.09em;
+  font-family: 'VT323', monospace;
+  outline: none;
+  box-shadow: 0 1px 6px #0009;
+  transition: border 0.2s;
+}
+.chat-input-steampunk:focus {
+  border: 2px solid #ffd265;
+  background: #312008;
+}
+.chat-send-btn {
+  font-size: 1.4em;
+  border: none;
+  background: #ac7c3a;
+  border-radius: 8px;
+  padding: 7px 13px;
+  cursor: pointer;
+  transition: filter 0.18s;
+  color: #fff2cc;
+  box-shadow: 0 2px 0 #4c320b, 0 2px 6px #20120b;
+}
+.chat-send-btn:disabled {
+  filter: grayscale(0.7);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 400px) {
+  .dialogue-box-steampunk {
+    padding: 7px 6px;
+  }
+  .rpg-btn {
+    min-width: 108px;
+    font-size: 1em;
+  }
+  .chatbot-steampunk-wrapper {
+    padding: 6px 3px 3px 3px;
+  }
+}

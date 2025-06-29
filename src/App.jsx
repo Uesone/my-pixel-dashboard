@@ -11,11 +11,19 @@ import OverlayWithHole from "./components/OverlayWithHole";
 // === IMPORTA LA SWITCHER LINGUA ===
 import LanguageSwitcher from "./components/LanguageSwitcher";
 
+// ---- Importa la logica mobile ----
+import useIsMobile from "./hooks/useIsMobile";
+import UmbyBotRPG from "./mobile/UmbyBotRPG";
+
 const SECTIONS = ["home", "about", "projects", "contacts"];
 const FLIP_DURATION = 820;
 
 function App() {
-  // Navigazione, animazione, overlay
+  // 1️⃣ === HOOKS: devono essere TUTTI chiamati, sempre ===
+  // Mobile/desktop detection (breakpoint 600px)
+  const isMobile = useIsMobile();
+
+  // Navigazione, animazione, overlay (per versione desktop)
   const [selectedSection, setSelectedSection] = useState("home");
   const [pendingSection, setPendingSection] = useState(null);
   const [isFlipping, setIsFlipping] = useState(false);
@@ -23,35 +31,31 @@ function App() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const prevSectionRef = useRef("home");
 
-  // Overlay buio iniziale
+  // Overlay effetto luce/buio
   const [overlayVisible, setOverlayVisible] = useState(true);
-  // Stato per il "lampeggio": true = stanza illuminata, false = buio
   const [bulbLight, setBulbLight] = useState(false);
-  // Stato visibilità dialog box home
   const [dialogBoxVisible, setDialogBoxVisible] = useState(false);
 
-  // Ref per la dashboard (per allineare il buco)
+  // Ref dashboard per overlay
   const dashboardRef = useRef();
 
-  // --- MODIFICA QUI per allineare il buco pixel-perfect ---
+  // Pixel-perfect overlay buco
   const HOLE_TOP = 316 + 87;
   const HOLE_LEFT = 814 + 16;
   const HOLE_WIDTH = 61;
   const HOLE_HEIGHT = 140;
 
-  // Callback: termina overlay e mostra dialog dopo accensione
+  // 2️⃣ === CALLBACKS desktop ===
   const handlePowerOnFinished = useCallback(() => {
     setOverlayVisible(false);
     setDialogBoxVisible(true);
   }, []);
 
-  // Ogni volta che accendi o spegni, overlay ON subito e HIDE dialog
   const handlePowerClick = useCallback((on) => {
     setOverlayVisible(true);
     setDialogBoxVisible(false);
   }, []);
 
-  // Lampadina ON/OFF: solo per lampeggio (nessun controllo overlay qui)
   const handleBulbChange = useCallback((on) => {
     setBulbLight(on);
   }, []);
@@ -73,7 +77,14 @@ function App() {
     }, FLIP_DURATION);
   };
 
-  // Render sezione attuale, passa la prop a HomeSection
+  // 3️⃣ === RENDER CONDIZIONALE ===
+  // Se siamo su mobile (<600px), mostra SOLO UmbyBotRPG
+  if (isMobile) {
+    return <UmbyBotRPG />;
+  }
+
+  // 4️⃣ === VERSIONE DESKTOP ===
+  // Funzione per renderizzare la sezione corrente
   const renderSection = () => {
     switch (selectedSection) {
       case "home": return <HomeSection dialogBoxVisible={dialogBoxVisible} />;
