@@ -8,6 +8,8 @@ import ContactsSection from "./pages/ContactsSection";
 import bgPattern from "./assets/content/background/0.png";
 import PageFlipTransition from "./components/PageFlipTransition";
 import OverlayWithHole from "./components/OverlayWithHole";
+// === IMPORTA LA SWITCHER LINGUA ===
+import LanguageSwitcher from "./components/LanguageSwitcher";
 
 const SECTIONS = ["home", "about", "projects", "contacts"];
 const FLIP_DURATION = 820;
@@ -25,7 +27,7 @@ function App() {
   const [overlayVisible, setOverlayVisible] = useState(true);
   // Stato per il "lampeggio": true = stanza illuminata, false = buio
   const [bulbLight, setBulbLight] = useState(false);
-  // Stato visibilità dialog box home (NEW)
+  // Stato visibilità dialog box home
   const [dialogBoxVisible, setDialogBoxVisible] = useState(false);
 
   // Ref per la dashboard (per allineare il buco)
@@ -40,13 +42,13 @@ function App() {
   // Callback: termina overlay e mostra dialog dopo accensione
   const handlePowerOnFinished = useCallback(() => {
     setOverlayVisible(false);
-    setDialogBoxVisible(true); // MOSTRA la dialog box
+    setDialogBoxVisible(true);
   }, []);
 
   // Ogni volta che accendi o spegni, overlay ON subito e HIDE dialog
   const handlePowerClick = useCallback((on) => {
     setOverlayVisible(true);
-    setDialogBoxVisible(false); // Nasconde la dialog se spegni/riaccendi
+    setDialogBoxVisible(false);
   }, []);
 
   // Lampadina ON/OFF: solo per lampeggio (nessun controllo overlay qui)
@@ -96,7 +98,7 @@ function App() {
         overflow: "hidden"
       }}
     >
-      {/* Overlay bucato, opacità dinamica per effetto lampeggio */}
+      {/* --- OVERLAY BUCATO (effetto luce/ombra) --- */}
       <OverlayWithHole
         visible={overlayVisible}
         opacity={bulbLight ? 0.12 : 0.77}
@@ -109,6 +111,7 @@ function App() {
         borderRadius={9}
       />
 
+      {/* --- DASHBOARD CENTRALE --- */}
       <div
         ref={dashboardRef}
         style={{
@@ -145,7 +148,7 @@ function App() {
             position: "relative"
           }}
         >
-          {/* DashboardBase ora riceve le prop per la PowerHub */}
+          {/* DashboardBase riceve le prop per la PowerHub */}
           <DashboardBase
             scale={1.5}
             showPageRoll={showPageRoll}
@@ -162,7 +165,7 @@ function App() {
               animated: true,
               onBulbChange: handleBulbChange,
               onPowerOnFinished: handlePowerOnFinished,
-              onPowerClick: handlePowerClick, // <--- patch!
+              onPowerClick: handlePowerClick,
             }}
           >
             {!isFlipping && renderSection()}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PageWrapper from "../components/PageWrapper";
+import { useLanguage } from "../components/LanguageContext.jsx";
 
 // --- Elementi decorativi ---
 import holder0 from "../assets/page-content-sprites/holders/8.png";         // Cornice rotonda avatar

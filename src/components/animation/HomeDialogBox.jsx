@@ -1,17 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import nextArrowPng from "../../assets/ui/dialog/arrow_next.png";
 import prevArrowPng from "../../assets/ui/dialog/arrow_prev.png";
+import { useLanguage } from "../LanguageContext.jsx";
 import balloonPng from "../../assets/ui/dialog/steampunk_dialogbox.png";
-
-// Dialoghi da mostrare
-const lines = [
-  "Benvenuto negli archivi personali\ndi Umberto Amoroso, detto Uesone.",
-  "Qui raccolgo appunti, schemi e cronache\ndei miei progetti e sperimentazioni digitali.",
-  "Ogni sezione è una pagina di taccuino:\ndove la logica incontra la creatività.",
-  "Naviga tra progetti, annotazioni e strumenti,\ne osserva l’ingegno all’opera.",
-  "Nel mestiere dell’ingegno, la curiosità\nè il miglior alleato.",
-  "Avanti: l’esplorazione può cominciare."
-];
 
 export default function HomeDialogBox({
   balloonWidth = 290,
@@ -36,6 +27,10 @@ export default function HomeDialogBox({
   // Callback avatar
   onTalkingChange = () => {},
 }) {
+  const { t } = useLanguage(); // 👈 hook del context
+  // Prendi le lines tradotte (array) oppure fallback a []
+  const lines = t("home.dialog") || [];
+
   const [step, setStep] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [talking, setTalking] = useState(false);
@@ -74,9 +69,9 @@ export default function HomeDialogBox({
       onTalkingChange(false);
     };
     // eslint-disable-next-line
-  }, [step, onTalkingChange]);
+  }, [step, onTalkingChange, lines]);
 
-  // "ombra" per mantenere il testo centrato
+  // "ombra" per mantenere il testo centrato (scegli la stringa più lunga)
   const testText = lines.reduce((a, b) => (a.length > b.length ? a : b), "");
 
   return (

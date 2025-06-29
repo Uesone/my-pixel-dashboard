@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useLanguage } from "../components/LanguageContext.jsx";
 
 // === ASSETS GRAFICI ===
 import linePng from "../assets/page-content-sprites/holders/0.png";
@@ -62,13 +63,9 @@ const CIRCLE_HOVER_DEFAULT_LEFT_OFFSET = -14;
 const CIRCLE_HOVER_DEFAULT_WIDTH = 70;
 const CIRCLE_HOVER_DEFAULT_HEIGHT = 70;
 
-// === DATI SOCIAL ===
-const SOCIALS = [
+// === DATI SOCIAL (solo asset: testo lo prendi dal JSON lingua)
+const SOCIALS_META = [
   {
-    id: 1,
-    name: "GitHub",
-    url: "https://github.com/Uesone",
-    tooltip: "See my GitHub",
     icon: githubIcon,
     iconWidth: 25, iconHeight: 25, iconLeft: 12, iconTop: 15,
     infoIconWidth: 45, infoIconHeight: 45, infoIconLeft: 13, infoIconTop: 20,
@@ -77,18 +74,8 @@ const SOCIALS = [
     circleHoverLeftOffset: -16,
     circleHoverWidth: 73,
     circleHoverHeight: 73,
-    desc: [
-      "Tutti i miei progetti open source, side project, app React, backend Java e pixel art sono su GitHub.",
-      "Scopri il mio codice, con README dettagliati e istruzioni per contribuire!",
-      "Se vuoi vedere come lavoro o seguire i miei aggiornamenti, questo è il posto giusto!",
-      "Click sull'icona a sinistra per maggiori dettagli!",
-    ]
   },
   {
-    id: 2,
-    name: "LinkedIn",
-    url: "https://linkedin.com/in/umberto-amoroso-387394167",
-    tooltip: "Connect on LinkedIn",
     icon: linkedinIcon,
     iconWidth: 21, iconHeight: 21, iconLeft: 13.8, iconTop: 15,
     infoIconWidth: 35, infoIconHeight: 35, infoIconLeft: 17, infoIconTop: 20,
@@ -97,17 +84,8 @@ const SOCIALS = [
     circleHoverLeftOffset: -19,
     circleHoverWidth: 72,
     circleHoverHeight: 72,
-    desc: [
-      "Qui trovi il mio profilo LinkedIn con esperienze lavorative, formazione e competenze.",
-      "Aggiungimi alla rete per restare aggiornato o scrivimi in privato!",
-      "Click sull'icona a sinistra per maggiori dettagli!",
-    ]
   },
   {
-    id: 3,
-    name: "Mail",
-    url: "mailto:umberto12amoroso@gmail.com",
-    tooltip: "Send me an email",
     icon: mailIcon,
     iconWidth: 21, iconHeight: 21, iconLeft: 13, iconTop: 14,
     infoIconWidth: 35, infoIconHeight: 35, infoIconLeft: 16, infoIconTop: 20,
@@ -116,17 +94,8 @@ const SOCIALS = [
     circleHoverLeftOffset: -17,
     circleHoverWidth: 70,
     circleHoverHeight: 70,
-    desc: [
-      "Scrivimi una mail per collaborazioni, domande tecniche, offerte di lavoro o anche solo per due chiacchiere.",
-      "Cerco nuovi spunti e rispondo entro poche ore!",
-      "Click sull'icona a sinistra per maggiori dettagli!",
-    ]
   },
   {
-    id: 4,
-    name: "Instagram",
-    url: "https://instagram.com/ues.one",
-    tooltip: "Follow me on Instagram",
     icon: instagramIcon,
     iconWidth: 22, iconHeight: 22, iconLeft: 13.2, iconTop: 14,
     infoIconWidth: 35, infoIconHeight: 35, infoIconLeft: 17, infoIconTop: 20,
@@ -135,33 +104,8 @@ const SOCIALS = [
     circleHoverLeftOffset: -17,
     circleHoverWidth: 69,
     circleHoverHeight: 70,
-    desc: [
-      "Profilo personale IG: foto di viaggi, pixel art, aggiornamenti tech e lifestyle.",
-      "Seguimi per vedere il lato creativo o per DM informali!",
-      "Click sull'icona a sinistra per maggiori dettagli!"
-    ]
   }
 ];
-
-// === SCROLL: quante righe scrollabili
-const TOTAL_ROWS = SOCIALS.length;
-const GRID_ROWS_TOTAL = TOTAL_ROWS;
-const MAX_SCROLL = Math.max(0, GRID_ROWS_TOTAL - GRID_ROWS_VISIBLE);
-
-// === UTILITY: posizione PNG hover per ogni social
-function getCircleHoverProps(social) {
-  return {
-    png: social.circleHoverPng ?? CIRCLE_HOVER_DEFAULT_PNG,
-    top: (social.infoIconTop !== undefined
-      ? INFOBAR_TOP + social.infoIconTop
-      : INFOBAR_TOP + CIRCLE_ICON_OFFSET_TOP) + (social.circleHoverTopOffset ?? CIRCLE_HOVER_DEFAULT_TOP_OFFSET),
-    left: (social.infoIconLeft !== undefined
-      ? INFOBAR_LEFT + social.infoIconLeft
-      : INFOBAR_LEFT + CIRCLE_ICON_OFFSET_LEFT) + (social.circleHoverLeftOffset ?? CIRCLE_HOVER_DEFAULT_LEFT_OFFSET),
-    width: social.circleHoverWidth ?? CIRCLE_HOVER_DEFAULT_WIDTH,
-    height: social.circleHoverHeight ?? CIRCLE_HOVER_DEFAULT_HEIGHT
-  };
-}
 
 // === HOOK animazione testo typewriter + paginazione ===
 function useTypewriterText(lines, charPerPage, resetKey = 0) {
@@ -194,7 +138,45 @@ function useTypewriterText(lines, charPerPage, resetKey = 0) {
   return { displayed, done, page, hasNext, hasPrev, next, prev };
 }
 
+// === UTILITY: posizione PNG hover per ogni social
+function getCircleHoverProps(meta) {
+  return {
+    png: meta.circleHoverPng ?? CIRCLE_HOVER_DEFAULT_PNG,
+    top: (meta.infoIconTop !== undefined
+      ? INFOBAR_TOP + meta.infoIconTop
+      : INFOBAR_TOP + CIRCLE_ICON_OFFSET_TOP) + (meta.circleHoverTopOffset ?? CIRCLE_HOVER_DEFAULT_TOP_OFFSET),
+    left: (meta.infoIconLeft !== undefined
+      ? INFOBAR_LEFT + meta.infoIconLeft
+      : INFOBAR_LEFT + CIRCLE_ICON_OFFSET_LEFT) + (meta.circleHoverLeftOffset ?? CIRCLE_HOVER_DEFAULT_LEFT_OFFSET),
+    width: meta.circleHoverWidth ?? CIRCLE_HOVER_DEFAULT_WIDTH,
+    height: meta.circleHoverHeight ?? CIRCLE_HOVER_DEFAULT_HEIGHT
+  };
+}
+
 const ContactsSection = () => {
+  const { t } = useLanguage();
+
+  // Prende i socials dalla lingua corrente (dal JSON)
+  const socialsData = t("contacts.socials") || [];
+  // Tooltips dal JSON
+  const tooltips = t("contacts.tooltips") || {};
+  // Alt text dal JSON
+  const alt = t("contacts.alt") || {};
+  // Titolo tabs
+  const title = t("contacts.title") || "Contacts";
+  const tabs = t("contacts.tabs") || { socials: "Socials", direct: "Contact Me" };
+
+  // Unisce asset (meta) e testo (traduzioni)
+  const SOCIALS = socialsData.map((s, idx) => ({
+    ...s,
+    ...SOCIALS_META[idx]
+  }));
+
+  // === SCROLL ===
+  const TOTAL_ROWS = SOCIALS.length;
+  const GRID_ROWS_TOTAL = TOTAL_ROWS;
+  const MAX_SCROLL = Math.max(0, GRID_ROWS_TOTAL - GRID_ROWS_VISIBLE);
+
   // === STATE ===
   const [scrollTop, setScrollTop] = useState(0);
   const [selected, setSelected] = useState(null);
@@ -239,7 +221,7 @@ const ContactsSection = () => {
     const rect = e.currentTarget.getBoundingClientRect();
     setTooltip({
       visible: true,
-      text: social.tooltip,
+      text: tooltips[social.name.toLowerCase()] || social.tooltip || social.name,
       x: rect.left + SLOT_WIDTH / 2,
       y: rect.top - 36
     });
@@ -269,12 +251,12 @@ const ContactsSection = () => {
       }}
     >
       {/* --- LINEE DECORATIVE E TITOLO --- */}
-      <img src={linePng} alt="decorative line left"
+      <img src={linePng} alt={alt.decorative_line_left || "decorative line left"}
         style={{
           position: "absolute", top: LINE_LEFT_TOP, left: LINE_LEFT_LEFT,
           width: LINE_LEFT_WIDTH, height: LINE_LEFT_HEIGHT, zIndex: 13, pointerEvents: "none"
         }} draggable={false} />
-      <img src={linePng} alt="decorative line right"
+      <img src={linePng} alt={alt.decorative_line_right || "decorative line right"}
         style={{
           position: "absolute", top: LINE_RIGHT_TOP, left: LINE_RIGHT_LEFT,
           width: LINE_RIGHT_WIDTH, height: LINE_RIGHT_HEIGHT, zIndex: 13, pointerEvents: "none",
@@ -286,7 +268,7 @@ const ContactsSection = () => {
         color: "#24170b", letterSpacing: 0, padding: "3px 16px", zIndex: 20,
         textShadow: `-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643`,
         userSelect: "none"
-      }}>Contacts</div>
+      }}>{title}</div>
 
       {/* === BOTTONI PIXEL ART "Contacts" + "Direct" === */}
       <div
@@ -301,8 +283,8 @@ const ContactsSection = () => {
         }}
       >
         {[
-          { key: "contacts", label: "Socials" },
-          { key: "direct", label: "Contact Me" },
+          { key: "contacts", label: tabs.socials || "Socials" },
+          { key: "direct", label: tabs.direct || "Contact Me" },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -504,7 +486,7 @@ const ContactsSection = () => {
 
           {/* Cerchio PNG hover: personalizzabile per ogni social */}
           {iconHovered && (() => {
-            const props = getCircleHoverProps(SOCIALS[selected]);
+            const props = getCircleHoverProps(SOCIALS_META[selected]);
             return (
               <img
                 src={props.png}
@@ -531,17 +513,17 @@ const ContactsSection = () => {
             rel="noopener noreferrer"
             style={{
               position: "absolute",
-              top: SOCIALS[selected].infoIconTop !== undefined
-                ? INFOBAR_TOP + SOCIALS[selected].infoIconTop
+              top: SOCIALS_META[selected].infoIconTop !== undefined
+                ? INFOBAR_TOP + SOCIALS_META[selected].infoIconTop
                 : INFOBAR_TOP + CIRCLE_ICON_OFFSET_TOP,
-              left: SOCIALS[selected].infoIconLeft !== undefined
-                ? INFOBAR_LEFT + SOCIALS[selected].infoIconLeft
+              left: SOCIALS_META[selected].infoIconLeft !== undefined
+                ? INFOBAR_LEFT + SOCIALS_META[selected].infoIconLeft
                 : INFOBAR_LEFT + CIRCLE_ICON_OFFSET_LEFT,
-              width: SOCIALS[selected].infoIconWidth !== undefined
-                ? SOCIALS[selected].infoIconWidth
+              width: SOCIALS_META[selected].infoIconWidth !== undefined
+                ? SOCIALS_META[selected].infoIconWidth
                 : CIRCLE_SIZE - 4,
-              height: SOCIALS[selected].infoIconHeight !== undefined
-                ? SOCIALS[selected].infoIconHeight
+              height: SOCIALS_META[selected].infoIconHeight !== undefined
+                ? SOCIALS_META[selected].infoIconHeight
                 : CIRCLE_SIZE - 4,
               zIndex: 17,
               display: "block"
@@ -591,7 +573,7 @@ const ContactsSection = () => {
           {done && hasNext && (
             <img
               src={INFOBAR_ARROW_PNG}
-              alt="continua"
+              alt={alt.continua || "continua"}
               onClick={next}
               style={{
                 position: "absolute",

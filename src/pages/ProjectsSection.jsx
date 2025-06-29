@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import PageWrapper from "../components/PageWrapper";
 import PixelTooltip from "../components/PixelTooltip";
 import PixelScrollbar from "../components/PixelScrollbar";
+import { useLanguage } from "../components/LanguageContext.jsx";
 
 // === Assets grafici ===
 import linePng from "../assets/page-content-sprites/holders/0.png";
@@ -9,14 +10,13 @@ import holderPng from "../assets/content/holders/3.png";
 import holderFilledPng from "../assets/content/holders/4.png";
 import infoBarPng from "../assets/content/holders/10.png";
 import nextArrowPng from "../assets/content/buttons/2.png";
-import scrollbarBarPng from "../assets/content/holders/9.png";    // Barra SCROLL
-import scrollbarHandlePng from "../assets/content/buttons/1.png"; // Handle SCROLL
+import scrollbarBarPng from "../assets/content/holders/9.png";
+import scrollbarHandlePng from "../assets/content/buttons/1.png";
 import item0 from "../assets/content/items/0.png";
 import item1 from "../assets/content/items/1.png";
 import item2 from "../assets/content/items/2.png";
 import item3 from "../assets/content/items/3.png";
 import item4 from "../assets/content/items/4.png";
-import item5 from "../assets/content/items/5.png";
 
 // === CONFIGURAZIONI LAYOUT & ANIMAZIONE ===
 const SLOT_SIZE = 32, GRID_COLS = 4, GRID_ROWS_VISIBLE = 3, GRID_GAP = 15;
@@ -30,73 +30,36 @@ const DESC_FONT_FAMILY = "'VT323', monospace", DESC_COLOR = "#4b2d11", DESC_LETT
 const TYPEWRITER_SPEED = 19, CHAR_PER_PAGE = 300;
 const ARROW_NEXT_TOP = 298, ARROW_NEXT_LEFT = 375, ARROW_NEXT_WIDTH = 32, ARROW_NEXT_HEIGHT = 38;
 
-// === OGGETTI PORTFOLIO ===
+// === OGGETTI PORTFOLIO (SOLO dati tecnici, niente testo qui!) ===
 const PROJECTS = [
   {
-    id: 1,
-    name: "PokeCard Collector",
+    id: "pokecard",
     icon: item0,
-    tooltip: "PokèDecks Frontend",
-    desc: [
-      "Frontend React per collezionare e cercare carte Pokémon con filtri e pixel art.",
-      "Interfaccia moderna, ricerca in tempo reale, connessione al backend personalizzato.",
-      "Contattami tramite Contacts per dettagli o visita GitHub."
-    ],
     iconSize: 20, iconTop: 6, iconLeft: 6
   },
   {
-    id: 2,
-    name: "PokeCard Collector Backend",
+    id: "pokecard-backend",
     icon: item1,
-    tooltip: "PokèDecks Backend",
-    desc: [
-      "Backend Java Spring Boot dedicato all’app PokeCard Collector.",
-      "Gestione database, API RESTful, autenticazione e ottimizzazione performance.",
-      "Contattami tramite Contacts per dettagli o visita GitHub."
-    ],
     iconSize: 20, iconTop: 6, iconLeft: 6
   },
   {
-    id: 3,
-    name: "Spotify Clone",
+    id: "spotify",
     icon: item2,
-    tooltip: "Spotify Clone",
-    desc: [
-      "Web app clone di Spotify: ricerca, player, album e artisti dinamici tramite API Deezer.",
-      "Homepage ispirata a Spotify, navigazione tra album e artisti, player interattivo, ricerca live.",
-      "Routing dinamico via URL params, responsive design mobile-first.",
-      "Contattami tramite Contacts per dettagli o visita GitHub."
-    ],
     iconSize: 16, iconTop: 7, iconLeft: 8
   },
   {
-    id: 4,
-    name: "App Meteo",
+    id: "meteo",
     icon: item3,
-    tooltip: "App Meteo",
-    desc: [
-      "Applicazione React per consultare le previsioni meteo in tempo reale.",
-      "Ricerca città, API openweather, design responsive e gestione errori.",
-      "Contattami tramite Contacts per dettagli o visita GitHub."
-    ],
     iconSize: 20, iconTop: 6, iconLeft: 6
   },
   {
-    id: 5,
-    name: "Agenzia Trasporti",
+    id: "trasporti",
     icon: item4,
-    tooltip: "Agenzia Trasporti",
-    desc: [
-      "Backend Java per gestione trasporti: tratte, orari, veicoli, utenti.",
-      "Project team: modellazione ER, entità JPA, API REST e logiche di business.",
-      "Backend, data modeling e supporto API in team.",
-      "Per dettagli e codice consulta Contacts o GitHub."
-    ],
     iconSize: 20, iconTop: 6, iconLeft: 6
-  },
+  }
 ];
 
-// === HOOK typewriter & paginazione (reset su cambio selezione) ===
+// === HOOK Typewriter per descrizione progetto ===
 function useTypewriterText(lines, charPerPage, resetKey = 0) {
   const [page, setPage] = useState(0);
   const [displayed, setDisplayed] = useState("");
@@ -127,55 +90,69 @@ function useTypewriterText(lines, charPerPage, resetKey = 0) {
   return { displayed, done, page, hasNext, hasPrev, next, prev };
 }
 
-// === IMPOSTAZIONE GRIGLIA (righe virtuali totali e slot totali) ===
-const GRID_ROWS_TOTAL = Math.ceil(PROJECTS.length / GRID_COLS) + 3; // aggiungi slot vuoti in fondo
+// === Griglia e slots
+const GRID_ROWS_TOTAL = Math.ceil(PROJECTS.length / GRID_COLS) + 3;
 const TOTAL_SLOTS = GRID_ROWS_TOTAL * GRID_COLS;
 
 const ProjectsSection = () => {
-  // 1. Array slot: progetti + slot vuoti per scorrere la griglia
-  const slots = Array(TOTAL_SLOTS).fill(null).map((_, i) => PROJECTS[i] || null);
+  const { t } = useLanguage(); // 👈 Usa il context per le traduzioni
 
-  // 2. Stato scroll (indice della riga in alto, 0 = prima riga)
+  // --- Prendi la lista progetti e titolo dalla lingua attuale ---
+  const translatedProjects = t("projects.items") || [];
+  const projectsTitle = t("projects.title") || "Projects";
+
+  // Mappa id -> testo tradotto
+  const projectMap = Object.fromEntries(
+    translatedProjects.map((p, idx) => {
+      // NB: Se i dati dei JSON sono sempre nella stessa posizione puoi anche usare PROJECTS[idx].id come id
+      return [PROJECTS[idx]?.id, p];
+    })
+  );
+
+  // --- Accoppia asset tecnici a testo tradotto ---
+  const slots = Array(TOTAL_SLOTS)
+    .fill(null)
+    .map((_, i) => {
+      const meta = PROJECTS[i];
+      if (!meta) return null;
+      const data = projectMap[meta.id] || {};
+      return {
+        ...meta,
+        ...data // name, tooltip, desc
+      };
+    });
+
+  // --- Stati della UI ---
   const [scrollTop, setScrollTop] = useState(0);
   const maxScroll = GRID_ROWS_TOTAL - GRID_ROWS_VISIBLE;
-
-  // 3. Selezione progetto (e reset animazione)
   const [selected, setSelected] = useState(null);
   const [resetKey, setResetKey] = useState(0);
-
-  // 4. Stato tooltip
   const [tooltip, setTooltip] = useState({ visible: false, text: "", x: 0, y: 0 });
 
-  // 5. Testo descrizione selezionata
+  // --- Descrizione progetto selezionato, animata ---
   const selectedDesc =
     selected !== null && slots[selected] && slots[selected].desc
       ? slots[selected].desc
       : [""];
 
-  // 6. Hook animazione testo
   const { displayed, done, hasNext, hasPrev, next, prev } = useTypewriterText(
     selectedDesc, CHAR_PER_PAGE, resetKey
   );
 
-  // 7. Tooltip handlers: posizione e testo
-  // Offset Y: se vuoi il tooltip SOPRA la cella, usa (rect.top - 50)
-  //           se lo vuoi SOTTO, usa (rect.bottom + 10)
+  // --- Tooltip handlers
   const handleMouseEnter = (e, project) => {
     if (!project) return;
     const rect = e.currentTarget.getBoundingClientRect();
     setTooltip({
       visible: true,
-      text: project.tooltip || project.name,
+      text: project.tooltip || project.name || "",
       x: rect.left + rect.width / 2,
-      y: rect.top - -50, // <- questo è equivalente a (rect.top + 50)
-      // Consiglio: per "tooltip sopra", meglio rect.top - 50
-      //            per "tooltip sotto", meglio rect.bottom + 10
-      // Lasciato come da tua richiesta!
+      y: rect.top + 50
     });
   };
   const handleMouseLeave = () => setTooltip({ visible: false, text: "", x: 0, y: 0 });
 
-  // 8. Calcolo slot da mostrare (3 righe visibili)
+  // --- Slots visibili nella viewport (3 righe) ---
   const start = scrollTop * GRID_COLS;
   const end = start + GRID_ROWS_VISIBLE * GRID_COLS;
   const visibleSlots = slots.slice(start, end);
@@ -199,18 +176,19 @@ const ProjectsSection = () => {
         fontFamily: "'VT323', monospace", fontSize: 52, color: "#24170b",
         letterSpacing: 1.5, padding: "3px 16px", zIndex: 20,
         textShadow: "-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643"
-      }}>Projects</div>
+      }}>
+        {projectsTitle}
+      </div>
 
       {/* --- INVENTARIO: griglia slot + SCROLLBAR custom pixel art --- */}
       <div style={{
         position: "absolute", top: WRAPPER_TOP, left: WRAPPER_LEFT,
-        width: WRAPPER_WIDTH + 28, // lascia spazio per la scrollbar
+        width: WRAPPER_WIDTH + 28,
         height: WRAPPER_HEIGHT, zIndex: 12,
         overflow: "visible",
         display: "flex",
         flexDirection: "row"
       }}>
-        {/* GRIGLIA ICON INVENTARIO con onWheel */}
         <div
           style={{
             width: WRAPPER_WIDTH, height: WRAPPER_HEIGHT,
@@ -219,7 +197,6 @@ const ProjectsSection = () => {
             gridTemplateRows: `repeat(${GRID_ROWS_VISIBLE}, ${SLOT_SIZE}px)`,
             gap: `${GRID_GAP}px`, background: "none"
           }}
-          // === SCROLL CON LA ROTELLA DEL MOUSE SULLA GRIGLIA ===
           onWheel={e => {
             if (maxScroll > 0) {
               setScrollTop(prev =>
@@ -276,7 +253,7 @@ const ProjectsSection = () => {
             );
           })}
         </div>
-        {/* SCROLLBAR PIXEL ART */}
+        {/* --- SCROLLBAR PIXEL ART --- */}
         {maxScroll > 0 && (
           <PixelScrollbar
             height={WRAPPER_HEIGHT}
@@ -285,7 +262,7 @@ const ProjectsSection = () => {
             onScrollChange={setScrollTop}
             barPng={scrollbarBarPng}
             handlePng={scrollbarHandlePng}
-            left={WRAPPER_WIDTH + 4} // a destra della griglia (regola per il tuo layout)
+            left={WRAPPER_WIDTH + 4}
             top={0}
           />
         )}

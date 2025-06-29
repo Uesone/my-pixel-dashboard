@@ -1,0 +1,137 @@
+{
+  "home": {
+    "dialog": [
+      "Benvenuto negli archivi personali\ndi Umberto Amoroso, detto Uesone.",
+      "Qui raccolgo appunti, schemi e cronache\ndei miei progetti e sperimentazioni digitali.",
+      "Ogni sezione è una pagina di taccuino:\ndove la logica incontra la creatività.",
+      "Naviga tra progetti, annotazioni e strumenti,\ne osserva l’ingegno all’opera.",
+      "Nel mestiere dell’ingegno, la curiosità\nè il miglior alleato.",
+      "Avanti: l’esplorazione può cominciare."
+    ]
+  },
+  "about": {
+    "title": "About",
+    "name_label": "Nome:",
+    "name_value": "Umberto Amoroso",
+    "age_label": "Età:",
+    "age_value": "33",
+    "xp_label": "XP:",
+    "role_label": "Ruolo:",
+    "role_value": "Full Stack Developer",
+    "skills_label": "Competenze:",
+    "skills": [
+      "JavaScript", "HTML5", "CSS3", "SpringBoot", "Dart", "Postman", "React",
+      "TypeScript", "Sass", "Redux", "Bootstrap", "Vite", "Java",
+      "PostgreSQL", "Flutter", "Git", "GitHub", "VSCode"
+    ]
+  },
+  "contacts": {
+    "title": "Contatti",
+    "tabs": {
+      "socials": "Social",
+      "direct": "Contattami"
+    },
+    "tooltips": {
+      "github": "Guarda il mio GitHub",
+      "linkedin": "Collegati su LinkedIn",
+      "mail": "Mandami una mail",
+      "instagram": "Seguimi su Instagram"
+    },
+    "socials": [
+      {
+        "name": "GitHub",
+        "desc": [
+          "Tutti i miei progetti open source, side project, app React, backend Java e pixel art sono su GitHub.",
+          "Scopri il mio codice, con README dettagliati e istruzioni per contribuire!",
+          "Se vuoi vedere come lavoro o seguire i miei aggiornamenti, questo è il posto giusto!",
+          "Click sull'icona a sinistra per maggiori dettagli!"
+        ]
+      },
+      {
+        "name": "LinkedIn",
+        "desc": [
+          "Qui trovi il mio profilo LinkedIn con esperienze lavorative, formazione e competenze.",
+          "Aggiungimi alla rete per restare aggiornato o scrivimi in privato!",
+          "Click sull'icona a sinistra per maggiori dettagli!"
+        ]
+      },
+      {
+        "name": "Mail",
+        "desc": [
+          "Scrivimi una mail per collaborazioni, domande tecniche, offerte di lavoro o anche solo per due chiacchiere.",
+          "Cerco nuovi spunti e rispondo entro poche ore!",
+          "Click sull'icona a sinistra per maggiori dettagli!"
+        ]
+      },
+      {
+        "name": "Instagram",
+        "desc": [
+          "Profilo personale IG: foto di viaggi, pixel art, aggiornamenti tech e lifestyle.",
+          "Seguimi per vedere il lato creativo o per DM informali!",
+          "Click sull'icona a sinistra per maggiori dettagli!"
+        ]
+      }
+    ],
+    "alt": {
+      "decorative_line_left": "linea decorativa sinistra",
+      "decorative_line_right": "linea decorativa destra",
+      "continua": "continua"
+    }
+  },
+  "projects": {
+    "title": "Progetti",
+    "items": [
+      {
+        "name": "PokeCard Collector",
+        "tooltip": "PokèDecks Frontend",
+        "desc": [
+          "Frontend React per collezionare e cercare carte Pokémon con filtri e pixel art.",
+          "Interfaccia moderna, ricerca in tempo reale, connessione al backend personalizzato.",
+          "Contattami tramite Contatti per dettagli o visita GitHub."
+        ]
+      },
+      {
+        "name": "PokeCard Collector Backend",
+        "tooltip": "PokèDecks Backend",
+        "desc": [
+          "Backend Java Spring Boot dedicato all’app PokeCard Collector.",
+          "Gestione database, API RESTful, autenticazione e ottimizzazione performance.",
+          "Contattami tramite Contatti per dettagli o visita GitHub."
+        ]
+      },
+      {
+        "name": "Spotify Clone",
+        "tooltip": "Spotify Clone",
+        "desc": [
+          "Web app clone di Spotify: ricerca, player, album e artisti dinamici tramite API Deezer.",
+          "Homepage ispirata a Spotify, navigazione tra album e artisti, player interattivo, ricerca live.",
+          "Routing dinamico via URL params, responsive design mobile-first.",
+          "Contattami tramite Contatti per dettagli o visita GitHub."
+        ]
+      },
+      {
+        "name": "App Meteo",
+        "tooltip": "App Meteo",
+        "desc": [
+          "Applicazione React per consultare le previsioni meteo in tempo reale.",
+          "Ricerca città, API openweather, design responsive e gestione errori.",
+          "Contattami tramite Contatti per dettagli o visita GitHub."
+        ]
+      },
+      {
+        "name": "Agenzia Trasporti",
+        "tooltip": "Agenzia Trasporti",
+        "desc": [
+          "Backend Java per gestione trasporti: tratte, orari, veicoli, utenti.",
+          "Project team: modellazione ER, entità JPA, API REST e logiche di business.",
+          "Backend, data modeling e supporto API in team.",
+          "Per dettagli e codice consulta Contatti o GitHub."
+        ]
+      }
+    ],
+    "alt": {
+      "slot": "slot progetto",
+      "continua": "continua"
+    }
+  }
+}
