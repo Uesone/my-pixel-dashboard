@@ -19,6 +19,9 @@ import btnNormal from "../assets/content/buttons/11.png";
 import btnHover from "../assets/content/buttons/12.png";
 import btnClick from "../assets/content/buttons/13.png";
 
+// === MODALE DIRECT ===
+import DirectMessageModal from "../components/DirectMessageModal";
+
 // === COSTANTI LAYOUT ===
 const LINE_LEFT_TOP = 20, LINE_LEFT_LEFT = 13, LINE_LEFT_WIDTH = 60, LINE_LEFT_HEIGHT = 70;
 const LINE_RIGHT_TOP = 20, LINE_RIGHT_LEFT = 242, LINE_RIGHT_WIDTH = 60, LINE_RIGHT_HEIGHT = 70;
@@ -40,18 +43,17 @@ const TYPEWRITER_SPEED = 15, CHAR_PER_PAGE = 300;
 // === BOTTONI LAYOUT E LABEL ===
 const BUTTONS_TOP = 87;
 const BUTTONS_LEFT = 220;
-const BUTTON_WIDTH = 70;
+const BUTTON_WIDTH = 79;
 const BUTTON_HEIGHT = 52;
 const BUTTON_GAP = 0;
-// Label tuning (puoi cambiare questi valori a piacere!)
 const BUTTON_LABEL_FONT_SIZE = 12;
 const BUTTON_LABEL_LETTER_SPACING = 0;
 const BUTTON_LABEL_COLOR_ACTIVE = "#1f1508";
 const BUTTON_LABEL_COLOR_INACTIVE = "#463319";
 const BUTTON_LABEL_SHADOW_ACTIVE = "0 2.5px 0 #ffeeb5, 0 -1.5px 0 #eedd8b, 2px 0 #e9d79c";
 const BUTTON_LABEL_SHADOW_INACTIVE = "0 1.2px 0 #d1c07f, 0 -1.5px 0 #e9d79c";
-const BUTTON_LABEL_TOP = 19;   // Posizione verticale label
-const BUTTON_LABEL_LEFT = 0;   // Posizione orizzontale label
+const BUTTON_LABEL_TOP = 19;
+const BUTTON_LABEL_LEFT = 0;
 
 // === DEFAULT PNG HOVER (ogni social può sovrascrivere)
 const CIRCLE_HOVER_DEFAULT_PNG = circleActivePng;
@@ -141,12 +143,12 @@ const SOCIALS = [
   }
 ];
 
-// === SCROLL: calcola quante righe si possono scrollare
+// === SCROLL: quante righe scrollabili
 const TOTAL_ROWS = SOCIALS.length;
 const GRID_ROWS_TOTAL = TOTAL_ROWS;
 const MAX_SCROLL = Math.max(0, GRID_ROWS_TOTAL - GRID_ROWS_VISIBLE);
 
-// === UTILITY: restituisce props PNG hover per ogni social
+// === UTILITY: posizione PNG hover per ogni social
 function getCircleHoverProps(social) {
   return {
     png: social.circleHoverPng ?? CIRCLE_HOVER_DEFAULT_PNG,
@@ -161,7 +163,7 @@ function getCircleHoverProps(social) {
   };
 }
 
-// === HOOK: animazione testo typewriter + paginazione ===
+// === HOOK animazione testo typewriter + paginazione ===
 function useTypewriterText(lines, charPerPage, resetKey = 0) {
   const [page, setPage] = useState(0);
   const [displayed, setDisplayed] = useState("");
@@ -193,35 +195,36 @@ function useTypewriterText(lines, charPerPage, resetKey = 0) {
 }
 
 const ContactsSection = () => {
-  // === STATE PRINCIPALI ===
-  const [scrollTop, setScrollTop] = useState(0);        
-  const [selected, setSelected] = useState(null);       
-  const [resetKey, setResetKey] = useState(0);          
-  const [tooltip, setTooltip] = useState({ visible: false, text: "", x: 0, y: 0 }); 
-  const [iconHovered, setIconHovered] = useState(false); 
+  // === STATE ===
+  const [scrollTop, setScrollTop] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [resetKey, setResetKey] = useState(0);
+  const [tooltip, setTooltip] = useState({ visible: false, text: "", x: 0, y: 0 });
+  const [iconHovered, setIconHovered] = useState(false);
 
-  // === STATE BOTTONI TABS ===
+  // Tab state + stato modale direct
   const [activeTab, setActiveTab] = useState("contacts");
   const [hoveredBtn, setHoveredBtn] = useState(null);
   const [pressedBtn, setPressedBtn] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false); // Modale Direct
 
-  // Socials attualmente visibili nella lista scrollabile
+  // Socials visibili (scroll)
   const start = scrollTop;
   const end = start + GRID_ROWS_VISIBLE;
   const visibleSocials = SOCIALS.slice(start, end);
 
-  // Descrizione del social selezionato
+  // Descrizione social selezionato
   const selectedDesc =
     selected !== null && SOCIALS[selected] && SOCIALS[selected].desc
       ? SOCIALS[selected].desc
       : [""];
 
-  // Hook per animazione testo a macchina e paginazione
+  // Typewriter/paginazione desc social
   const { displayed, done, hasNext, hasPrev, next, prev } = useTypewriterText(
     selectedDesc, CHAR_PER_PAGE, resetKey
   );
 
-  // Gestione scroll lista social (con rotella mouse)
+  // Scroll socials con rotella mouse
   const handleWheel = e => {
     if (MAX_SCROLL > 0) {
       setScrollTop(prev =>
@@ -230,7 +233,7 @@ const ContactsSection = () => {
     }
   };
 
-  // Tooltip handlers
+  // Tooltip socials
   const handleMouseEnter = (e, social) => {
     if (!social) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -242,6 +245,14 @@ const ContactsSection = () => {
     });
   };
   const handleMouseLeave = () => setTooltip({ visible: false, text: "", x: 0, y: 0 });
+
+  // === GESTIONE TAB ===
+  const handleTabClick = (key) => {
+    setActiveTab(key);
+    if (key === "direct") {
+      setModalOpen(true); // Apre il modale
+    }
+  };
 
   return (
     <div
@@ -290,8 +301,8 @@ const ContactsSection = () => {
         }}
       >
         {[
-          { key: "contacts", label: "Contacts" },
-          { key: "direct", label: "Direct" },
+          { key: "contacts", label: "Socials" },
+          { key: "direct", label: "Contact Me" },
         ].map(({ key, label }) => (
           <button
             key={key}
@@ -306,7 +317,6 @@ const ContactsSection = () => {
               filter: activeTab === key ? "brightness(1.13)" : undefined,
               opacity: activeTab === key ? 1 : 0.93,
               transition: "filter 0.12s, opacity 0.12s",
-              // boxShadow: ... (RIMOSSO per look pixel art puro)
               outline: "none",
               background: "none",
               padding: 0,
@@ -318,7 +328,7 @@ const ContactsSection = () => {
             }}
             onMouseDown={() => setPressedBtn(key)}
             onMouseUp={() => setPressedBtn(null)}
-            onClick={() => setActiveTab(key)}
+            onClick={() => handleTabClick(key)}
             disabled={activeTab === key}
             aria-label={label}
           >
@@ -371,107 +381,109 @@ const ContactsSection = () => {
       </div>
 
       {/* --- GRIGLIA SOCIALS + SCROLLBAR --- */}
-      <div style={{
-        position: "absolute", top: 72, left: 20,
-        width: SLOT_WIDTH + 28,
-        height: GRID_ROWS_VISIBLE * SLOT_HEIGHT + (GRID_ROWS_VISIBLE - 1) * SLOTS_GAP,
-        zIndex: 10, display: "flex", flexDirection: "row"
-      }}>
+      {activeTab === "contacts" && (
         <div style={{
-          width: SLOT_WIDTH,
+          position: "absolute", top: 72, left: 20,
+          width: SLOT_WIDTH + 28,
           height: GRID_ROWS_VISIBLE * SLOT_HEIGHT + (GRID_ROWS_VISIBLE - 1) * SLOTS_GAP,
-          display: "flex", flexDirection: "column", gap: SLOTS_GAP,
-          position: "relative", background: "none"
-        }} onWheel={handleWheel}>
-          {visibleSocials.map((social, i) => (
-            <div
-              key={i + start}
-              style={{
-                width: SLOT_WIDTH,
-                height: SLOT_HEIGHT,
-                position: "relative",
-                cursor: "pointer",
-                userSelect: "none"
-              }}
-              onClick={() => {
-                setSelected(i + start);
-                setResetKey(k => k + 1);
-              }}
-              onMouseEnter={e => handleMouseEnter(e, social)}
-              onMouseMove={e => handleMouseEnter(e, social)}
-              onMouseLeave={handleMouseLeave}
-            >
-              {/* Sfondo slot: hover (se selezionato) o normale */}
-              <img
-                src={selected === i + start ? holderHoverPng : holderPng}
-                alt=""
+          zIndex: 10, display: "flex", flexDirection: "row"
+        }}>
+          <div style={{
+            width: SLOT_WIDTH,
+            height: GRID_ROWS_VISIBLE * SLOT_HEIGHT + (GRID_ROWS_VISIBLE - 1) * SLOTS_GAP,
+            display: "flex", flexDirection: "column", gap: SLOTS_GAP,
+            position: "relative", background: "none"
+          }} onWheel={handleWheel}>
+            {visibleSocials.map((social, i) => (
+              <div
+                key={i + start}
                 style={{
                   width: SLOT_WIDTH,
                   height: SLOT_HEIGHT,
-                  imageRendering: "pixelated",
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                  zIndex: 1
+                  position: "relative",
+                  cursor: "pointer",
+                  userSelect: "none"
                 }}
-                draggable={false}
-              />
-              {/* Icona social piccola */}
-              <img
-                src={social.icon}
-                alt={social.name}
-                style={{
-                  width: social.iconWidth,
-                  height: social.iconHeight,
-                  imageRendering: "pixelated",
-                  position: "absolute",
-                  left: social.iconLeft,
-                  top: social.iconTop,
-                  zIndex: 2,
-                  pointerEvents: "none"
+                onClick={() => {
+                  setSelected(i + start);
+                  setResetKey(k => k + 1);
                 }}
-                draggable={false}
-              />
-              {/* Nome social */}
-              <div style={{
-                position: "absolute",
-                left: NAME_LEFT,
-                top: NAME_TOP,
-                width: NAME_WIDTH,
-                height: NAME_HEIGHT,
-                fontFamily: NAME_FONT_FAMILY,
-                fontSize: NAME_FONT_SIZE,
-                color: NAME_COLOR,
-                zIndex: 3,
-                letterSpacing: NAME_LETTER_SPACING,
-                textAlign: NAME_TEXT_ALIGN,
-                lineHeight: `${NAME_HEIGHT}px`,
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                userSelect: "none"
-              }}>
-                {social?.name}
+                onMouseEnter={e => handleMouseEnter(e, social)}
+                onMouseMove={e => handleMouseEnter(e, social)}
+                onMouseLeave={handleMouseLeave}
+              >
+                {/* Sfondo slot: hover (se selezionato) o normale */}
+                <img
+                  src={selected === i + start ? holderHoverPng : holderPng}
+                  alt=""
+                  style={{
+                    width: SLOT_WIDTH,
+                    height: SLOT_HEIGHT,
+                    imageRendering: "pixelated",
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    zIndex: 1
+                  }}
+                  draggable={false}
+                />
+                {/* Icona social piccola */}
+                <img
+                  src={social.icon}
+                  alt={social.name}
+                  style={{
+                    width: social.iconWidth,
+                    height: social.iconHeight,
+                    imageRendering: "pixelated",
+                    position: "absolute",
+                    left: social.iconLeft,
+                    top: social.iconTop,
+                    zIndex: 2,
+                    pointerEvents: "none"
+                  }}
+                  draggable={false}
+                />
+                {/* Nome social */}
+                <div style={{
+                  position: "absolute",
+                  left: NAME_LEFT,
+                  top: NAME_TOP,
+                  width: NAME_WIDTH,
+                  height: NAME_HEIGHT,
+                  fontFamily: NAME_FONT_FAMILY,
+                  fontSize: NAME_FONT_SIZE,
+                  color: NAME_COLOR,
+                  zIndex: 3,
+                  letterSpacing: NAME_LETTER_SPACING,
+                  textAlign: NAME_TEXT_ALIGN,
+                  lineHeight: `${NAME_HEIGHT}px`,
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  userSelect: "none"
+                }}>
+                  {social?.name}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          {/* Scrollbar custom pixel art */}
+          {MAX_SCROLL > 0 && (
+            <PixelScrollbar
+              height={GRID_ROWS_VISIBLE * SLOT_HEIGHT + (GRID_ROWS_VISIBLE - 1) * SLOTS_GAP}
+              scrollTop={scrollTop}
+              maxScroll={MAX_SCROLL}
+              onScrollChange={setScrollTop}
+              barPng={scrollbarBarPng}
+              handlePng={scrollbarHandlePng}
+              left={SLOT_WIDTH + 4}
+              top={0}
+            />
+          )}
         </div>
-        {/* Scrollbar custom pixel art */}
-        {MAX_SCROLL > 0 && (
-          <PixelScrollbar
-            height={GRID_ROWS_VISIBLE * SLOT_HEIGHT + (GRID_ROWS_VISIBLE - 1) * SLOTS_GAP}
-            scrollTop={scrollTop}
-            maxScroll={MAX_SCROLL}
-            onScrollChange={setScrollTop}
-            barPng={scrollbarBarPng}
-            handlePng={scrollbarHandlePng}
-            left={SLOT_WIDTH + 4}
-            top={0}
-          />
-        )}
-      </div>
+      )}
 
       {/* --- INFO BAR SOTTO (SOLO SE SOCIAL SELEZIONATO) --- */}
-      {selected !== null && SOCIALS[selected] && (
+      {activeTab === "contacts" && selected !== null && SOCIALS[selected] && (
         <>
           {/* Info bar sfondo */}
           <img
@@ -596,6 +608,12 @@ const ContactsSection = () => {
           )}
         </>
       )}
+
+      {/* --- MODALE DIRECT MESSAGE --- */}
+      <DirectMessageModal open={modalOpen} onClose={() => {
+        setModalOpen(false);
+        setActiveTab("contacts"); // Torna al tab contacts alla chiusura
+      }} />
 
       {/* --- TOOLTIP SOCIAL --- */}
       {tooltip.visible && (
