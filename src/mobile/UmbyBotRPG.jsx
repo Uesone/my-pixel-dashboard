@@ -160,14 +160,14 @@ export default function UmbyBotRPG({
           {/* === Dialogue Box === */}
           <div className="dialogue-box-bleed">
             <DialogueBox
-              npcName="UmbyBot"
+              npcName="Golem"
               dialogue={
                 <>
                   <div className="dialogue-user-question">
                     <b>Tu:</b> {current.user}
                   </div>
                   <div className="dialogue-bot-reply">
-                    <span className="bot-label">UmbyBot:</span>{" "}
+                    <span className="bot-label">Golem:</span>{" "}
                     {botText}
                   </div>
                   <div ref={messagesEndRef} />
