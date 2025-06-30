@@ -1,9 +1,44 @@
-import React, { useState, useRef, useEffect } from "react";
+// /src/mobile/UmbyBotRPG.jsx
+import React, { useState, useEffect, useRef } from "react";
 import DialogueBox from "./DialogueBox";
 import umbybotIdle from "./assets/sprites/umbybot-idle.png";
-import "./styles/rpg-mobile.css"; // Importa lo stile
+import umbybotTalking from "./assets/sprites/umbybot-talking.png";
+import "./styles/rpg-mobile.css";
 
-// MOCK: risposte random per test
+/**
+ * Hook typewriter con bocca: fa scrivere il testo gradualmente e alterna lo stato della bocca.
+ */
+function useTypewriterWithMouth(text, active, speed = 24) {
+  const [displayed, setDisplayed] = useState("");
+  const [isMouthOpen, setIsMouthOpen] = useState(false);
+
+  useEffect(() => {
+    if (!active) {
+      setDisplayed(text);
+      setIsMouthOpen(false);
+      return;
+    }
+    setDisplayed("");
+    let i = 0;
+    let mouthOpen = false;
+    const interval = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      mouthOpen = !mouthOpen;
+      setIsMouthOpen(mouthOpen);
+      if (i >= text.length) {
+        clearInterval(interval);
+        setIsMouthOpen(false);
+      }
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [text, active, speed]);
+
+  return [displayed, isMouthOpen];
+}
+
+// MOCK risposte random per demo
 const MOCK_REPLIES = [
   "Benvenuto nella mia officina a vapore! Cosa vuoi sapere, viaggiatore?",
   "Ogni progetto è un ingranaggio nella macchina del destino.",
@@ -19,14 +54,15 @@ export default function UmbyBotRPG({ spriteSize = 208, spriteMarginTop = 0 }) {
   const [history, setHistory] = useState([
     {
       user: "Chi sei?",
-      bot: "Sono SteamBot, il tuo mentore steampunk! Vuoi scoprire i miei progetti o iniziare una nuova quest?"
+      bot: "Sono UmbyBot, il tuo mentore steampunk! Vuoi scoprire i miei progetti o iniziare una nuova quest?"
     }
   ]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isBotTyping, setIsBotTyping] = useState(false);
 
-  // Auto scroll sempre a fondo quando cambiano le risposte
+  // Scroll sempre a fondo
   const messagesEndRef = useRef(null);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -48,51 +84,61 @@ export default function UmbyBotRPG({ spriteSize = 208, spriteMarginTop = 0 }) {
       setHistory(newHistory);
       setCurrentIdx(newHistory.length - 1);
       setLoading(false);
+      setIsBotTyping(true); // Inizia animazione bocca/typewriter
     }, 650);
   }
 
+  const current = history[currentIdx];
+  const isLast = currentIdx === history.length - 1;
+  const showTypewriter = isLast && isBotTyping;
+  const [botText, isMouthOpen] = useTypewriterWithMouth(current.bot, showTypewriter, 80);
+
+  // Quando ha finito, dopo mezzo secondo torna idle
+  useEffect(() => {
+    if (showTypewriter && botText === current.bot) {
+      const t = setTimeout(() => setIsBotTyping(false), 400);
+      return () => clearTimeout(t);
+    }
+  }, [botText, showTypewriter, current.bot]);
+
   const goPrev = () => setCurrentIdx(idx => Math.max(0, idx - 1));
   const goNext = () => setCurrentIdx(idx => Math.min(history.length - 1, idx + 1));
-  const current = history[currentIdx];
 
   return (
     <div className="device-frame">
       <div className="device-inner-glass">
         <div className="umbybot-mobile-wrapper">
-          {/* Avatar */}
+          {/* Sprite steampunk animato: PNG alternati con CSS fix dimensione */}
           <div className="umbybot-sprite-box is-centered" style={{ marginTop: spriteMarginTop }}>
-            <img
-              src={umbybotIdle}
-              alt="UmbyBot pixel NPC"
-              className="umbybot-sprite"
-              style={{
-                width: spriteSize,
-                height: spriteSize,
-                imageRendering: "pixelated"
-              }}
-            />
+            <div className="umbybot-sprite-fix">
+              <img
+                src={showTypewriter && isMouthOpen ? umbybotTalking : umbybotIdle}
+                alt="UmbyBot pixel NPC"
+                className="umbybot-sprite"
+                draggable={false}
+              />
+            </div>
           </div>
-          {/* Dialogue Box SEMPRE full width, nessuno shrink */}
+
+          {/* Dialogue Box */}
           <div className="dialogue-box-bleed">
             <DialogueBox
-              npcName="SteamBot"
+              npcName="UmbyBot"
               dialogue={
                 <>
                   <div className="dialogue-user-question">
                     <b>Tu:</b> {current.user}
                   </div>
                   <div className="dialogue-bot-reply">
-                    <span className="bot-label">SteamBot:</span>{" "}
-                    {loading && currentIdx === history.length - 1
-                      ? "...sto rispondendo..."
-                      : current.bot}
+                    <span className="bot-label">UmbyBot:</span>{" "}
+                    {botText}
                   </div>
-                  {/* Auto scroll sempre a fondo */}
                   <div ref={messagesEndRef} />
                 </>
               }
             />
           </div>
+
           {/* Navigazione dialoghi */}
           <div className="dialogue-navigation">
             <button

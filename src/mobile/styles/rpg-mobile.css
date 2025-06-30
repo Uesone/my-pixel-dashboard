@@ -1,6 +1,8 @@
 @import url('https://unpkg.com/nes.css/css/nes.min.css');
 
-/* Fissiamo html e body per evitare shrink a TUTTA la pagina */
+/* ======================
+   IMPOSTAZIONI GENERALI
+   ====================== */
 html, body, #root {
   width: 100vw !important;
   min-width: 0 !important;
@@ -11,7 +13,9 @@ html, body, #root {
   letter-spacing: 0px;
 }
 
-/* Device frame: layout principale */
+/* ===========================
+   FRAME ESTERNO (FAKE DEVICE)
+   =========================== */
 .device-frame {
   background: linear-gradient(180deg, #3c4348 40%, #191a1d 100%);
   border-radius: 44px;
@@ -31,7 +35,9 @@ html, body, #root {
   align-items: stretch;
 }
 
-/* Glass interno device */
+/* =====================
+   GLASS EFFETTO DEVICE
+   ===================== */
 .device-inner-glass {
   flex: 1;
   width: 100%;
@@ -48,7 +54,9 @@ html, body, #root {
   box-sizing: border-box;
 }
 
-/* Main wrapper: padding solo dove vuoi (non sulle box bleed) */
+/* ==========================
+   MAIN WRAPPER (PAD CHATBOT)
+   ========================== */
 .umbybot-mobile-wrapper {
   flex: 1 1 0;
   display: flex;
@@ -56,7 +64,7 @@ html, body, #root {
   align-items: stretch;
   justify-content: flex-start;
   overflow-y: auto;
-  padding: 18px 8px 12px 8px;   /* 8px padding laterale */
+  padding: 18px 8px 12px 8px;
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -64,7 +72,11 @@ html, body, #root {
   box-sizing: border-box;
 }
 
-/* Sprite */
+/* ====================================
+   SPRITE BOT — FIX E ANIMAZIONE BORDO
+   ==================================== */
+
+/* Fix dimensione sprite: PNG SEMPRE della stessa area visiva */
 .umbybot-sprite-box {
   margin-bottom: 18px;
   padding: 8px;
@@ -72,14 +84,30 @@ html, body, #root {
   justify-content: center;
   align-items: center;
 }
-.umbybot-sprite {
-  width: 164px;
+
+/* --- FIX FINALE: wrapper che mantiene la PNG centrata e croppa l'eccesso --- */
+.umbybot-sprite-fix {
+  width: 208px;      /* stessa dimensione di spriteSize in JSX */
   height: 208px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;  /* nasconde l'eccesso fuori dal box */
+  /* border-radius: 32px; */ /* opzionale: se vuoi PNG tondo */
+}
+
+/* PNG del bot: sempre 100% del wrapper, mai valori fissi qui! */
+.umbybot-sprite {
+  width: 100%;
+  height: 100%;
   image-rendering: pixelated;
+  object-fit: contain; /* oppure cover se vuoi che riempia di più */
   filter: drop-shadow(0 0 10px #46ffac80);
 }
 
-/* PATCH: "full bleed" della dialogue box per evitare shrink e padding effetto Game Boy */
+/* ==========================
+   PATCH: BLEED SUL DIALOGUE BOX
+   ========================== */
 .dialogue-box-bleed {
   margin-left: -8px;
   margin-right: -8px;
@@ -96,7 +124,9 @@ html, body, #root {
   }
 }
 
-/* --- DIALOGUE BOX NES: anti-shrink, sempre allineata, scroll interno --- */
+/* ========================
+   NES-STYLE DIALOGUE BOX
+   ======================== */
 .dialogue-box-steampunk.nes-container {
   background: linear-gradient(180deg, #1e271f 40%, #0e1310 100%);
   border-radius: 17px;
@@ -178,7 +208,9 @@ html, body, #root {
   margin: 10px 0 0 0;
 }
 
-/* --- INPUT CHAT: SEMPRE FISSO IN FONDO AL DEVICE --- */
+/* ========================
+   CHAT INPUT (IN FONDO)
+   ======================== */
 .input-chatbox {
   width: 100%;
   padding: 10px 10px 8px 10px;
@@ -240,7 +272,9 @@ html, body, #root {
   }
 }
 
-/* ******* COLORE "UmbyBot:" nella risposta BOT ******* */
+/* ===========================
+   "UmbyBot:" etichetta colore
+   =========================== */
 .bot-label {
   color: #ffe066;            /* Giallo Steampunk */
   font-weight: bold;
