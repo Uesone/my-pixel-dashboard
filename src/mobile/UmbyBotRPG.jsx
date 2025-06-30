@@ -26,7 +26,7 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Scroll sempre a fondo quando cambiano i messaggi
+  // Auto scroll sempre a fondo quando cambiano le risposte
   const messagesEndRef = useRef(null);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -59,7 +59,7 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
     <div className="device-frame">
       <div className="device-inner-glass">
         <div className="umbybot-mobile-wrapper">
-          {/* Avatar */}
+          {/* Sprite bot */}
           <div className="umbybot-sprite-box is-centered" style={{ marginTop: spriteMarginTop }}>
             <img
               src={umbybotIdle}
@@ -73,22 +73,22 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
             />
           </div>
 
-          {/* Dialogue Box SEMPRE full width, nessuno shrink */}
+          {/* Dialogue Box */}
           <div className="dialogue-box-bleed">
             <DialogueBox
-              npcName="UmbyBot"
+              npcName="SteamBot"
               dialogue={
                 <>
                   <div className="dialogue-user-question">
                     <b>Tu:</b> {current.user}
                   </div>
                   <div className="dialogue-bot-reply">
-                    <b>UmbyBot:</b>{" "}
+                    <span className="bot-label">SteamBot:</span>{" "}
                     {loading && currentIdx === history.length - 1
                       ? "...sto rispondendo..."
                       : current.bot}
                   </div>
-                  {/* Scroll sempre a fondo */}
+                  {/* Auto scroll sempre a fondo */}
                   <div ref={messagesEndRef} />
                 </>
               }
@@ -114,7 +114,7 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
             >▶️</button>
           </div>
         </div>
-        {/* Input chat sempre a fondo */}
+        {/* Input chat */}
         <form
           className="input-chatbox"
           onSubmit={handleSend}

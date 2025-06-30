@@ -2,7 +2,7 @@ import React from "react";
 import umbybotIcon from "./assets/sprites/umbybot-idle.png";
 
 /**
- * DialogueBox: NES style, height fissa, larghezza sempre 100%, contenuto non shrinka mai
+ * DialogueBox: NES style, altezza fissa, larghezza sempre 100%, contenuto non shrinka mai
  */
 export default function DialogueBox({ npcName, dialogue }) {
   return (

@@ -6,8 +6,8 @@ html, body, #root {
   min-width: 0 !important;
   overflow-x: hidden !important;
   box-sizing: border-box;
-   font-family: 'VT323', 'Press Start 2P', monospace !important;
-  font-size: 20px;
+  font-family: 'VT323', 'Press Start 2P', monospace !important;
+  font-size: 16px;
   letter-spacing: 0px;
 }
 
@@ -79,7 +79,7 @@ html, body, #root {
   filter: drop-shadow(0 0 10px #46ffac80);
 }
 
-/* --- PATCH: "full bleed" della dialogue box per evitare shrink e padding effetto Game Boy --- */
+/* PATCH: "full bleed" della dialogue box per evitare shrink e padding effetto Game Boy */
 .dialogue-box-bleed {
   margin-left: -8px;
   margin-right: -8px;
@@ -114,7 +114,6 @@ html, body, #root {
   align-items: stretch;
   box-sizing: border-box;
   margin: 0;
-  /* debug: outline: 2px solid red; */
 }
 .dialogue-box-steampunk.nes-container::-webkit-scrollbar {
   width: 7px;
@@ -141,7 +140,7 @@ html, body, #root {
   box-shadow: 0 2px 9px #52ffa840;
 }
 .dialogue-npc-name {
-  color: #87ffb4;
+  color: #ffe066;
   font-size: 1.16em;
   letter-spacing: 0.04em;
 }
@@ -239,4 +238,12 @@ html, body, #root {
     margin-right: -1vw;
     width: calc(100% + 2vw);
   }
+}
+
+/* ******* COLORE "UmbyBot:" nella risposta BOT ******* */
+.bot-label {
+  color: #ffe066;            /* Giallo Steampunk */
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  filter: drop-shadow(0 0 2px #fff76e80);
 }
