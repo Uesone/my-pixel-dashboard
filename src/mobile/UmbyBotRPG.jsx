@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import DialogueBox from "./DialogueBox";
 import umbybotIdle from "./assets/sprites/umbybot-idle.png";
-import "./styles/rpg-mobile.css";
+import "./styles/rpg-mobile.css"; // Importa lo stile
 
-// MOCK: risposte random
+// MOCK: risposte random per test
 const MOCK_REPLIES = [
   "Benvenuto nella mia officina a vapore! Cosa vuoi sapere, viaggiatore?",
   "Ogni progetto è un ingranaggio nella macchina del destino.",
@@ -15,11 +15,11 @@ function getMockReply() {
   return MOCK_REPLIES[Math.floor(Math.random() * MOCK_REPLIES.length)];
 }
 
-export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
+export default function UmbyBotRPG({ spriteSize = 208, spriteMarginTop = 0 }) {
   const [history, setHistory] = useState([
     {
       user: "Chi sei?",
-      bot: "Sono UmbyBot, il tuo mentore steampunk! Vuoi scoprire i miei progetti o iniziare una nuova quest?"
+      bot: "Sono SteamBot, il tuo mentore steampunk! Vuoi scoprire i miei progetti o iniziare una nuova quest?"
     }
   ]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -59,7 +59,7 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
     <div className="device-frame">
       <div className="device-inner-glass">
         <div className="umbybot-mobile-wrapper">
-          {/* Sprite bot */}
+          {/* Avatar */}
           <div className="umbybot-sprite-box is-centered" style={{ marginTop: spriteMarginTop }}>
             <img
               src={umbybotIdle}
@@ -72,8 +72,7 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
               }}
             />
           </div>
-
-          {/* Dialogue Box */}
+          {/* Dialogue Box SEMPRE full width, nessuno shrink */}
           <div className="dialogue-box-bleed">
             <DialogueBox
               npcName="SteamBot"
@@ -94,7 +93,6 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
               }
             />
           </div>
-
           {/* Navigazione dialoghi */}
           <div className="dialogue-navigation">
             <button
@@ -114,7 +112,7 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
             >▶️</button>
           </div>
         </div>
-        {/* Input chat */}
+        {/* Input chat sempre a fondo */}
         <form
           className="input-chatbox"
           onSubmit={handleSend}
