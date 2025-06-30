@@ -20,9 +20,9 @@ html, body, #root {
   background: linear-gradient(180deg, #3c4348 40%, #191a1d 100%);
   border-radius: 44px;
   box-shadow:
-    0 6px 36px #000d,
-    0 0 0 9px #262c34 inset,
-    0 1px 40px #0f151c;
+    0 6px 10px #000d,
+    0 0 0 5px #262c34 inset,
+    0 1px 10px #0f151c;
   padding: 14px;
   max-width: 540px;
   margin: 28px auto;
