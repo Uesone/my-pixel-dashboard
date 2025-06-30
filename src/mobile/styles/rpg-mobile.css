@@ -1,47 +1,112 @@
-/* === BODY (NO CORNICE, SOLO BG) === */
+@import url('https://unpkg.com/nes.css/css/nes.min.css');
+
 body {
   min-height: 100vh;
-  min-width: 100vw;
   margin: 0;
-  background: radial-gradient(ellipse at center, #8a6840 0%, #40311b 100%);
   box-sizing: border-box;
   overflow-x: hidden;
+  font-family: 'VT323', 'Press Start 2P', monospace;
+  background: radial-gradient(ellipse at center, #8a6840 0%, #40311b 100%);
 }
 
-/* === WRAPPER CENTRALE CON CORNICE (CONTENUTO) ===
-   PNG con centro trasparente!
-   - Border-image solo qui (non su body).
-   - Max-width: 500px = effetto boxed su mobile/desktop.
-   - Padding-bottom (80px) lascia spazio all'input fisso.
-*/
+/* --- OUTER DEVICE FRAME --- */
+.device-frame {
+  background: linear-gradient(180deg, #3c4348 40%, #191a1d 100%);
+  border-radius: 44px;
+  box-shadow:
+    0 6px 36px #000d,
+    0 0 0 9px #262c34 inset,
+    0 1px 40px #0f151c;
+  padding: 14px;
+  max-width: 540px;
+  margin: 28px auto;
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* --- SCREEN GLASS: no inner border, input fa parte dello schermo --- */
+.device-inner-glass {
+  flex: 1;
+  width: 100%;
+  min-height: 78vh;
+  background:
+    linear-gradient(145deg, #222f26 76%, #1a1e17 100%),
+    radial-gradient(ellipse at 70% 18%, #54ffbf1a 0%, #3c6c38 85%, transparent 100%);
+  border-radius: 30px;
+  box-shadow:
+    0 0 32px 6px #6fffb36b inset,
+    0 0 6px 2px #3bff82b2 inset,
+    0 1px 26px #46c67444;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* --- TUTTO IL CONTENUTO SCROLLABILE + INPUT IN FONDO --- */
 .umbybot-mobile-wrapper {
-  width: 94vw;
-  max-width: 500px;
-  min-height: 90vh;
-  max-height: 98vh;
-  margin: 32px auto;
-  padding: 20px 8px 80px 8px;
-  background: none;
-  border: 32px solid transparent;
-  border-image: url('../assets/ui/cornice2.png') 32 fill stretch;
-  image-rendering: pixelated;
-  box-sizing: border-box;
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'VT323', 'Press Start 2P', monospace;
-  color: #ffe8ad;
+  justify-content: flex-start;
   overflow-y: auto;
-  /* No position: relative qui! */
+  padding: 18px 8px 12px 8px;
+  width: 100%;
+  max-width: 100%;
+  color: #ffe8ad;
 }
 
-/* === SPRITE BOT (CON BOX SFONDO) === */
+/* --- INPUT SEMPRE FISSO IN FONDO ALLO SCREEN INTERNO (NO fixed!) --- */
+.input-chatbox {
+  width: 100%;
+  padding: 10px 10px 8px 10px;
+  box-shadow: 0 -4px 14px #31ffbe70;
+  border-top: 2px solid #47ffa6e8;
+  border-radius: 0 0 23px 23px;
+  display: flex;
+  gap: 10px;
+  z-index: 2;
+  position: sticky;
+  bottom: 0;
+}
+
+.chat-input-steampunk.nes-input {
+  flex: 1;
+  background: #1c3222cc;
+  border: 2px solid #48ffa4;
+  color: #c5ffe7;
+  font-size: 1.15em;
+  border-radius: 11px;
+  padding: 9px 11px;
+  font-family: inherit;
+  outline: none;
+  box-shadow: 0 2px 9px #2bffbb51;
+}
+.chat-input-steampunk:focus { border-color: #fff; }
+.chat-send-btn.nes-btn {
+  background: #39e19a;
+  color: #003315;
+  border-radius: 8px;
+  font-size: 1.29em;
+  cursor: pointer;
+  box-shadow: 0 1px 9px #30ffae90;
+  border: 2px solid #54ffc7;
+}
+.chat-send-btn:disabled {
+  filter: grayscale(0.7);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.nes-btn[disabled] { opacity: 0.5 !important; cursor: not-allowed !important; }
+
+/* --- Sprite box, Dialogue box, ecc. --- */
 .umbybot-sprite-box {
   margin-bottom: 18px;
   padding: 8px;
-  background: #342110d8;
-  border-radius: 14px;
-  box-shadow: 0 4px 16px #0006;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,21 +115,14 @@ body {
   width: 164px;
   height: 208px;
   image-rendering: pixelated;
+  filter: drop-shadow(0 0 10px #46ffac80);
 }
-
-/* === DIALOGUE BOX RPG === */
-.dialogue-box-steampunk {
-  width: 92%;
-  min-height: 100px;
-  background: linear-gradient(180deg, #41331e 0%, #1c140a 100%);
-  border-radius: 15px;
-  box-shadow: 0 2px 18px #211007a8;
-  box-sizing: border-box;
-  margin-bottom: 14px;
-  padding: 16px 16px 8px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
+.dialogue-box-steampunk.nes-container {
+  background: linear-gradient(180deg, #1e271f 40%, #0e1310 100%);
+  border-radius: 17px;
+  box-shadow: 0 2px 26px #31ff9670, 0 0 0 3px #3affbb72 inset;
+  border: 2px solid #3affbb85;
+  color: #c6ffe8;
 }
 .dialogue-header-steampunk {
   display: flex;
@@ -76,34 +134,31 @@ body {
   width: 28px;
   height: 28px;
   image-rendering: pixelated;
-  border-radius: 7px;
-  background: #1e1204;
-  box-shadow: 0 2px 7px #40240590;
+  border-radius: 8px;
+  background: #293425;
+  box-shadow: 0 2px 9px #52ffa840;
 }
 .dialogue-npc-name {
-  color: #ffd380;
-  font-size: 1.18em;
+  color: #87ffb4;
+  font-size: 1.16em;
   letter-spacing: 0.04em;
 }
 .dialogue-content-steampunk {
-  color: #ffe9ad;
-  font-size: 1.14em;
+  color: #c2ffd7;
+  font-size: 1.13em;
+  text-shadow: 0 1px 5px #42ec8054;
 }
-
-/* === DOMANDA/USER & RISPOSTA/BOT === */
 .dialogue-user-question {
-  color: #e3be8e;
-  font-size: 1.1em;
+  color: #b7ffac;
+  font-size: 1.06em;
   margin-bottom: 3px;
-  text-shadow: 0 1px 3px #3d2c14b2;
+  text-shadow: 0 1px 3px #30f48c85;
 }
 .dialogue-bot-reply {
-  color: #ffe8ad;
-  font-size: 1.19em;
-  text-shadow: 0 1px 5px #44331ab4;
+  color: #dafff2;
+  font-size: 1.18em;
+  text-shadow: 0 1px 7px #3affbb74;
 }
-
-/* === FRECCE NAVIGAZIONE === */
 .dialogue-navigation {
   display: flex;
   align-items: center;
@@ -111,91 +166,11 @@ body {
   gap: 18px;
   margin: 10px 0 0 0;
 }
-.dialogue-navigation button {
-  background: #3a2916;
-  color: #ffd380;
-  border: none;
-  border-radius: 6px;
-  font-size: 1.5em;
-  padding: 2px 13px;
-  cursor: pointer;
-  transition: opacity 0.15s;
-  box-shadow: 0 1px 6px #21100740;
-}
-.dialogue-navigation button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  background: #222;
-}
 
-/* === INPUT CHATBOX FISSO: EDGE-TO-EDGE (SEMPRE VISIBILE) ===
-   - Fuori dal wrapper per essere sempre full width!
-   - Sotto al contenuto, non subisce i limiti di max-width.
-   - Prende tutto il viewport anche su mobile.
-*/
-.input-chatbox {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;         /* FULL viewport width sempre */
-  min-width: 0;
-  max-width: 100vw;
-  box-sizing: border-box;
-  margin: 0;
-  background: linear-gradient(90deg, #4e361b 40%, #221607 100%);
-  box-shadow: 0 -4px 16px #21100798;
-  border-top: 2px solid #6c471f;
-  padding: 12px 16px 8px 16px;
-  display: flex;
-  gap: 10px;
-  z-index: 1000;
-}
-
-/* === INPUT E BUTTON CHAT === */
-.chat-input-steampunk {
-  flex: 1;
-  background: #2b1b08;
-  border: 2px solid #a67e47;
-  color: #ffe8ad;
-  font-size: 1.13em;
-  border-radius: 9px;
-  padding: 8px 11px;
-  font-family: inherit;
-  outline: none;
-  box-shadow: 0 2px 8px #1c0a0470;
-}
-.chat-input-steampunk:focus {
-  border-color: #ffd36b;
-}
-.chat-send-btn {
-  background: #ac7c3a;
-  border: none;
-  color: #fff8df;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 1.3em;
-  cursor: pointer;
-  box-shadow: 0 1px 6px #0007;
-  transition: filter 0.1s;
-}
-.chat-send-btn:disabled {
-  filter: grayscale(0.7);
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* === RESPONSIVE MOBILE <400px === */
-@media (max-width: 400px) {
-  .umbybot-mobile-wrapper {
-    padding: 10px 2vw 72px 2vw;
-    width: 98vw;
-  }
-  .dialogue-box-steampunk,
-  .umbybot-sprite-box {
-    padding: 8px 4px;
-  }
-  .input-chatbox {
-    padding: 8px 8px 6px 8px;
-  }
+/* --- Responsive mobile --- */
+@media (max-width: 600px) {
+  .device-frame     { border-radius: 17px; }
+  .device-inner-glass { border-radius: 7px; }
+  .umbybot-mobile-wrapper { padding: 6px 1vw 8px 1vw; }
+  .input-chatbox { padding: 7px 3px 4px 3px; border-radius: 0 0 12px 12px; }
 }
