@@ -3,6 +3,7 @@ import DialogueBox from "./DialogueBox";
 import umbybotIdle from "./assets/sprites/umbybot-idle.png";
 import "./styles/rpg-mobile.css";
 
+// MOCK: risposte random
 const MOCK_REPLIES = [
   "Benvenuto nella mia officina a vapore! Cosa vuoi sapere, viaggiatore?",
   "Ogni progetto è un ingranaggio nella macchina del destino.",
@@ -25,7 +26,7 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Auto scroll in fondo ogni nuovo messaggio
+  // Scroll sempre a fondo quando cambiano i messaggi
   const messagesEndRef = useRef(null);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,8 +58,8 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
   return (
     <div className="device-frame">
       <div className="device-inner-glass">
-        <div className="umbybot-mobile-wrapper" style={{paddingBottom:0}}>
-          {/* Sprite bot */}
+        <div className="umbybot-mobile-wrapper">
+          {/* Avatar */}
           <div className="umbybot-sprite-box is-centered" style={{ marginTop: spriteMarginTop }}>
             <img
               src={umbybotIdle}
@@ -72,23 +73,30 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
             />
           </div>
 
-          {/* Dialogue NES box */}
-          <DialogueBox
-            npcName="UmbyBot"
-            dialogue={
-              <>
-                <div className="dialogue-user-question">
-                  <b>Tu:</b> {current.user}
-                </div>
-                <div className="dialogue-bot-reply" style={{ marginTop: 4 }}>
-                  <b>UmbyBot:</b> {loading && currentIdx === history.length - 1 ? "...sto rispondendo..." : current.bot}
-                </div>
-              </>
-            }
-          />
+          {/* Dialogue Box SEMPRE full width, nessuno shrink */}
+          <div className="dialogue-box-bleed">
+            <DialogueBox
+              npcName="UmbyBot"
+              dialogue={
+                <>
+                  <div className="dialogue-user-question">
+                    <b>Tu:</b> {current.user}
+                  </div>
+                  <div className="dialogue-bot-reply">
+                    <b>UmbyBot:</b>{" "}
+                    {loading && currentIdx === history.length - 1
+                      ? "...sto rispondendo..."
+                      : current.bot}
+                  </div>
+                  {/* Scroll sempre a fondo */}
+                  <div ref={messagesEndRef} />
+                </>
+              }
+            />
+          </div>
 
-          {/* Frecce navigazione NES */}
-          <div className="dialogue-navigation" style={{ marginBottom: 8 }}>
+          {/* Navigazione dialoghi */}
+          <div className="dialogue-navigation">
             <button
               type="button"
               onClick={goPrev}
@@ -105,9 +113,8 @@ export default function UmbyBotRPG({ spriteSize = 164, spriteMarginTop = 0 }) {
               className="nes-btn"
             >▶️</button>
           </div>
-          <div ref={messagesEndRef} />
         </div>
-        {/* --- INPUT CHAT: APPICCICATO IN FONDO ALLO SCREEN! --- */}
+        {/* Input chat sempre a fondo */}
         <form
           className="input-chatbox"
           onSubmit={handleSend}
