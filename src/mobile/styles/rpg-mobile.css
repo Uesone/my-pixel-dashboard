@@ -256,7 +256,7 @@ html, body, #root {
 }
 .nes-btn[disabled] { opacity: 0.5 !important; cursor: not-allowed !important; }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .device-frame        { border-radius: 17px; }
   .device-inner-glass  { border-radius: 7px; }
   .umbybot-mobile-wrapper { padding: 6px 1vw 8px 1vw; }
