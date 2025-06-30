@@ -1,184 +1,183 @@
-/* === WRAPPER GENERALE MOBILE === */
-.umbybot-mobile-wrapper {
+/* === BODY (NO CORNICE, SOLO BG) === */
+body {
   min-height: 100vh;
+  min-width: 100vw;
+  margin: 0;
   background: radial-gradient(ellipse at center, #8a6840 0%, #40311b 100%);
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* === WRAPPER CENTRALE CON CORNICE (CONTENUTO) ===
+   PNG con centro trasparente!
+   - Border-image solo qui (non su body).
+   - Max-width: 500px = effetto boxed su mobile/desktop.
+   - Padding-bottom (80px) lascia spazio all'input fisso.
+*/
+.umbybot-mobile-wrapper {
+  width: 94vw;
+  max-width: 500px;
+  min-height: 90vh;
+  max-height: 98vh;
+  margin: 32px auto;
+  padding: 20px 8px 80px 8px;
+  background: none;
+  border: 32px solid transparent;
+  border-image: url('../assets/ui/cornice2.png') 32 fill stretch;
+  image-rendering: pixelated;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px 0;
   font-family: 'VT323', 'Press Start 2P', monospace;
   color: #ffe8ad;
+  overflow-y: auto;
+  /* No position: relative qui! */
 }
 
-/* === SPRITE BOT CON BORDO E SFONDO === */
+/* === SPRITE BOT (CON BOX SFONDO) === */
 .umbybot-sprite-box {
-  margin-bottom: 12px;
-  border: 4px solid #ac7c3a;
-  border-radius: 20px;
-  background: #6d4b25b3;
-  box-shadow: 0 0 16px #ac7c3a44;
-  padding: 16px 24px 12px 24px;
+  margin-bottom: 18px;
+  padding: 8px;
+  background: #342110d8;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px #0006;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .umbybot-sprite {
   width: 164px;
   height: 208px;
   image-rendering: pixelated;
-  filter: drop-shadow(0 4px 12px #442504b0);
 }
 
-/* === DIALOGUE BOX (STEAMPUNK) === */
+/* === DIALOGUE BOX RPG === */
 .dialogue-box-steampunk {
-  width: 90vw;
-  max-width: 420px;
-  min-height: 120px;
-  border: 4px solid #ac7c3a;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #54391e 0%, #291a0d 100%);
-  box-shadow: 0 0 24px #2a1d0a70;
-  margin-bottom: 20px;
-  padding: 12px 20px;
-  position: relative;
+  width: 92%;
+  min-height: 100px;
+  background: linear-gradient(180deg, #41331e 0%, #1c140a 100%);
+  border-radius: 15px;
+  box-shadow: 0 2px 18px #211007a8;
+  box-sizing: border-box;
+  margin-bottom: 14px;
+  padding: 16px 16px 8px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 .dialogue-header-steampunk {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 10px;
+  margin-bottom: 2px;
 }
 .dialogue-npc-icon {
   width: 28px;
   height: 28px;
   image-rendering: pixelated;
-  border: 2px solid #ac7c3a;
   border-radius: 7px;
-  background: #221203;
-  box-shadow: 0 0 6px #ac7c3a40;
+  background: #1e1204;
+  box-shadow: 0 2px 7px #40240590;
 }
 .dialogue-npc-name {
-  font-size: 1.3em;
-  font-family: 'Press Start 2P', monospace;
-  color: #f6c972;
-  letter-spacing: 0.09em;
-  filter: drop-shadow(0 0 4px #ac7c3a60);
+  color: #ffd380;
+  font-size: 1.18em;
+  letter-spacing: 0.04em;
 }
 .dialogue-content-steampunk {
-  margin-top: 6px;
-  font-size: 1.19em;
-  line-height: 1.6em;
   color: #ffe9ad;
-  text-shadow: 0 1px 6px #402405b0;
+  font-size: 1.14em;
 }
 
-/* === BOTTONI RPG PIXEL ART === */
-.rpg-btn-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  width: 100%;
+/* === DOMANDA/USER & RISPOSTA/BOT === */
+.dialogue-user-question {
+  color: #e3be8e;
+  font-size: 1.1em;
+  margin-bottom: 3px;
+  text-shadow: 0 1px 3px #3d2c14b2;
 }
-.rpg-btn {
-  background: linear-gradient(180deg, #83602b 0%, #55401e 100%);
-  border: 3px solid #ac7c3a;
-  border-radius: 10px;
-  font-family: 'VT323', 'Press Start 2P', monospace;
+.dialogue-bot-reply {
   color: #ffe8ad;
-  font-size: 1.1em;
-  min-width: 140px;
-  min-height: 48px;
-  box-shadow: 0 4px 0 #5c421e, 0 2px 8px #2a1d0a50;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: filter 0.1s, box-shadow 0.1s;
-  outline: none;
-  text-shadow: 0 2px 8px #2d1402;
-}
-.rpg-btn:active {
-  filter: brightness(0.88);
-  box-shadow: 0 2px 0 #3e2a14;
+  font-size: 1.19em;
+  text-shadow: 0 1px 5px #44331ab4;
 }
 
-/* === CHATBOT STEAMPUNK (CHAT GPT STYLE) === */
-.chatbot-steampunk-wrapper {
-  width: 92vw;
-  max-width: 430px;
-  background: #3c250e;
-  border: 4px solid #a16e2f;
-  border-radius: 13px;
-  box-shadow: 0 0 16px #271d0a80;
-  margin: 0 auto 24px auto;
-  padding: 12px 10px 4px 10px;
-  display: flex;
-  flex-direction: column;
-  font-family: 'VT323', monospace;
-  min-height: 240px;
-}
-.chat-messages {
-  flex: 1;
-  max-height: 280px;
-  overflow-y: auto;
-  padding-bottom: 4px;
-  margin-bottom: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.chat-message {
-  padding: 7px 13px;
-  border-radius: 9px;
-  font-size: 1.1em;
-  white-space: pre-line;
-  word-break: break-word;
-  text-shadow: 0 1px 5px #3d1d04d2;
-  line-height: 1.48;
-}
-.chat-message.bot {
-  background: #705023;
-  align-self: flex-start;
-  color: #ffeaad;
-  border: 2px solid #ac7c3a;
-}
-.chat-message.user {
-  background: #2a1b0c;
-  align-self: flex-end;
-  color: #d7c897;
-  border: 2px solid #7e6544;
-}
-.chat-input-row {
+/* === FRECCE NAVIGAZIONE === */
+.dialogue-navigation {
   display: flex;
   align-items: center;
-  gap: 7px;
+  justify-content: center;
+  gap: 18px;
+  margin: 10px 0 0 0;
 }
+.dialogue-navigation button {
+  background: #3a2916;
+  color: #ffd380;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.5em;
+  padding: 2px 13px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  box-shadow: 0 1px 6px #21100740;
+}
+.dialogue-navigation button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #222;
+}
+
+/* === INPUT CHATBOX FISSO: EDGE-TO-EDGE (SEMPRE VISIBILE) ===
+   - Fuori dal wrapper per essere sempre full width!
+   - Sotto al contenuto, non subisce i limiti di max-width.
+   - Prende tutto il viewport anche su mobile.
+*/
+.input-chatbox {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;         /* FULL viewport width sempre */
+  min-width: 0;
+  max-width: 100vw;
+  box-sizing: border-box;
+  margin: 0;
+  background: linear-gradient(90deg, #4e361b 40%, #221607 100%);
+  box-shadow: 0 -4px 16px #21100798;
+  border-top: 2px solid #6c471f;
+  padding: 12px 16px 8px 16px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+/* === INPUT E BUTTON CHAT === */
 .chat-input-steampunk {
   flex: 1;
-  padding: 7px 10px;
+  background: #2b1b08;
+  border: 2px solid #a67e47;
+  color: #ffe8ad;
+  font-size: 1.13em;
   border-radius: 9px;
-  border: 2px solid #ac7c3a;
-  background: #231607;
-  color: #ffecb1;
-  font-size: 1.09em;
-  font-family: 'VT323', monospace;
+  padding: 8px 11px;
+  font-family: inherit;
   outline: none;
-  box-shadow: 0 1px 6px #0009;
-  transition: border 0.2s;
+  box-shadow: 0 2px 8px #1c0a0470;
 }
 .chat-input-steampunk:focus {
-  border: 2px solid #ffd265;
-  background: #312008;
+  border-color: #ffd36b;
 }
 .chat-send-btn {
-  font-size: 1.4em;
-  border: none;
   background: #ac7c3a;
+  border: none;
+  color: #fff8df;
+  padding: 8px 16px;
   border-radius: 8px;
-  padding: 7px 13px;
+  font-size: 1.3em;
   cursor: pointer;
-  transition: filter 0.18s;
-  color: #fff2cc;
-  box-shadow: 0 2px 0 #4c320b, 0 2px 6px #20120b;
+  box-shadow: 0 1px 6px #0007;
+  transition: filter 0.1s;
 }
 .chat-send-btn:disabled {
   filter: grayscale(0.7);
@@ -186,16 +185,17 @@
   cursor: not-allowed;
 }
 
-/* === RESPONSIVE === */
+/* === RESPONSIVE MOBILE <400px === */
 @media (max-width: 400px) {
-  .dialogue-box-steampunk {
-    padding: 7px 6px;
+  .umbybot-mobile-wrapper {
+    padding: 10px 2vw 72px 2vw;
+    width: 98vw;
   }
-  .rpg-btn {
-    min-width: 108px;
-    font-size: 1em;
+  .dialogue-box-steampunk,
+  .umbybot-sprite-box {
+    padding: 8px 4px;
   }
-  .chatbot-steampunk-wrapper {
-    padding: 6px 3px 3px 3px;
+  .input-chatbox {
+    padding: 8px 8px 6px 8px;
   }
 }

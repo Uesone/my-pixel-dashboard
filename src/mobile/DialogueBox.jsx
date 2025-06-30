@@ -1,5 +1,5 @@
 import React from "react";
-import umbybotIcon from "./assets/sprites/umbybot-idle.png"; // o icona più piccola
+import umbybotIcon from "./assets/sprites/umbybot-idle.png"; // O icona più piccola
 
 export default function DialogueBox({ npcName, dialogue }) {
   return (

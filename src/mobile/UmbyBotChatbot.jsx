@@ -1,59 +1,61 @@
+// /src/mobile/UmbyBotChatbot.jsx
 import React, { useState } from "react";
 import "./styles/rpg-mobile.css";
 
-export default function UmbyBotChatbot({ apiKey }) {
+export default function UmbyBotChatbot() {
   const [messages, setMessages] = useState([
     { role: "assistant", content: "Saluti, viaggiatore! Sono UmbyBot, pronto a rispondere a ogni domanda in stile steampunk." }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Invia richiesta a OpenAI API
+  // MOCK: risposte random per testare la UI (sostituisci con fetch API per OpenAI in futuro)
+  const MOCK_REPLIES = [
+    "Il mio motore a vapore ci sta pensando... chiedimi altro!",
+    "Ho appena stretto un bullone nel mio pensatoio.",
+    "Il mio telegrafo a vapore suggerisce: affronta ogni sfida con pixel e coraggio!",
+    "Sono solo un umile bot steampunk: prova con 'progetti', 'contatti' o 'vita'.",
+    "La caldaia delle idee oggi fuma poco... ma resto a disposizione!"
+  ];
+
+  function getRandomReply() {
+    return MOCK_REPLIES[Math.floor(Math.random() * MOCK_REPLIES.length)];
+  }
+
   const sendMessage = async () => {
     if (!input.trim()) return;
     const userMessage = { role: "user", content: input };
-    setMessages((msgs) => [...msgs, userMessage]);
+    setMessages(msgs => [...msgs, userMessage]);
     setInput("");
     setLoading(true);
 
+    // MOCK: Risposta simulata dopo breve delay
+    setTimeout(() => {
+      setMessages(msgs =>
+        [...msgs, { role: "assistant", content: getRandomReply() }]
+      );
+      setLoading(false);
+    }, 600);
+
+    /* --- Versione OpenAI reale (quando vorrai!) ---
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`, // <-- Attento: non mettere apiKey visibile lato pubblico!
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: [
-            ...messages,
-            userMessage,
-            {
-              role: "system",
-              content:
-                "Rispondi sempre come UmbyBot, mentore steampunk NPC di un RPG pixel art, tono narrativo ironico e breve.",
-            },
-          ],
-          max_tokens: 200,
-          temperature: 0.9,
-        }),
-      });
+      const response = await fetch("/api/umbybot", { ... });
       const data = await response.json();
       const botMessage = data.choices?.[0]?.message?.content || "Errore, il mio vapore si è inceppato!";
-      setMessages((msgs) => [...msgs, { role: "assistant", content: botMessage }]);
+      setMessages(msgs => [...msgs, { role: "assistant", content: botMessage }]);
     } catch (err) {
-      setMessages((msgs) => [
+      setMessages(msgs => [
         ...msgs,
         { role: "assistant", content: "Errore di connessione alle caldaie OpenAI!" },
       ]);
     } finally {
       setLoading(false);
     }
+    */
   };
 
-  const handleInput = (e) => setInput(e.target.value);
-
-  const handleKeyDown = (e) => {
+  const handleInput = e => setInput(e.target.value);
+  const handleKeyDown = e => {
     if (e.key === "Enter" && !loading) sendMessage();
   };
 
