@@ -176,24 +176,43 @@ export default function UmbyBotRPG({
             />
           </div>
 
-          {/* === Navigazione dialoghi === */}
-          <div className="dialogue-navigation">
-            <button
-              type="button"
-              onClick={goPrev}
-              disabled={currentIdx === 0}
-              className="nes-btn"
-            >◀️</button>
-            <span style={{ fontFamily: "monospace", fontSize: 16 }}>
-              {currentIdx + 1} / {history.length}
-            </span>
-            <button
-              type="button"
-              onClick={goNext}
-              disabled={currentIdx === history.length - 1}
-              className="nes-btn"
-            >▶️</button>
-          </div>
+{/* === Navigazione dialoghi === */}
+<div className="dialogue-navigation">
+  <button
+    type="button"
+    onClick={goPrev}
+    disabled={currentIdx === 0}
+    className="nes-btn"
+  >
+    {/* Freccia destra ruotata verso sinistra */}
+    <span style={{
+      display: "inline-block",
+      transform: "scaleX(-1)",
+      fontSize: 15,
+      lineHeight: "1"
+    }}>
+      ➤
+    </span>
+  </button>
+  <span style={{ fontFamily: "monospace", fontSize: 16 }}>
+    {currentIdx + 1} / {history.length}
+  </span>
+  <button
+    type="button"
+    onClick={goNext}
+    disabled={currentIdx === history.length - 1}
+    className="nes-btn"
+  >
+    {/* Freccia destra classica */}
+    <span style={{
+      fontSize: 15,
+      lineHeight: "1"
+    }}>
+      ➤
+    </span>
+  </button>
+</div>
+
         </div>
         {/* === Input chat sempre a fondo === */}
         <form
@@ -216,7 +235,7 @@ export default function UmbyBotRPG({
             disabled={loading || !input.trim()}
             style={{ fontSize: 22 }}
           >
-            🚀
+             ➤
           </button>
         </form>
       </div>
