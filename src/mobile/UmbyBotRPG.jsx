@@ -6,9 +6,14 @@ import umbybotTalking from "./assets/sprites/umbybot-talking.png";
 import "./styles/rpg-mobile.css";
 
 /**
- * Hook typewriter con bocca: fa scrivere il testo gradualmente e alterna lo stato della bocca.
+ * Hook typewriter con bocca: scrittura graduale + animazione bocca, con velocità indipendenti.
+ * @param {string} text - Testo da scrivere
+ * @param {boolean} active - true se attiva animazione
+ * @param {number} textSpeed - ms tra ogni carattere (velocità testo)
+ * @param {number} mouthSpeed - ms tra cambio bocca (velocità bocca)
+ * @returns [displayed, isMouthOpen]
  */
-function useTypewriterWithMouth(text, active, speed = 24) {
+function useTypewriterWithMouth(text, active, textSpeed = 60, mouthSpeed = 30) {
   const [displayed, setDisplayed] = useState("");
   const [isMouthOpen, setIsMouthOpen] = useState(false);
 
@@ -20,25 +25,39 @@ function useTypewriterWithMouth(text, active, speed = 24) {
     }
     setDisplayed("");
     let i = 0;
-    let mouthOpen = false;
-    const interval = setInterval(() => {
+
+    // === Intervallo testo ===
+    const textInterval = setInterval(() => {
       i++;
       setDisplayed(text.slice(0, i));
+      if (i >= text.length) clearInterval(textInterval);
+    }, textSpeed);
+
+    // === Intervallo bocca ===
+    let mouthOpen = false;
+    const mouthInterval = setInterval(() => {
       mouthOpen = !mouthOpen;
       setIsMouthOpen(mouthOpen);
-      if (i >= text.length) {
-        clearInterval(interval);
-        setIsMouthOpen(false);
-      }
-    }, speed);
+    }, mouthSpeed);
 
-    return () => clearInterval(interval);
-  }, [text, active, speed]);
+    // Cleanup dopo la fine: bocca chiusa!
+    let cleanupTimeout = null;
+    if (i >= text.length) {
+      cleanupTimeout = setTimeout(() => setIsMouthOpen(false), 250);
+    }
+
+    return () => {
+      clearInterval(textInterval);
+      clearInterval(mouthInterval);
+      if (cleanupTimeout) clearTimeout(cleanupTimeout);
+      setIsMouthOpen(false);
+    };
+  }, [text, active, textSpeed, mouthSpeed]);
 
   return [displayed, isMouthOpen];
 }
 
-// MOCK risposte random per demo
+// === MOCK risposte random per demo
 const MOCK_REPLIES = [
   "Benvenuto nella mia officina a vapore! Cosa vuoi sapere, viaggiatore?",
   "Ogni progetto è un ingranaggio nella macchina del destino.",
@@ -50,7 +69,12 @@ function getMockReply() {
   return MOCK_REPLIES[Math.floor(Math.random() * MOCK_REPLIES.length)];
 }
 
-export default function UmbyBotRPG({ spriteSize = 208, spriteMarginTop = 0 }) {
+export default function UmbyBotRPG({
+  spriteSize = 208,
+  spriteMarginTop = 0,
+  textSpeed = 30,    // Cambia qui la velocità di scrittura (ms tra ogni carattere)
+  mouthSpeed = 110   // Cambia qui la velocità della bocca (ms tra ogni cambio)
+}) {
   const [history, setHistory] = useState([
     {
       user: "Chi sei?",
@@ -62,12 +86,13 @@ export default function UmbyBotRPG({ spriteSize = 208, spriteMarginTop = 0 }) {
   const [loading, setLoading] = useState(false);
   const [isBotTyping, setIsBotTyping] = useState(false);
 
-  // Scroll sempre a fondo
+  // === Scroll sempre a fondo ===
   const messagesEndRef = useRef(null);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [history, currentIdx]);
 
+  // === Gestione invio domanda ===
   function handleSend(e) {
     e.preventDefault();
     if (!input.trim() || loading) return;
@@ -91,9 +116,16 @@ export default function UmbyBotRPG({ spriteSize = 208, spriteMarginTop = 0 }) {
   const current = history[currentIdx];
   const isLast = currentIdx === history.length - 1;
   const showTypewriter = isLast && isBotTyping;
-  const [botText, isMouthOpen] = useTypewriterWithMouth(current.bot, showTypewriter, 80);
 
-  // Quando ha finito, dopo mezzo secondo torna idle
+  // === Typewriter custom ===
+  const [botText, isMouthOpen] = useTypewriterWithMouth(
+    current.bot,
+    showTypewriter,
+    textSpeed,
+    mouthSpeed
+  );
+
+  // === Quando finisce, bocca chiusa dopo mezzo secondo ===
   useEffect(() => {
     if (showTypewriter && botText === current.bot) {
       const t = setTimeout(() => setIsBotTyping(false), 400);
@@ -108,7 +140,7 @@ export default function UmbyBotRPG({ spriteSize = 208, spriteMarginTop = 0 }) {
     <div className="device-frame">
       <div className="device-inner-glass">
         <div className="umbybot-mobile-wrapper">
-          {/* Sprite steampunk animato: PNG alternati con CSS fix dimensione */}
+          {/* === Sprite steampunk animato === */}
           <div className="umbybot-sprite-box is-centered" style={{ marginTop: spriteMarginTop }}>
             <div className="umbybot-sprite-fix">
               <img
@@ -116,11 +148,16 @@ export default function UmbyBotRPG({ spriteSize = 208, spriteMarginTop = 0 }) {
                 alt="UmbyBot pixel NPC"
                 className="umbybot-sprite"
                 draggable={false}
+                style={{
+                  width: spriteSize,
+                  height: spriteSize,
+                  imageRendering: "pixelated"
+                }}
               />
             </div>
           </div>
 
-          {/* Dialogue Box */}
+          {/* === Dialogue Box === */}
           <div className="dialogue-box-bleed">
             <DialogueBox
               npcName="UmbyBot"
@@ -139,7 +176,7 @@ export default function UmbyBotRPG({ spriteSize = 208, spriteMarginTop = 0 }) {
             />
           </div>
 
-          {/* Navigazione dialoghi */}
+          {/* === Navigazione dialoghi === */}
           <div className="dialogue-navigation">
             <button
               type="button"
@@ -158,7 +195,7 @@ export default function UmbyBotRPG({ spriteSize = 208, spriteMarginTop = 0 }) {
             >▶️</button>
           </div>
         </div>
-        {/* Input chat sempre a fondo */}
+        {/* === Input chat sempre a fondo === */}
         <form
           className="input-chatbox"
           onSubmit={handleSend}
