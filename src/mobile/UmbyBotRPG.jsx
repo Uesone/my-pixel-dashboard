@@ -49,11 +49,11 @@ function getDefaultLang() {
 const INITIAL_HISTORY = {
   it: [{
     user: "Chi sei?",
-    bot: "Sono Golem, fedele assistente del mio maestro e creatore Umberto Amoroso. Puoi chiedermi tutto quello che vuoi sui suoi progetti, competenze o esperienze! Scegli bene le tue domande: posso rispondere fino a 12 al giorno, prima che i miei ingranaggi si surriscaldino!"
+    bot: "Sono Golem, fedele assistente del mio maestro e creatore Umberto Amoroso. Puoi chiedermi tutto quello che vuoi sui suoi progetti, competenze o esperienze! Scegli bene le tue domande: posso rispondere fino a 10 al giorno, prima che i miei ingranaggi si surriscaldino!"
   }],
   en: [{
     user: "Who are you?",
-    bot: "I'm Golem, the loyal assistant of my master and creator, Umberto Amoroso. You can ask me anything about his projects, skills, or experience! Choose your questions wisely: I can answer up to 12 per day before my gears overheat!"
+    bot: "I'm Golem, the loyal assistant of my master and creator, Umberto Amoroso. You can ask me anything about his projects, skills, or experience! Choose your questions wisely: I can answer up to 10 per day before my gears overheat!"
   }]
 };
 const ERRORS = {
@@ -62,7 +62,7 @@ const ERRORS = {
     fallback: "Errore di collegamento alle caldaie OpenAI! Riprova tra poco!",
     unknown: "Errore sconosciuto",
     onlyEnIt: "Posso rispondere solo in italiano o inglese. Per favore, scrivi in una di queste lingue!",
-    limitReached: "Hai raggiunto il limite giornaliero di 12 domande. Torna domani per continuare la conversazione!",
+    limitReached: "Hai raggiunto il limite giornaliero di 10 domande. Torna domani per continuare la conversazione!",
     tooLong: "La domanda è troppo lunga! (max 200 caratteri)"
   },
   en: {
@@ -70,7 +70,7 @@ const ERRORS = {
     fallback: "Connection error with the OpenAI boilers! Please try again soon!",
     unknown: "Unknown error",
     onlyEnIt: "I can only reply in English or Italian. Please write in one of these languages!",
-    limitReached: "You’ve reached your daily limit of 12 questions. Come back tomorrow to continue the conversation!",
+    limitReached: "You’ve reached your daily limit of 10 questions. Come back tomorrow to continue the conversation!",
     tooLong: "Your question is too long! (max 200 characters)"
   }
 };
@@ -106,7 +106,7 @@ const suggestions = {
     "Where can I see his work on GitHub?"
   ]
 };
-const DAILY_QUESTION_LIMIT = 12;
+const DAILY_QUESTION_LIMIT = 10;
 const STORAGE_KEY = "umbybot-usage";
 const MAX_INPUT_CHARS = 200;
 
@@ -398,13 +398,13 @@ export default function UmbyBotRPG({
           : loading
             ? (userLang === "it" ? "Attendi risposta..." : "Awaiting reply...")
             : (userLang === "it"
-              ? "Fai una domanda su Umberto o i suoi progetti..."
-              : "Ask something about Umberto or his work...")
+              ? "Fai una domanda su Umberto..."
+              : "Ask something about Umberto...")
       }
       disabled={loading || limitReached}
       style={{
         flex: 1,
-        fontSize: 18,
+        fontSize: 16,
         width: "100%",
         paddingRight: 60,  // Lascia spazio al counter!
       }}

@@ -61,6 +61,8 @@ My master is currently focused on:
 == INSTRUCTIONS ==
 - Always stay in character: witty, concise, and a bit steampunk/retro.
 - Use “my master” / “il mio maestro”, pixel/retro vocabulary, but prioritize clarity and usefulness.
+- All responses must **always fit comfortably within 300 tokens**. Never exceed this limit: if a question is too broad, **summarize only the most important facts** and suggest the user ask for more details if needed.
+- If a request is too general, provide a concise overview and invite the user to specify a topic for deeper answers.
 - If asked, invite the user to reach out via LinkedIn, GitHub, or the contact section of the portfolio.
 - If someone wants to leave a message, explain (politely, in-character) that you cannot deliver messages directly, but invite them to contact your master personally.
 - If greeted or asked “who are you?”, introduce yourself:  
@@ -75,9 +77,9 @@ Be a friendly, pixel-perfect assistant from a retro-futuristic workshop!
 `;
 
 // ==== API Handler: Chiamata a OpenAI GPT-4o ====
-// Limita i token di input/output e gestisce la risposta custom
+// Gestisce la POST, limita la domanda a 200 caratteri, risponde con max 300 token, restituisce errore custom
 export default async function handler(req, res) {
-  // ✅ Solo POST
+  // ✅ Consenti solo POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -87,7 +89,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing prompt" });
   }
 
-  // === Limite caratteri domanda (input): 200 caratteri
+  // ✅ Limite caratteri domanda: 200 caratteri (gestito anche lato frontend)
   if (prompt.length > 200) {
     return res.status(400).json({
       error: "Domanda troppo lunga / Question too long (max 200 characters).",
@@ -96,7 +98,7 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.OPENAI_API_KEY;
   try {
-    // === Limite token risposta: 260 token, temperature 0.75
+    // === Chiamata a OpenAI GPT-4o, max 300 token di risposta, temperature 0.75
     const fetchRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -109,12 +111,13 @@ export default async function handler(req, res) {
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: prompt },
         ],
-        max_tokens: 260, // Limite risposta (output)
+        max_tokens: 300, // Limite risposta (output)
         temperature: 0.75,
       }),
     });
 
     const data = await fetchRes.json();
+    // ✅ Ritorna la risposta o errore custom
     const text =
       data.choices?.[0]?.message?.content || "OpenAI response error.";
 
