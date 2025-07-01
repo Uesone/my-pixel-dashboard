@@ -12,7 +12,7 @@ import AvatarAnimato from "../components/animation/AvatarAnimato.jsx";      // A
 const HomeSection = ({ dialogBoxVisible }) => {
   const [talking, setTalking] = useState(false);
 
-  // Se vuoi che l’avatar parli SOLO quando la dialog box è visibile
+  // Fai parlare l’avatar SOLO quando la dialog box è visibile
   useEffect(() => {
     setTalking(dialogBoxVisible);
   }, [dialogBoxVisible]);
@@ -20,98 +20,7 @@ const HomeSection = ({ dialogBoxVisible }) => {
   return (
     // === Wrapper che occupa tutta l'area beige (310x290) ===
     <PageWrapper>
-      {/* --- CORNICE TONDA AVATAR --- */}
-      <img
-        src={holder0}
-        alt="holder"
-        style={{
-          position: "absolute",
-          top: 90,
-          left: 10,
-          width: 100,
-          height: 100,
-          zIndex: 12,
-          pointerEvents: "none",
-        }}
-        draggable={false}
-      />
-
-      {/* --- AVATAR ANIMATO --- */}
-      <div
-        style={{
-          position: "absolute",
-          top: 103,
-          left: 22,
-          width: 78,
-          height: 76,
-          borderRadius: "50%",
-          overflow: "hidden",
-          zIndex: 11,
-          display: "flex",
-          alignItems: "flex-end",
-          justifyContent: "center",
-        }}
-      >
-        <AvatarAnimato talking={talking} />
-      </div>
-
-      {/* --- LINEA DECORATIVA SINISTRA --- */}
-      <img
-        src={linePng}
-        alt="linea"
-        style={{
-          position: "absolute",
-          top: 20,
-          left: 10,
-          width: 90,
-          height: 70,
-          zIndex: 13,
-          pointerEvents: "none",
-        }}
-        draggable={false}
-      />
-
-      {/* --- LINEA DECORATIVA DESTRA (specchiata) --- */}
-      <img
-        src={linePng}
-        alt="linea specchiata"
-        style={{
-          position: "absolute",
-          top: 20,
-          left: 214,
-          width: 90,
-          height: 70,
-          zIndex: 13,
-          pointerEvents: "none",
-          transform: "scaleX(-1)",
-          transformOrigin: "center center",
-        }}
-        draggable={false}
-      />
-
-      {/* --- TITOLO TESTO ("Home") --- */}
-      <div
-        style={{
-          position: "absolute",
-          top: 4,
-          left: 95,
-          fontFamily: "'VT323', monospace",
-          fontSize: 52,
-          color: "#24170b",
-          letterSpacing: 2,
-          padding: "3px 16px",
-          zIndex: 20,
-          textShadow: `
-            -2px 2px 0 #e7d7b6,  
-            2px 2px 0 #e7d7b6,    
-            2px 4px 2px #7e6643
-          `,
-        }}
-      >
-        Home
-      </div>
-
-      {/* --- BALLOON / DIALOG BOX --- */}
+      {/* --- BALLOON / DIALOG BOX (sempre in top, zIndex più alto) --- */}
       {dialogBoxVisible && (
         <div
           style={{
@@ -120,8 +29,9 @@ const HomeSection = ({ dialogBoxVisible }) => {
             left: 100,
             width: 180,
             height: 80,
-            zIndex: 21,
-            pointerEvents: "auto"
+            zIndex: 30, // PATCH: Priorità massima sopra tutto
+            pointerEvents: "auto",
+            willChange: "transform", // PATCH: aiuta i browser a ottimizzare il paint
           }}
         >
           <HomeDialogBox
@@ -143,6 +53,98 @@ const HomeSection = ({ dialogBoxVisible }) => {
           />
         </div>
       )}
+
+      {/* --- CORNICE TONDA AVATAR (secondo livello) --- */}
+      <img
+        src={holder0}
+        alt="holder"
+        style={{
+          position: "absolute",
+          top: 90,
+          left: 10,
+          width: 100,
+          height: 100,
+          zIndex: 20, // PATCH: subito sotto il balloon
+          pointerEvents: "none",
+          willChange: "transform", // PATCH: aiuta anti-flicker
+        }}
+        draggable={false}
+      />
+
+      {/* --- LINEE DECORATIVE SINISTRA/DX --- */}
+      <img
+        src={linePng}
+        alt="linea"
+        style={{
+          position: "absolute",
+          top: 20,
+          left: 10,
+          width: 90,
+          height: 70,
+          zIndex: 15, // PATCH: sotto cornice/avatar/balloon
+          pointerEvents: "none",
+        }}
+        draggable={false}
+      />
+      <img
+        src={linePng}
+        alt="linea specchiata"
+        style={{
+          position: "absolute",
+          top: 20,
+          left: 214,
+          width: 90,
+          height: 70,
+          zIndex: 15, // PATCH: sotto cornice/avatar/balloon
+          pointerEvents: "none",
+          transform: "scaleX(-1)",
+          transformOrigin: "center center",
+        }}
+        draggable={false}
+      />
+
+      {/* --- AVATAR ANIMATO (terzo livello, sopra linee e sotto cornice) --- */}
+      <div
+        style={{
+          position: "absolute",
+          top: 103,
+          left: 22,
+          width: 78,
+          height: 76,
+          borderRadius: "50%",
+          overflow: "hidden",
+          zIndex: 12, // PATCH: avatar sotto tutto il resto
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "center",
+          willChange: "transform", // PATCH: aiuta su Chrome/Edge
+        }}
+      >
+        <AvatarAnimato talking={talking} />
+      </div>
+
+      {/* --- TITOLO TESTO ("Home") --- */}
+      <div
+        style={{
+          position: "absolute",
+          top: 4,
+          left: 95,
+          fontFamily: "'VT323', monospace",
+          fontSize: 52,
+          color: "#24170b",
+          letterSpacing: 2,
+          padding: "3px 16px",
+          zIndex: 25, // PATCH: sopra avatar/cornice, ma sotto balloon
+          textShadow: `
+            -2px 2px 0 #e7d7b6,  
+            2px 2px 0 #e7d7b6,    
+            2px 4px 2px #7e6643
+          `,
+          willChange: "transform", // PATCH: aiuta anti-flicker
+        }}
+      >
+        Home
+      </div>
     </PageWrapper>
   );
 };

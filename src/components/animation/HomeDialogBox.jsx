@@ -8,27 +8,23 @@ export default function HomeDialogBox({
   balloonWidth = 290,
   balloonHeight = 124,
   fontSize = 22,
-  // Testo (nuove props personalizzabili!)
   textTop = 38,
   textLeft = 38,
   textWidth = 215,
   textHeight = 40,
-  letterSpacing = 0,     // 👈 aggiunto
-  fontWeight = "normal", // 👈 aggiunto
-  color = "#24170b",     // 👈 aggiunto
-  lineHeight = 1.1,      // 👈 aggiunto (default per testo compatto)
-  fontFamily = "'VT323', monospace", // 👈 aggiunto
-  textAlign = "center",  // 👈 aggiunto
-  // Frecce
+  letterSpacing = 0,
+  fontWeight = "normal",
+  color = "#24170b",
+  lineHeight = 1.1,
+  fontFamily = "'VT323', monospace",
+  textAlign = "center",
   arrowPrevTop = 85,
   arrowPrevLeft = -55,
   arrowNextTop = 85,
   arrowNextLeft = 235,
-  // Callback avatar
   onTalkingChange = () => {},
 }) {
-  const { t } = useLanguage(); // 👈 hook del context
-  // Prendi le lines tradotte (array) oppure fallback a []
+  const { t } = useLanguage();
   const lines = t("home.dialog") || [];
 
   const [step, setStep] = useState(0);
@@ -36,13 +32,14 @@ export default function HomeDialogBox({
   const [talking, setTalking] = useState(false);
   const timerRef = useRef();
 
-  // Effetto BLINK (solo la freccia next)
+  // PATCH: Blink ogni 430ms per la freccia (ok)
   const [blink, setBlink] = useState(true);
   useEffect(() => {
     const interval = setInterval(() => setBlink((b) => !b), 430);
     return () => clearInterval(interval);
   }, []);
 
+  // PATCH: Typewriter meno “aggressivo” per ridurre glitch su Chrome/Edge (28ms)
   useEffect(() => {
     setDisplayed("");
     setTalking(true);
@@ -62,7 +59,7 @@ export default function HomeDialogBox({
         setTalking(false);
         onTalkingChange(false);
       }
-    }, 22);
+    }, 28);
 
     return () => {
       clearInterval(timerRef.current);
@@ -83,7 +80,9 @@ export default function HomeDialogBox({
         pointerEvents: "auto",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        zIndex: 30, // PATCH: balloon sempre davanti
+        willChange: "transform", // PATCH: smooth su Chrome/Edge
       }}
     >
       {/* Balloon PNG */}
@@ -98,7 +97,8 @@ export default function HomeDialogBox({
           left: 0,
           zIndex: 1,
           imageRendering: "pixelated",
-          pointerEvents: "none"
+          pointerEvents: "none",
+          willChange: "transform", // PATCH: aiuta anti-flicker
         }}
         draggable={false}
       />
@@ -113,17 +113,17 @@ export default function HomeDialogBox({
           height: textHeight,
           fontFamily,
           fontSize,
-          fontWeight,     // 👈 USATO!
-          color,          // 👈 USATO!
-          letterSpacing,  // 👈 USATO!
-          lineHeight,     // 👈 USATO!
-          textAlign,      // 👈 USATO!
+          fontWeight,
+          color,
+          letterSpacing,
+          lineHeight,
+          textAlign,
           whiteSpace: "pre-line",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           zIndex: 2,
-          pointerEvents: "auto"
+          pointerEvents: "auto",
         }}
       >
         {/* Ombra invisibile per mantenere il box fisso */}
@@ -134,7 +134,7 @@ export default function HomeDialogBox({
         <span style={{
           zIndex: 2,
           position: "relative",
-          width: "100%"
+          width: "100%",
         }}>
           {displayed}
         </span>
@@ -155,7 +155,8 @@ export default function HomeDialogBox({
             cursor: "pointer",
             zIndex: 3,
             opacity: blink ? 1 : 0.0,
-            transition: "opacity 0.18s"
+            transition: "opacity 0.18s",
+            willChange: "opacity",
           }}
         />
       )}
@@ -175,7 +176,8 @@ export default function HomeDialogBox({
             cursor: "pointer",
             zIndex: 3,
             opacity: blink ? 1 : 0.0,
-            transition: "opacity 0.18s"
+            transition: "opacity 0.18s",
+            willChange: "opacity",
           }}
         />
       )}
