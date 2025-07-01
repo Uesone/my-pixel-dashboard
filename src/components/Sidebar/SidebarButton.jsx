@@ -46,7 +46,6 @@ const SidebarButton = ({
     }}
     tabIndex={alt === "Language" ? -1 : 0}
     aria-label={alt}
-    title={alt}
   >
     {/* Sfondo bottone (default, hover, attivo) */}
     <img

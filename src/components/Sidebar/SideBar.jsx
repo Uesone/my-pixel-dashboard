@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import SidebarButton from "./SidebarButton";
+import PixelTooltip from "../PixelTooltip";
 import { useLanguage } from "../LanguageContext";
 
 // PNG bottoni e icone
@@ -15,22 +16,40 @@ import icon3 from "../../assets/sidebar-sprites/icons/3.png";
 import itFlag from "../../assets/ui/flags/it.png";
 import enFlag from "../../assets/ui/flags/en.png";
 
-// ========== MODIFICA QUI PER TUTTO IL LAYOUT ==========
-// Spacing globale
-const startingTop = 39;       // distanza dal top del container sidebar
-const buttonSpacing = 110;    // distanza tra i bottoni (verticale)
-const buttonLeft = 70;        // distanza dal bordo sinistro sidebar
-const defaultButtonSize = 78; // dimensione base dei bottoni (quadrati)
-const defaultSidebarWidth = 120; // larghezza totale sidebar
-const defaultSidebarHeight = 520; // altezza totale sidebar
+// ========== CONFIGURAZIONE LAYOUT ==========
+// Spacing globale e dimensioni sidebar
+const startingTop = 39;            // distanza dal top del container sidebar
+const buttonSpacing = 110;         // distanza tra i bottoni (verticale)
+const buttonLeft = 70;             // distanza dal bordo sinistro sidebar
+const defaultButtonSize = 78;      // dimensione base dei bottoni (quadrati)
+const defaultSidebarWidth = 120;   // larghezza totale sidebar
+const defaultSidebarHeight = 520;  // altezza totale sidebar
 
 // Personalizzazione posizione/dimensione solo per il bottone lingua
-const langButtonOffsetTop = 0;    // offset extra top per la lingua
+const langButtonOffsetTop = 0;     // offset extra top per la lingua
 const langButtonOffsetLeft = 2;    // offset extra left per la lingua
 const langButtonSize = 74;         // dimensione bottone lingua
 const langIconSize = 32;           // dimensione bandierina lingua
 
-// ====== DEFINIZIONE BOTTONI (aggiungi qui nuovi tasti se vuoi) ======
+// ====== TOOLTIP LOCALIZZATI ======
+const TOOLTIP_TEXTS = {
+  it: {
+    home: "Home",
+    about: "About",
+    projects: "Guarda i progetti",
+    contacts: "Contattami",
+    lang: "Cambia lingua: English"
+  },
+  en: {
+    home: "Home",
+    about: "About",
+    projects: "See my projects",
+    contacts: "Contact me",
+    lang: "Change Language: Italian"
+  }
+};
+
+// ====== DEFINIZIONE BOTTONI ======
 const BUTTONS_BASE = [
   { key: "home",     icon: icon0, alt: "Home",     iconSize: 58, buttonSize: defaultButtonSize },
   { key: "about",    icon: icon1, alt: "About",    iconSize: 26, buttonSize: defaultButtonSize },
@@ -47,20 +66,34 @@ const Sidebar = ({
   height = defaultSidebarHeight,
   sidebarStyle = {},
 }) => {
+  // Bottone attualmente hoverato
   const [hovered, setHovered] = useState(null);
+  // Stato del tooltip
+  const [tooltip, setTooltip] = useState({
+    visible: false,
+    text: "",
+    x: 0,
+    y: 0,
+  });
 
   // Lingua corrente e funzione cambio lingua dal context
   const { language, setLanguage } = useLanguage();
+  // Lingua "dopo il click" e bandiera relativa
   const nextLang = language === "it" ? "en" : "it";
   const flagIcon = nextLang === "it" ? itFlag : enFlag;
   const flagAlt  = nextLang === "it" ? "Cambia lingua: Italiano" : "Change language: English";
 
-  // Costruisci tutti i bottoni sidebar, posizione personalizzata per ciascuno
+  // Tooltip localizzato per lingua corrente
+  const getTooltip = (key) => {
+    return TOOLTIP_TEXTS[language][key] || "";
+  };
+
+  // Costruisci array bottoni sidebar (posizione, icona, alt, tooltip, ...)
   const BUTTONS = BUTTONS_BASE.map((btn, idx) => {
-    // Tutti tranne quello lingua
     if (btn.key !== "lang") {
       return {
         ...btn,
+        tooltip: getTooltip(btn.key),
         style: {
           top: startingTop + idx * buttonSpacing,
           left: buttonLeft,
@@ -69,11 +102,12 @@ const Sidebar = ({
         },
       };
     } else {
-      // Pulsante lingua: bandiera e posizioni custom
+      // Bottone lingua
       return {
         ...btn,
         icon: flagIcon,
         alt: flagAlt,
+        tooltip: getTooltip("lang"),
         style: {
           top: startingTop + idx * buttonSpacing + langButtonOffsetTop,
           left: buttonLeft + langButtonOffsetLeft,
@@ -83,6 +117,24 @@ const Sidebar = ({
       };
     }
   });
+
+  // Gestione hover: mostra tooltip sopra al bottone
+  const handleMouseEnter = (btn, e) => {
+    setHovered(btn.key);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltip({
+      visible: true,
+      text: btn.tooltip,
+      x: rect.left + rect.width / 2,
+      y: rect.top - -65, // tooltip sopra il bottone
+    });
+  };
+
+  // Nascondi tooltip
+  const handleMouseLeave = () => {
+    setHovered(null);
+    setTooltip(t => ({ ...t, visible: false }));
+  };
 
   return (
     <div
@@ -96,7 +148,7 @@ const Sidebar = ({
         ...sidebarStyle,
       }}
     >
-      {/* Render bottone per ogni entry */}
+      {/* Render di ogni bottone */}
       {BUTTONS.map((btn) => (
         <SidebarButton
           key={btn.key}
@@ -107,8 +159,9 @@ const Sidebar = ({
           alt={btn.alt}
           isActive={selected === btn.key}
           isHovered={hovered === btn.key}
-          onMouseEnter={() => setHovered(btn.key)}
-          onMouseLeave={() => setHovered(null)}
+          // Passa event per posizione tooltip
+          onMouseEnter={(e) => handleMouseEnter(btn, e)}
+          onMouseLeave={handleMouseLeave}
           onClick={() => {
             if (btn.key === "lang") setLanguage(nextLang);
             else onSelect(btn.key);
@@ -118,6 +171,13 @@ const Sidebar = ({
           style={btn.style}
         />
       ))}
+      {/* Tooltip pixel-art/steampunk */}
+      <PixelTooltip
+        visible={tooltip.visible}
+        text={tooltip.text}
+        x={tooltip.x}
+        y={tooltip.y}
+      />
     </div>
   );
 };
