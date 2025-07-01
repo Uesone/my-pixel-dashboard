@@ -1,14 +1,14 @@
 {
   "home": {
-    "dialog": [
-      "Welcome to the personal archives\nof Umberto Amoroso, also known as Uesone.",
-      "Here I collect notes, diagrams, and chronicles\nof my projects and digital experiments.",
-      "Each section is a notebook page:\nwhere logic meets creativity.",
-      "Browse through projects, notes, and tools,\nand watch ingenuity in action.",
-      "In the craft of ingenuity, curiosity\nis your best ally.",
-      "Let the exploration begin!"
-    ]
-  },
+  "dialog": [
+    "Honorable visitor, be welcome to my workshop.",
+    "You are greeted by Umberto Amoroso, creator and custodian of these inventions.",
+    "Here I collect experiments, chronicles, and projects spanning past and future.",
+    "Each page tells a story, each section a different challenge faced.",
+    "Enter freely: curiosity is the key that sets every gear in motion.",
+    "Let the exploration of my archives begin!"
+  ]
+},
   "about": {
     "title": "About",
     "name_label": "Name:",
