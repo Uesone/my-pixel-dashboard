@@ -55,7 +55,7 @@ const PROJECTS = [
   {
     id: "meteo",
     icon: item3,
-    iconSize: 25, iconTop: 3, iconLeft: 4
+    iconSize: 25, iconTop: 3, iconLeft: 3
   },
   {
     id: "trasporti",

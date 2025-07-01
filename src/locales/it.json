@@ -1,14 +1,14 @@
 {
-  "home": {
-    "dialog": [
-      "Benvenuto negli archivi personali\ndi Umberto Amoroso, detto Uesone.",
-      "Qui raccolgo appunti, schemi e cronache\ndei miei progetti e sperimentazioni digitali.",
-      "Ogni sezione è una pagina di taccuino:\ndove la logica incontra la creatività.",
-      "Naviga tra progetti, annotazioni e strumenti,\ne osserva l’ingegno all’opera.",
-      "Nel mestiere dell’ingegno, la curiosità\nè il miglior alleato.",
-      "Avanti: l’esplorazione può cominciare."
-    ]
-  },
+"home": {
+  "dialog": [
+    "Onorevole visitatore, sii il benvenuto nella mia officina.",
+    "Ti accoglie Umberto Amoroso, artefice e custode di queste invenzioni.",
+    "Qui raccolgo esperimenti, cronache e progetti tra passato e futuro.",
+    "Ogni pagina racconta un percorso, ogni sezione una diversa sfida affrontata.",
+    "Entra pure: la curiosità è la chiave che mette in moto ogni ingranaggio.",
+    "Che l’esplorazione dei miei archivi abbia inizio!"
+  ]  
+},
   "about": {
     "title": "About",
     "name_label": "Nome:",

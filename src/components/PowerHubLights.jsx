@@ -27,9 +27,9 @@ export default function PowerHubLights({
   const [btnOn, setBtnOn] = useState(false);
   const [btnPressed, setBtnPressed] = useState(false);
 
-  // Lucina in basso che lampeggia random
-  const [blinkingLightOn, setBlinkingLightOn] = useState(false);
-  const blinkingLightTimeout = useRef(null);
+  // PATCH: NON esiste più blinking
+  // const [blinkingLightOn, setBlinkingLightOn] = useState(false);
+  // const blinkingLightTimeout = useRef(null);
 
   // Timer per animazioni
   const timeoutsRef = useRef([]);
@@ -43,7 +43,7 @@ export default function PowerHubLights({
     return () => {
       timeoutsRef.current.forEach((t) => clearTimeout(t));
       timeoutsRef.current = [];
-      clearTimeout(blinkingLightTimeout.current);
+      // clearTimeout(blinkingLightTimeout.current); // rimosso blinking
     };
   }, []);
 
@@ -63,7 +63,7 @@ export default function PowerHubLights({
     // Pulisci animazioni precedenti
     timeoutsRef.current.forEach((t) => clearTimeout(t));
     timeoutsRef.current = [];
-    clearTimeout(blinkingLightTimeout.current);
+    // clearTimeout(blinkingLightTimeout.current); // rimosso blinking
 
     // STATIC: nessuna animazione
     if (!animated) {
@@ -71,7 +71,7 @@ export default function PowerHubLights({
       setLights(isOn ? [true, true, true, true, true] : [false, false, false, false, false]);
       setBtnOn(isOn);
       setAnimating(false);
-      setBlinkingLightOn(isOn);
+      // setBlinkingLightOn(isOn); // rimosso blinking
       // Chiamata immediata se in static mode e ON
       if (isOn && typeof onPowerOnFinished === "function" && !hasCalledOnFinished.current) {
         hasCalledOnFinished.current = true;
@@ -86,7 +86,7 @@ export default function PowerHubLights({
       setBulbOn(false);
       setBtnOn(false);
       setLights([false, false, false, false, false]);
-      setBlinkingLightOn(false);
+      // setBlinkingLightOn(false); // rimosso blinking
 
       // Sequenza blink luci dall’alto al basso
       const BLINKS = [7, 5, 4, 4, 3];
@@ -137,11 +137,16 @@ export default function PowerHubLights({
               onPowerOnFinished();
             }
 
-            // Poi accendi bottone e parti con la lucina lampeggiante
+            // Poi accendi bottone e accendi lucina bassa FISSA
             timeoutsRef.current.push(setTimeout(() => {
               setBtnOn(true);
               setAnimating(false);
-              startBlinkingLight();
+              // PATCH: accendi la lucina bassa fissa (prima era startBlinkingLight)
+              setLights((arr) => {
+                const fixed = [...arr];
+                fixed[0] = true;
+                return fixed;
+              });
             }, 500));
           }
         }
@@ -154,7 +159,7 @@ export default function PowerHubLights({
       // SPEGNIMENTO
       setAnimating(true);
       setBtnOn(false);
-      setBlinkingLightOn(false);
+      // setBlinkingLightOn(false); // rimosso blinking
       setBulbOn(false);
 
       // Luci off a cascata
@@ -172,18 +177,7 @@ export default function PowerHubLights({
     // eslint-disable-next-line
   }, [isOn, animated, onPowerOnFinished]);
 
-  // Lampeggio random lucina bassa (solo ON)
-  function startBlinkingLight() {
-    setBlinkingLightOn(true);
-    function blink() {
-      setBlinkingLightOn((prev) => !prev);
-      const next = 900 + Math.random() * 800;
-      blinkingLightTimeout.current = setTimeout(blink, next);
-    }
-    blinkingLightTimeout.current = setTimeout(blink, 950 + Math.random() * 400);
-  }
-
-  // Gestione click bottone
+  // --- Gestione click bottone ---
   function handleBtnClick(e) {
     e.stopPropagation();
     if (!canClick || btnPressed) return;
@@ -224,11 +218,7 @@ export default function PowerHubLights({
       {lights.map((on, i) => (
         <img
           key={i}
-          src={
-            i === 0
-              ? (blinkingLightOn && on ? powerHubLightOn : powerHubLightOff)
-              : (on ? powerHubLightOn : powerHubLightOff)
-          }
+          src={on ? powerHubLightOn : powerHubLightOff}
           alt={`light-${i}`}
           style={{
             position: "absolute",
@@ -238,10 +228,10 @@ export default function PowerHubLights({
             height: "16px",
             zIndex: 34,
             pointerEvents: "none",
-            filter: (i === 0 ? (blinkingLightOn && on) : on)
+            filter: on
               ? "drop-shadow(0 0 9px #ffe080) drop-shadow(0 0 20px #fff7)"
               : undefined,
-            opacity: (i === 0 ? (blinkingLightOn && on) : on) ? 1 : 0.68,
+            opacity: on ? 1 : 0.68,
             transition: "opacity 0.16s"
           }}
           draggable={false}

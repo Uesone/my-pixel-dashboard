@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import avatarIdle from "../../assets/page-content-sprites/icons/14.png";
 import avatarTalk from "../../assets/page-content-sprites/icons/15.png";
 
+/**
+ * Avatar animato: cambia PNG per "parlare"
+ * PATCH: will-change su img, zIndex gestito dal wrapper parent.
+ */
 export default function AvatarAnimato({ talking }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,9 +31,9 @@ export default function AvatarAnimato({ talking }) {
         height: "100%",
         objectFit: "cover",
         pointerEvents: "none",
+        willChange: "transform", // PATCH: aiuta Chrome/Edge a non ripaintare tutto
       }}
       draggable={false}
     />
   );
 }
-

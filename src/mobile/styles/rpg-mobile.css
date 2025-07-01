@@ -1,0 +1,283 @@
+@import url('https://unpkg.com/nes.css/css/nes.min.css');
+
+/* ======================
+   IMPOSTAZIONI GENERALI
+   ====================== */
+html, body, #root {
+  width: 100vw !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box;
+  font-family: 'VT323', 'Press Start 2P', monospace !important;
+  font-size: 16px;
+  letter-spacing: 0px;
+}
+
+/* ===========================
+   FRAME ESTERNO (FAKE DEVICE)
+   =========================== */
+.device-frame {
+  background: linear-gradient(180deg, #3c4348 40%, #191a1d 100%);
+  border-radius: 44px;
+  box-shadow:
+    0 6px 10px #000d,
+    0 0 0 5px #262c34 inset,
+    0 1px 10px #0f151c;
+  padding: 14px;
+  max-width: 540px;
+  margin: 28px auto;
+  min-height: 92vh;
+  width: 100%;
+  min-width: 0 !important;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* =====================
+   GLASS EFFETTO DEVICE
+   ===================== */
+.device-inner-glass {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  background: linear-gradient(145deg, #222f26 76%, #1a1e17 100%),
+    radial-gradient(ellipse at 70% 18%, #54ffbf1a 0%, #3c6c38 85%, transparent 100%);
+  border-radius: 30px;
+  box-shadow: 0 0 32px 6px #6fffb36b inset, 0 0 6px 2px #3bff82b2 inset, 0 1px 26px #46c67444;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ==========================
+   MAIN WRAPPER (PAD CHATBOT)
+   ========================== */
+.umbybot-mobile-wrapper {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding: 18px 8px 12px 8px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  color: #ffe8ad;
+  box-sizing: border-box;
+}
+
+/* ====================================
+   SPRITE BOT — FIX E ANIMAZIONE BORDO
+   ==================================== */
+
+/* Fix dimensione sprite: PNG SEMPRE della stessa area visiva */
+.umbybot-sprite-box {
+  margin-bottom: 18px;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- FIX FINALE: wrapper che mantiene la PNG centrata e croppa l'eccesso --- */
+.umbybot-sprite-fix {
+  width: 208px;      /* stessa dimensione di spriteSize in JSX */
+  height: 208px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;  /* nasconde l'eccesso fuori dal box */
+  /* border-radius: 32px; */ /* opzionale: se vuoi PNG tondo */
+}
+
+/* PNG del bot: sempre 100% del wrapper, mai valori fissi qui! */
+.umbybot-sprite {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  object-fit: contain; /* oppure cover se vuoi che riempia di più */
+  filter: drop-shadow(0 0 10px #46ffac80);
+}
+
+/* ==========================
+   PATCH: BLEED SUL DIALOGUE BOX
+   ========================== */
+.dialogue-box-bleed {
+  margin-left: -8px;
+  margin-right: -8px;
+  width: calc(100% + 16px);
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .umbybot-mobile-wrapper { padding: 6px 1vw 8px 1vw; }
+  .dialogue-box-bleed {
+    margin-left: -1vw;
+    margin-right: -1vw;
+    width: calc(100% + 2vw);
+  }
+}
+
+/* ========================
+   NES-STYLE DIALOGUE BOX
+   ======================== */
+.dialogue-box-steampunk.nes-container {
+  background: linear-gradient(180deg, #1e271f 40%, #0e1310 100%);
+  border-radius: 17px;
+  box-shadow: 0 2px 26px #31ff9670, 0 0 0 3px #3affbb72 inset;
+  border: 2px solid #3affbb85;
+  color: #c6ffe8;
+  height: 210px;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  box-sizing: border-box;
+  margin: 0;
+}
+.dialogue-box-steampunk.nes-container::-webkit-scrollbar {
+  width: 7px;
+  background: #182b16;
+}
+.dialogue-box-steampunk.nes-container::-webkit-scrollbar-thumb {
+  background: #30e16a;
+  border-radius: 3px;
+}
+
+/* --- HEADER DIALOGUE --- */
+.dialogue-header-steampunk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+.dialogue-npc-icon {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
+  border-radius: 8px;
+  background: #293425;
+  box-shadow: 0 2px 9px #52ffa840;
+}
+.dialogue-npc-name {
+  color: #ffe066;
+  font-size: 1.16em;
+  letter-spacing: 0.04em;
+}
+.dialogue-content-steampunk {
+  color: #c2ffd7;
+  font-size: 1.13em;
+  text-shadow: 0 1px 5px #42ec8054;
+  overflow-y: auto;
+  flex: 1 1 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  padding: 8px 12px 4px 12px;
+}
+
+/* --- TESTO DIALOGO: utente & bot --- */
+.dialogue-user-question,
+.dialogue-bot-reply {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+}
+
+/* --- NAVIGAZIONE DIALOGHI --- */
+.dialogue-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 10px 0 0 0;
+}
+
+/* ========================
+   CHAT INPUT (IN FONDO)
+   ======================== */
+.input-chatbox {
+  width: 100%;
+  padding: 10px 10px 8px 10px;
+  box-shadow: 0 -4px 14px #31ffbe70;
+  border-top: 2px solid #47ffa6e8;
+  border-radius: 0 0 23px 23px;
+  display: flex;
+  gap: 10px;
+  z-index: 2;
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(90deg, #33523e 40%, #1b2220 100%);
+  box-sizing: border-box;
+}
+
+/* --- INPUT e BUTTON stile NES (restyle) --- */
+.chat-input-steampunk.nes-input {
+  flex: 1;
+  background: #1c3222cc;
+  border: 2px solid #48ffa4;
+  color: #c5ffe7;
+  font-size: 1.15em;
+  border-radius: 11px;
+  padding: 9px 11px;
+  font-family: inherit;
+  outline: none;
+  box-shadow: 0 2px 9px #2bffbb51;
+}
+.chat-input-steampunk:focus { border-color: #fff; }
+.chat-send-btn.nes-btn {
+  background: #39e19a;
+  color: #003315;
+  border-radius: 8px;
+  font-size: 1.29em;
+  cursor: pointer;
+  box-shadow: 0 1px 9px #30ffae90;
+  border: 2px solid #54ffc7;
+}
+.chat-send-btn:disabled {
+  filter: grayscale(0.7);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.nes-btn[disabled] { opacity: 0.5 !important; cursor: not-allowed !important; }
+
+@media (max-width: 900px) {
+  .device-frame        { border-radius: 17px; }
+  .device-inner-glass  { border-radius: 7px; }
+  .umbybot-mobile-wrapper { padding: 6px 1vw 8px 1vw; }
+  .input-chatbox       { padding: 7px 3px 4px 3px; border-radius: 0 0 12px 12px; }
+  .dialogue-box-steampunk.nes-container {
+    height: 28vw;
+  }
+  .dialogue-content-steampunk { padding: 5px 5px 3px 5px; }
+  .dialogue-box-bleed {
+    margin-left: -1vw;
+    margin-right: -1vw;
+    width: calc(100% + 2vw);
+  }
+}
+
+/* ===========================
+   "UmbyBot:" etichetta colore
+   =========================== */
+.bot-label {
+  color: #ffe066;            /* Giallo Steampunk */
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  filter: drop-shadow(0 0 2px #fff76e80);
+}

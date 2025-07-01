@@ -6,7 +6,7 @@ import modalFrame from "../assets/ui/modal/3.png"; // PNG bordo steampunk
 import { useLanguage } from "./LanguageContext";
 
 // =================== STILI PIXEL PERFECT DESKTOP ===================
-// (stessi tuoi, solo leggermente ordinati per chiarezza, ma puoi cambiare valori a piacere)
+// ( puoi cambiare valori a piacere)
 
 const modalBg = { /* ... */   // (come i tuoi: vedi sotto)
   position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
@@ -75,12 +75,27 @@ const textareaStyle = {
   resize: "vertical", transition: "border 0.18s"
 };
 const submitBtn = {
-  position: "absolute", top: 230, left: 290, width: 90, height: 39,
-  fontFamily: "'VT323', monospace", fontSize: 22, background: "#b68937",
-  color: "#fff", border: "3px solid #634113", borderRadius: "8px",
-  padding: "8px 0px", cursor: "pointer", letterSpacing: 3,
-  boxShadow: "2px 2px #fae2b6, -2px -2px #957440", transition: "background 0.16s, box-shadow 0.16s",
-  zIndex: 9
+  position: "absolute",
+  top: 230,
+  left: 290,           // (torna a destra se vuoi!)
+  width: 90,
+  height: 39,
+  fontFamily: "'VT323', monospace",
+  fontSize: 22,
+  background: "#b68937",
+  color: "#fff",
+  border: "3px solid #634113",
+  borderRadius: "8px",
+  padding: "8px 0px",
+  cursor: "pointer",
+  letterSpacing: 3,
+  boxShadow: "2px 2px #fae2b6, -2px -2px #957440",
+  transition: "background 0.16s, box-shadow 0.16s",
+  zIndex: 9,
+  display: "flex",              // <--- NEW!
+  alignItems: "center",         // <--- NEW!
+  justifyContent: "center",     // <--- NEW!
+  textAlign: "center",
 };
 const successMsg = {
   position: "absolute", top: 271, left: 0, width: 372, color: "#247e2b",
