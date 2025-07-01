@@ -276,11 +276,12 @@ export default function UmbyBotRPG({
     }
 
     try {
-      const res = await fetch("https://umbybot-proxy.vercel.app/api/umbybot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: domanda }),
-      });
+const res = await fetch(import.meta.env.VITE_UMBYBOT_API_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ prompt: domanda }),
+});
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || ERRORS[lang].unknown);
 
