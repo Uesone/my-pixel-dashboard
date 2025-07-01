@@ -276,7 +276,7 @@ export default function UmbyBotRPG({
     }
 
     try {
-      const res = await fetch("/api/umbybot", {
+      const res = await fetch("https://umbybot-proxy.vercel.app/api/umbybot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: domanda }),
