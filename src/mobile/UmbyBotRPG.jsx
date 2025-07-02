@@ -8,6 +8,7 @@ import "./styles/rpg-mobile.css";
 function useTypewriterWithMouth(text, active, textSpeed = 60, mouthSpeed = 30) {
   const [displayed, setDisplayed] = useState("");
   const [isMouthOpen, setIsMouthOpen] = useState(false);
+
   useEffect(() => {
     if (!active) {
       setDisplayed(text);
@@ -133,6 +134,7 @@ export default function UmbyBotRPG({
   // === Aggiorna limite domande (all'avvio e ogni domanda) ===
   useEffect(() => {
     updateUsage();
+    // eslint-disable-next-line
   }, []);
 
   // Reset se passate 24h dall’ultima domanda
@@ -215,7 +217,7 @@ export default function UmbyBotRPG({
       return;
     }
 
-    // Rileva lingua
+    // Rileva lingua della domanda
     const isEnglish = new RegExp("\\b(" + enWords.join("|") + ")\\b", "i").test(domanda);
     const isItalian = new RegExp("\\b(" + itWords.join("|") + ")\\b", "i").test(domanda);
     let detectedLang = userLang;
@@ -264,6 +266,7 @@ export default function UmbyBotRPG({
     const lang = isKnownLang ? detectedLang : "en";
     if (!isKnownLang) {
       const warningMsg = ERRORS[lang].onlyEnIt;
+      setIsBotTyping(true); // Fix: attiva animazione anche su errori lingua
       const updatedHistory = [
         ...newHistory.slice(0, -1),
         { user: domanda, bot: warningMsg }
@@ -271,16 +274,16 @@ export default function UmbyBotRPG({
       setHistory(updatedHistory);
       setCurrentIdx(updatedHistory.length - 1);
       setLoading(false);
-      setIsBotTyping(true);
       return;
     }
 
     try {
-const res = await fetch(import.meta.env.VITE_UMBYBOT_API_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ prompt: domanda }),
-});
+      setIsBotTyping(true); // === FIX: ATTIVA SUBITO LA BOCca ANIMATA!
+      const res = await fetch(import.meta.env.VITE_UMBYBOT_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: domanda }),
+      });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || ERRORS[lang].unknown);
@@ -291,8 +294,8 @@ const res = await fetch(import.meta.env.VITE_UMBYBOT_API_URL, {
       ];
       setHistory(updatedHistory);
       setCurrentIdx(updatedHistory.length - 1);
-      setIsBotTyping(true);
     } catch (err) {
+      setIsBotTyping(true); // === FIX: attiva bocca anche in errore
       setError(ERRORS[lang].connection + (err.message || ERRORS[lang].unknown));
       const updatedHistory = [
         ...newHistory.slice(0, -1),
@@ -300,7 +303,6 @@ const res = await fetch(import.meta.env.VITE_UMBYBOT_API_URL, {
       ];
       setHistory(updatedHistory);
       setCurrentIdx(updatedHistory.length - 1);
-      setIsBotTyping(true);
     } finally {
       setLoading(false);
     }
@@ -382,77 +384,77 @@ const res = await fetch(import.meta.env.VITE_UMBYBOT_API_URL, {
             ? `Domande rimaste oggi: ${questionsLeft} / ${DAILY_QUESTION_LIMIT}`
             : `Questions left today: ${questionsLeft} / ${DAILY_QUESTION_LIMIT}`}
         </div>
-{/* === Input chat === */}
-<form className="input-chatbox" onSubmit={handleSend} autoComplete="off">
-  <div style={{ position: "relative", width: "100%" }}>
-    <input
-      className="chat-input-steampunk nes-input"
-      type="text"
-      value={input}
-      onChange={e => setInput(e.target.value)}
-      maxLength={MAX_INPUT_CHARS}
-      placeholder={
-        limitReached
-          ? (userLang === "it"
-            ? "Limite raggiunto, torna domani!"
-            : "Limit reached, come back tomorrow!")
-          : loading
-            ? (userLang === "it" ? "Attendi risposta..." : "Awaiting reply...")
-            : (userLang === "it"
-              ? "Fai una domanda su Umberto..."
-              : "Ask something about Umberto...")
-      }
-      disabled={loading || limitReached}
-      style={{
-        flex: 1,
-        fontSize: 16,
-        width: "100%",
-        paddingRight: 60,  // Lascia spazio al counter!
-      }}
-      autoFocus
-    />
-    {/* Counter caratteri dentro l'input */}
-    <span
-      style={{
-        position: "absolute",
-        right: 16,
-        bottom: 18,
-        fontSize: 13,
-        color:
-          input.length >= MAX_INPUT_CHARS
-            ? "#ff6c6c"
-            : input.length >= MAX_INPUT_CHARS - 10
-              ? "#ffb488"
-              : "#b8ffd9cc",
-        pointerEvents: "none",
-        fontFamily: "inherit",
-        userSelect: "none",
-        fontWeight: 600,
-        letterSpacing: 0.2,
-        background: "rgba(28,16,8,0.07)",
-        padding: "0 4px",
-        borderRadius: 7,
-        zIndex: 10
-      }}
-    >
-      {input.length}/{MAX_INPUT_CHARS}
-    </span>
-  </div>
-  <button
-    className="chat-send-btn nes-btn is-success"
-    type="submit"
-    disabled={loading || limitReached || !input.trim()}
-    style={{ fontSize: 22 }}
-  >
-    ➤
-  </button>
-</form>
-{/* === Suggerimento dinamico che ruota === */}
-<div style={{ padding: "8px 10px 3px 10px", fontSize: 13, color: "#b8ffd9bb", textAlign: "center" }}>
-  {userLang === "it"
-    ? <>Prova a chiedere: <b>{tips[tipIndex]}</b></>
-    : <>Try asking: <b>{tips[tipIndex]}</b></>}
-</div>
+        {/* === Input chat === */}
+        <form className="input-chatbox" onSubmit={handleSend} autoComplete="off">
+          <div style={{ position: "relative", width: "100%" }}>
+            <input
+              className="chat-input-steampunk nes-input"
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              maxLength={MAX_INPUT_CHARS}
+              placeholder={
+                limitReached
+                  ? (userLang === "it"
+                    ? "Limite raggiunto, torna domani!"
+                    : "Limit reached, come back tomorrow!")
+                  : loading
+                    ? (userLang === "it" ? "Attendi risposta..." : "Awaiting reply...")
+                    : (userLang === "it"
+                      ? "Fai una domanda su Umberto..."
+                      : "Ask something about Umberto...")
+              }
+              disabled={loading || limitReached}
+              style={{
+                flex: 1,
+                fontSize: 16,
+                width: "100%",
+                paddingRight: 60,  // Lascia spazio al counter!
+              }}
+              autoFocus
+            />
+            {/* Counter caratteri dentro l'input */}
+            <span
+              style={{
+                position: "absolute",
+                right: 16,
+                bottom: 18,
+                fontSize: 13,
+                color:
+                  input.length >= MAX_INPUT_CHARS
+                    ? "#ff6c6c"
+                    : input.length >= MAX_INPUT_CHARS - 10
+                      ? "#ffb488"
+                      : "#b8ffd9cc",
+                pointerEvents: "none",
+                fontFamily: "inherit",
+                userSelect: "none",
+                fontWeight: 600,
+                letterSpacing: 0.2,
+                background: "rgba(28,16,8,0.07)",
+                padding: "0 4px",
+                borderRadius: 7,
+                zIndex: 10
+              }}
+            >
+              {input.length}/{MAX_INPUT_CHARS}
+            </span>
+          </div>
+          <button
+            className="chat-send-btn nes-btn is-success"
+            type="submit"
+            disabled={loading || limitReached || !input.trim()}
+            style={{ fontSize: 22 }}
+          >
+            ➤
+          </button>
+        </form>
+        {/* === Suggerimento dinamico che ruota === */}
+        <div style={{ padding: "8px 10px 3px 10px", fontSize: 13, color: "#b8ffd9bb", textAlign: "center" }}>
+          {userLang === "it"
+            ? <>Prova a chiedere: <b>{tips[tipIndex]}</b></>
+            : <>Try asking: <b>{tips[tipIndex]}</b></>}
+        </div>
 
       </div>
     </div>
