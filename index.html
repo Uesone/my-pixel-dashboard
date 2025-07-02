@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Icona del sito (modifica il path se necessario) -->
-    <!--<link rel="icon" type="image/svg+xml" href="/vite.svg" />  -->
+    <!-- Icona del sito (favicon) -->
+    <link rel="icon" type="image/x-icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Uesone's Portfolio</title>
     <!-- Puoi aggiungere qui altri meta, link font, o css globali -->
@@ -11,14 +11,8 @@
   <body>
     <!-- Root principale di React -->
     <div id="root"></div>
-
-    <!-- 
-      Portal root: necessario per far apparire i modali sopra ogni altro componente React.
-      Non serve styling o classi, basta ci sia e sia fuori dal root React.
-      Puoi gestire più modali anche qui se vuoi.
-    -->
+    <!-- Portal root: necessario per modali -->
     <div id="modal-root"></div>
-
     <!-- Entry point React/Vite -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
