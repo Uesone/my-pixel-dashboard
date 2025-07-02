@@ -1,26 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import PageWrapper from "../components/PageWrapper";
 import { useLanguage } from "../components/LanguageContext.jsx";
+import linePng from "../assets/page-content-sprites/holders/0.png"; // Linee deco
+import HomeDialogBox from "../components/animation/HomeDialogBox.jsx"; // Baloon/dialogo
 
-// --- Elementi decorativi ---
-import holder0 from "../assets/page-content-sprites/holders/8.png";         // Cornice rotonda avatar
-import linePng from "../assets/page-content-sprites/holders/0.png";         // Linee decorative
-import HomeDialogBox from "../components/animation/HomeDialogBox.jsx";      // Baloon/dialogo
-import AvatarAnimato from "../components/animation/AvatarAnimato.jsx";      // Avatar animato
-
-// Ricevi dialogBoxVisible come prop da App.jsx
-const HomeSection = ({ dialogBoxVisible }) => {
-  const [talking, setTalking] = useState(false);
-
-  // Fai parlare l’avatar SOLO quando la dialog box è visibile
-  useEffect(() => {
-    setTalking(dialogBoxVisible);
-  }, [dialogBoxVisible]);
-
+/**
+ * HomeSection (senza avatar/circle che ora sono overlay in App.jsx)
+ * - Riceve dialogBoxVisible e onAvatarTalking come props.
+ */
+const HomeSection = ({ dialogBoxVisible, onAvatarTalking = () => {} }) => {
   return (
-    // === Wrapper che occupa tutta l'area beige (310x290) ===
     <PageWrapper>
-      {/* --- BALLOON / DIALOG BOX (sempre in top, zIndex più alto) --- */}
+      {/* BALLOON / DIALOG BOX */}
       {dialogBoxVisible && (
         <div
           style={{
@@ -29,9 +20,8 @@ const HomeSection = ({ dialogBoxVisible }) => {
             left: 100,
             width: 180,
             height: 80,
-            zIndex: 30, // PATCH: Priorità massima sopra tutto
+            zIndex: 30,
             pointerEvents: "auto",
-            willChange: "transform", // PATCH: aiuta i browser a ottimizzare il paint
           }}
         >
           <HomeDialogBox
@@ -49,29 +39,11 @@ const HomeSection = ({ dialogBoxVisible }) => {
             letterSpacing={0}
             fontWeight="400"
             color="#f5ecd7"
-            onTalkingChange={setTalking}
+            onTalkingChange={onAvatarTalking} // <-- Collega qui!
           />
         </div>
       )}
-
-      {/* --- CORNICE TONDA AVATAR (secondo livello) --- */}
-      <img
-        src={holder0}
-        alt="holder"
-        style={{
-          position: "absolute",
-          top: 90,
-          left: 10,
-          width: 100,
-          height: 100,
-          zIndex: 20, // PATCH: subito sotto il balloon
-          pointerEvents: "none",
-          willChange: "transform", // PATCH: aiuta anti-flicker
-        }}
-        draggable={false}
-      />
-
-      {/* --- LINEE DECORATIVE SINISTRA/DX --- */}
+      {/* LINEE DECORATIVE */}
       <img
         src={linePng}
         alt="linea"
@@ -81,7 +53,7 @@ const HomeSection = ({ dialogBoxVisible }) => {
           left: 10,
           width: 90,
           height: 70,
-          zIndex: 15, // PATCH: sotto cornice/avatar/balloon
+          zIndex: 15,
           pointerEvents: "none",
         }}
         draggable={false}
@@ -95,35 +67,14 @@ const HomeSection = ({ dialogBoxVisible }) => {
           left: 214,
           width: 90,
           height: 70,
-          zIndex: 15, // PATCH: sotto cornice/avatar/balloon
+          zIndex: 15,
           pointerEvents: "none",
           transform: "scaleX(-1)",
           transformOrigin: "center center",
         }}
         draggable={false}
       />
-
-      {/* --- AVATAR ANIMATO (terzo livello, sopra linee e sotto cornice) --- */}
-      <div
-        style={{
-          position: "absolute",
-          top: 103,
-          left: 22,
-          width: 78,
-          height: 76,
-          borderRadius: "50%",
-          overflow: "hidden",
-          zIndex: 12, // PATCH: avatar sotto tutto il resto
-          display: "flex",
-          alignItems: "flex-end",
-          justifyContent: "center",
-          willChange: "transform", // PATCH: aiuta su Chrome/Edge
-        }}
-      >
-        <AvatarAnimato talking={talking} />
-      </div>
-
-      {/* --- TITOLO TESTO ("Home") --- */}
+      {/* TITOLO TESTO ("Home") */}
       <div
         style={{
           position: "absolute",
@@ -134,13 +85,12 @@ const HomeSection = ({ dialogBoxVisible }) => {
           color: "#24170b",
           letterSpacing: 2,
           padding: "3px 16px",
-          zIndex: 25, // PATCH: sopra avatar/cornice, ma sotto balloon
+          zIndex: 25,
           textShadow: `
             -2px 2px 0 #e7d7b6,  
             2px 2px 0 #e7d7b6,    
             2px 4px 2px #7e6643
           `,
-          willChange: "transform", // PATCH: aiuta anti-flicker
         }}
       >
         Home

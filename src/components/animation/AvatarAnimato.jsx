@@ -3,8 +3,9 @@ import avatarIdle from "../../assets/page-content-sprites/icons/14.png";
 import avatarTalk from "../../assets/page-content-sprites/icons/15.png";
 
 /**
- * Avatar animato: cambia PNG per "parlare"
- * PATCH: will-change su img, zIndex gestito dal wrapper parent.
+ * Avatar animato: pixel-art SEMPRE nitida.
+ * - Cambia PNG quando "talking" (animazione bocca)
+ * - Usare SEMPRE imageRendering: "pixelated" per nitidezza perfetta
  */
 export default function AvatarAnimato({ talking }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,12 +13,9 @@ export default function AvatarAnimato({ talking }) {
   useEffect(() => {
     let interval;
     if (talking) {
-      // Bocca si apre e si chiude ogni 160ms mentre "parla"
-      interval = setInterval(() => {
-        setIsOpen((open) => !open);
-      }, 160);
+      interval = setInterval(() => setIsOpen(open => !open), 160);
     } else {
-      setIsOpen(false); // Bocca chiusa quando non parla
+      setIsOpen(false);
     }
     return () => clearInterval(interval);
   }, [talking]);
@@ -29,9 +27,8 @@ export default function AvatarAnimato({ talking }) {
       style={{
         width: "100%",
         height: "100%",
-        objectFit: "cover",
-        pointerEvents: "none",
-        willChange: "transform", // PATCH: aiuta Chrome/Edge a non ripaintare tutto
+        imageRendering: "pixelated",
+        pointerEvents: "none"
       }}
       draggable={false}
     />

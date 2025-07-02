@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import Sidebar from "./components/Sidebar/SideBar";
 import DashboardBase from "./components/DashboardBase";
 import HomeSection from "./pages/HomeSection";
@@ -8,59 +8,90 @@ import ContactsSection from "./pages/ContactsSection";
 import bgPattern from "./assets/content/background/0.png";
 import PageFlipTransition from "./components/PageFlipTransition";
 import OverlayWithHole from "./components/OverlayWithHole";
-// === IMPORTA LA SWITCHER LINGUA ===
-import LanguageSwitcher from "./components/LanguageSwitcher";
-
-// ---- Importa la logica mobile ----
+import AvatarAnimato from "./components/animation/AvatarAnimato";
+import holder0 from "./assets/page-content-sprites/holders/8.png";
 import useIsMobile from "./hooks/useIsMobile";
 import UmbyBotRPG from "./mobile/UmbyBotRPG";
 
 const SECTIONS = ["home", "about", "projects", "contacts"];
 const FLIP_DURATION = 820;
 
-function App() {
-  // 1️⃣ === HOOKS: devono essere TUTTI chiamati, sempre ===
-  // Mobile/desktop detection (breakpoint 600px)
-  const isMobile = useIsMobile();
+const DASHBOARD_SCALE = 1.5;
+// Avatar overlay: puoi regolare qui!
+const AVATAR_ORIG_LEFT = 270;
+const AVATAR_ORIG_TOP = 185;
+const AVATAR_WIDTH = 80;
+const AVATAR_HEIGHT = 80;
+// Cerchio overlay: puoi regolare qui!
+const CIRCLE_ORIG_LEFT = 260;
+const CIRCLE_ORIG_TOP = 175;
+const CIRCLE_WIDTH = 100;
+const CIRCLE_HEIGHT = 100;
 
-  // Navigazione, animazione, overlay (per versione desktop)
+function App() {
+  const isMobile = useIsMobile();
   const [selectedSection, setSelectedSection] = useState("home");
   const [pendingSection, setPendingSection] = useState(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipDirection, setFlipDirection] = useState("forward");
   const [hasInteracted, setHasInteracted] = useState(false);
   const prevSectionRef = useRef("home");
-
-  // Overlay effetto luce/buio
   const [overlayVisible, setOverlayVisible] = useState(true);
   const [bulbLight, setBulbLight] = useState(false);
   const [dialogBoxVisible, setDialogBoxVisible] = useState(false);
 
-  // Ref dashboard per overlay
+  // Stato: animazione bocca avatar (viene aggiornato da HomeDialogBox)
+  const [avatarTalking, setAvatarTalking] = useState(false);
+
   const dashboardRef = useRef();
 
-  // Pixel-perfect overlay buco
-  const HOLE_TOP = 316 + 87;
-  const HOLE_LEFT = 814 + 16;
-  const HOLE_WIDTH = 61;
-  const HOLE_HEIGHT = 140;
+  // Overlay ABS: calcolato su mount/resize/scroll
+  const [avatarAbs, setAvatarAbs] = useState({ left: 0, top: 0 });
+  const [circleAbs, setCircleAbs] = useState({ left: 0, top: 0 });
 
-  // 2️⃣ === CALLBACKS desktop ===
+  // Aggiornamento posizione overlays: retry loop (evita glitch on refresh)
+  useEffect(() => {
+    function updatePos() {
+      if (!dashboardRef.current) return;
+      const rect = dashboardRef.current.getBoundingClientRect();
+      setAvatarAbs({
+        left: rect.left + AVATAR_ORIG_LEFT * DASHBOARD_SCALE,
+        top: rect.top + AVATAR_ORIG_TOP * DASHBOARD_SCALE,
+      });
+      setCircleAbs({
+        left: rect.left + CIRCLE_ORIG_LEFT * DASHBOARD_SCALE,
+        top: rect.top + CIRCLE_ORIG_TOP * DASHBOARD_SCALE,
+      });
+    }
+    // Retry loop su mount, catch asincronie
+    let tries = 0;
+    function tryUpdate() {
+      updatePos();
+      tries++;
+      if (tries < 12) setTimeout(tryUpdate, 85);
+    }
+    tryUpdate();
+
+    window.addEventListener("resize", updatePos);
+    window.addEventListener("scroll", updatePos);
+    return () => {
+      window.removeEventListener("resize", updatePos);
+      window.removeEventListener("scroll", updatePos);
+    };
+  }, [selectedSection, DASHBOARD_SCALE]);
+
+  // POWER HUB / FLIP CALLBACKS
   const handlePowerOnFinished = useCallback(() => {
     setOverlayVisible(false);
     setDialogBoxVisible(true);
   }, []);
-
-  const handlePowerClick = useCallback((on) => {
+  const handlePowerClick = useCallback(() => {
     setOverlayVisible(true);
     setDialogBoxVisible(false);
   }, []);
+  const handleBulbChange = useCallback((on) => setBulbLight(on), []);
 
-  const handleBulbChange = useCallback((on) => {
-    setBulbLight(on);
-  }, []);
-
-  // Navigazione con flip
+  // NAVIGAZIONE CON FLIP
   const handleSectionChange = (newSection) => {
     if (newSection === selectedSection || isFlipping) return;
     setHasInteracted(true);
@@ -77,24 +108,25 @@ function App() {
     }, FLIP_DURATION);
   };
 
-  // 3️⃣ === RENDER CONDIZIONALE ===
-  // Se siamo su mobile (<600px), mostra SOLO UmbyBotRPG
-  if (isMobile) {
-    return <UmbyBotRPG />;
-  }
+  // SOLO MOBILE: mostra chatbot mobile
+  if (isMobile) return <UmbyBotRPG />;
 
-  // 4️⃣ === VERSIONE DESKTOP ===
-  // Funzione per renderizzare la sezione corrente
+  // RENDER SEZIONE CORRENTE, passa la callback a HomeSection!
   const renderSection = () => {
     switch (selectedSection) {
-      case "home": return <HomeSection dialogBoxVisible={dialogBoxVisible} />;
+      case "home":
+        return (
+          <HomeSection
+            dialogBoxVisible={dialogBoxVisible}
+            onAvatarTalking={setAvatarTalking}
+          />
+        );
       case "about": return <AboutSection />;
       case "projects": return <ProjectsSection />;
       case "contacts": return <ContactsSection />;
-      default: return <HomeSection dialogBoxVisible={dialogBoxVisible} />;
+      default: return <HomeSection dialogBoxVisible={dialogBoxVisible} onAvatarTalking={setAvatarTalking} />;
     }
   };
-
   const showPageRoll = selectedSection !== "home";
 
   return (
@@ -109,20 +141,59 @@ function App() {
         overflow: "hidden"
       }}
     >
-      {/* --- OVERLAY BUCATO (effetto luce/ombra) --- */}
+      {/* --- OVERLAY NERO SOPRA TUTTO (zIndex altissimo) --- */}
       <OverlayWithHole
         visible={overlayVisible}
         opacity={bulbLight ? 0.12 : 0.77}
-        zIndex={10003}
+        zIndex={20000}
         containerRef={dashboardRef}
-        holeTop={HOLE_TOP}
-        holeLeft={HOLE_LEFT}
-        holeWidth={HOLE_WIDTH}
-        holeHeight={HOLE_HEIGHT}
+        holeTop={316 + 87}
+        holeLeft={814 + 16}
+        holeWidth={61}
+        holeHeight={140}
         borderRadius={9}
       />
 
-      {/* --- DASHBOARD CENTRALE --- */}
+      {/* --- CERCHIO E AVATAR SOLO SU HOME, SOTTO OVERLAY NERO --- */}
+      {selectedSection === "home" && !isFlipping && (
+        <>
+          {/* Cerchio (zIndex basso, sotto avatar) */}
+          <img
+            src={holder0}
+            alt="avatar-circle"
+            style={{
+              position: "fixed",
+              left: circleAbs.left,
+              top: circleAbs.top,
+              width: CIRCLE_WIDTH * DASHBOARD_SCALE,
+              height: CIRCLE_HEIGHT * DASHBOARD_SCALE,
+              zIndex: 11999,
+              pointerEvents: "none",
+              imageRendering: "pixelated",
+            }}
+            draggable={false}
+          />
+          {/* Avatar (zIndex sopra il cerchio, sempre nitido, animato) */}
+          <div
+            style={{
+              position: "fixed",
+              left: avatarAbs.left,
+              top: avatarAbs.top,
+              width: AVATAR_WIDTH * DASHBOARD_SCALE,
+              height: AVATAR_HEIGHT * DASHBOARD_SCALE,
+              zIndex: 12000,
+              pointerEvents: "none",
+              borderRadius: "50%",
+              overflow: "hidden",
+              background: "none",
+            }}
+          >
+            <AvatarAnimato talking={avatarTalking} />
+          </div>
+        </>
+      )}
+
+      {/* --- DASHBOARD BASE (ref per overlay) --- */}
       <div
         ref={dashboardRef}
         style={{
@@ -147,7 +218,6 @@ function App() {
           width={140}
           height={500}
         />
-
         <div
           style={{
             flex: 0,
@@ -159,9 +229,9 @@ function App() {
             position: "relative"
           }}
         >
-          {/* DashboardBase riceve le prop per la PowerHub */}
           <DashboardBase
-            scale={1.5}
+            ref={dashboardRef}
+            scale={DASHBOARD_SCALE}
             showPageRoll={showPageRoll}
             isFlipping={isFlipping}
             pageFlipOverlay={
@@ -186,5 +256,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

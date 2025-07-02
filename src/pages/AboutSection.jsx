@@ -65,13 +65,13 @@ const AboutSection = () => {
       {/* --- CORNICE TONDA AVATAR --- */}
       <img src={holder0} alt="holder"
         style={{
-          position: "absolute", top: 70, left: 40, width: 80, height: 80,
+          position: "absolute", top: 70, left: 25, width: 100, height: 100,
           zIndex: 12, pointerEvents: "none",
         }} draggable={false} />
 
       {/* --- AVATAR ANIMATO/STATICO --- */}
       <div style={{
-        position: "absolute", top: 78, left: 48, width: 65, height: 65,
+        position: "absolute", top: 80, left: 35, width: 80, height: 80,
         borderRadius: "50%", overflow: "hidden", zIndex: 11,
         display: "flex", alignItems: "flex-end", justifyContent: "center",
       }}>

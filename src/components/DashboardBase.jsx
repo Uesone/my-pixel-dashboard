@@ -1,48 +1,36 @@
-import React from "react";
+import React, { forwardRef } from "react";
 // --- ASSET principali ---
 import frame from "../assets/pixel-map-sprites/base/3.png";
 import background from "../assets/pixel-map-sprites/base/0.png";
 import corners from "../assets/pixel-map-sprites/base/1.png";
 import leftBar from "../assets/pixel-map-sprites/base/2.png";
-
 // --- POWER HUB ---
 import powerHubTube from "../assets/pixel-map-sprites/power-hub/1.png";
 import powerHubGlow from "../assets/pixel-map-sprites/power-hub/2.png";
 import powerHubBox from "../assets/pixel-map-sprites/power-hub/3.png";
 import PowerHubLights from "./PowerHubLights";
-
-// --- FOGLIO ARROTOLATO (Page roll) ---
+// --- FOGLIO ARROTOLATO ---
 import pageRollPng from "../assets/content/page-flip/next-page/11.png";
-
-// --- BUSSOLA (COMPASS) ---
+// --- BUSSOLA/COMPASS & CLOCK ---
 import Compass from "./Compass";
-
-// --- CLOCK ANIMATED ---
 import ClockAnimated from "./ClockAnimated";
 
 /**
- * DashboardBase
- * Layout principale della dashboard con frame, decorazioni, power hub e slot per children.
- * Ora contiene una classe "dashboard-base" per consentire il calcolo delle posizioni assolute
- * (necessario per tooltip scalate e altri overlay).
- *
- * @param {number} scale   Fattore di scala (default 1.4)
- * @param {ReactNode} children  Contenuto interno della pagina (es. AboutSection, Projects, ecc.)
- * @param {boolean} showPageRoll Se mostrare il foglio arrotolato in alto (effetto flip)
- * @param {ReactNode} pageFlipOverlay Overlay/animazione pagina che gira (opzionale)
- * @param {boolean} isFlipping True se in animazione page flip (nasconde gli angoli)
- * @param {object} PowerHubProps Props da passare a PowerHubLights
+ * DashboardBase (ora accetta ref!)
+ * - Layout con scaling unico per retro/pixel art UI
+ * - Il ref permette overlay esterni ancorati in pixel-perfect sopra la dashboard
  */
-const DashboardBase = ({
+const DashboardBase = forwardRef(({
   scale = 1.4,
   children,
   showPageRoll = false,
   pageFlipOverlay = null,
   isFlipping = false,
   PowerHubProps = {}
-}) => (
+}, ref) => (
   <div
-    className="dashboard-base" // <-- Importante per tooltip e overlay globali
+    className="dashboard-base"
+    ref={ref}
     style={{
       transform: `scale(${scale})`,
       transformOrigin: "top left",
@@ -52,7 +40,7 @@ const DashboardBase = ({
       height: "399px",
     }}
   >
-    {/* --- FOGLIO ARROTOLATO IN ALTO (Page flip) --- */}
+    {/* Foglio arrotolato (se attivo) */}
     {showPageRoll && (
       <img
         src={pageRollPng}
@@ -70,8 +58,7 @@ const DashboardBase = ({
         draggable={false}
       />
     )}
-
-    {/* --- FRAME ESTERNO DASHBOARD (bordo) --- */}
+    {/* Frame bordo */}
     <img
       src={frame}
       alt="frame"
@@ -86,8 +73,7 @@ const DashboardBase = ({
       }}
       draggable={false}
     />
-
-    {/* --- BARRA LATERALE SINISTRA --- */}
+    {/* Barra laterale sinistra */}
     <img
       src={leftBar}
       alt="left bar"
@@ -102,8 +88,7 @@ const DashboardBase = ({
       }}
       draggable={false}
     />
-
-    {/* --- SFONDO CENTRALE (pagina beige) --- */}
+    {/* Sfondo centrale */}
     <img
       src={background}
       alt="background"
@@ -118,8 +103,7 @@ const DashboardBase = ({
       }}
       draggable={false}
     />
-
-    {/* --- CONTENUTI INTERNI (children + eventuale overlay page flip) --- */}
+    {/* Area contenuto */}
     <div
       style={{
         position: "absolute",
@@ -134,8 +118,7 @@ const DashboardBase = ({
       {children}
       {pageFlipOverlay}
     </div>
-
-    {/* --- DECORAZIONI ANGOLI (solo se non sta flippando) --- */}
+    {/* Decorazione angoli (solo se non flip) */}
     {!isFlipping && (
       <img
         src={corners}
@@ -152,8 +135,7 @@ const DashboardBase = ({
         draggable={false}
       />
     )}
-
-    {/* --- POWER HUB: tubo, glow, box --- */}
+    {/* Power hub: tubo, glow, box */}
     <img
       src={powerHubTube}
       alt="power hub tube"
@@ -168,22 +150,19 @@ const DashboardBase = ({
       }}
       draggable={false}
     />
-
     {/* Glow orizzontali */}
     <img src={powerHubGlow} alt="glow horizontal 1" style={{ position: "absolute", top: "50px", left: "35px", width: "32px", height: "32px", zIndex: 31, pointerEvents: "none" }} draggable={false} />
     <img src={powerHubGlow} alt="glow horizontal 2" style={{ position: "absolute", top: "150px", left: "35px", width: "32px", height: "32px", zIndex: 31, pointerEvents: "none" }} draggable={false} />
     <img src={powerHubGlow} alt="glow horizontal 3" style={{ position: "absolute", top: "65px", left: "428px", width: "32px", height: "32px", zIndex: 31, pointerEvents: "none" }} draggable={false} />
     <img src={powerHubGlow} alt="glow horizontal 4" style={{ position: "absolute", top: "170px", left: "428px", width: "32px", height: "32px", zIndex: 31, pointerEvents: "none" }} draggable={false} />
     <img src={powerHubGlow} alt="glow horizontal 5" style={{ position: "absolute", top: "250px", left: "35px", width: "32px", height: "32px", zIndex: 31, pointerEvents: "none" }} draggable={false} />
-
     {/* Glow verticali */}
     <img src={powerHubGlow} alt="glow vertical 1" style={{ position: "absolute", top: "36px", left: "400px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
     <img src={powerHubGlow} alt="glow vertical 2" style={{ position: "absolute", top: "36px", left: "320px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
     <img src={powerHubGlow} alt="glow vertical 3" style={{ position: "absolute", top: "36px", left: "245px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
     <img src={powerHubGlow} alt="glow vertical 4" style={{ position: "absolute", top: "36px", left: "160px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
     <img src={powerHubGlow} alt="glow vertical 5" style={{ position: "absolute", top: "36px", left: "80px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
-
-    {/* --- BOX BASE POWER HUB --- */}
+    {/* Box power hub */}
     <img
       src={powerHubBox}
       alt="power hub box"
@@ -198,17 +177,12 @@ const DashboardBase = ({
       }}
       draggable={false}
     />
-
-    {/* --- POWER HUB ANIMATED LIGHTS & BULB --- */}
+    {/* Power hub animato */}
     <PowerHubLights {...PowerHubProps} />
-
-    {/* --- COMPASS --- */}
+    {/* Bussola */}
     <Compass />
-
-    {/* --- CLOCK ANIMATED --- */}
-    <ClockAnimated /> {/* <--- Animazione digitale! */}
-
+    {/* Clock */}
+    <ClockAnimated />
   </div>
-);
-
+));
 export default DashboardBase;
