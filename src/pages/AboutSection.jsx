@@ -98,7 +98,8 @@ const AboutSection = () => {
 
       {/* --- TITOLO TESTO ("About") --- */}
       <div style={{
-        position: "absolute", top: 3, left: 90, fontFamily: "'VT323', monospace",
+        position: "absolute", top: 3, left: 90,
+        fontFamily: "'Pixel Operator', 'VT323', monospace",
         fontSize: 52, color: "#24170b", letterSpacing: 0, padding: "3px 16px",
         zIndex: 20, textShadow: `-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643`
       }}>
@@ -107,7 +108,8 @@ const AboutSection = () => {
 
       {/* --- NOME/NICKNAME --- */}
       <div style={{
-        position: "absolute", top: 72, left: 135, fontFamily: "'VT323', monospace",
+        position: "absolute", top: 72, left: 135,
+        fontFamily: "'Pixel Operator', 'VT323', monospace",
         fontSize: 16, color: "#3a2412", zIndex: 30, minWidth: 140, textAlign: "left",
       }}>
         <b>{t("about.name_label")}</b> <span style={{ color: "#b89254" }}>{t("about.name_value")}</span>
@@ -115,7 +117,8 @@ const AboutSection = () => {
 
       {/* --- LEVEL/AGE --- */}
       <div style={{
-        position: "absolute", top: 98, left: 135, fontFamily: "'VT323', monospace",
+        position: "absolute", top: 98, left: 135,
+        fontFamily: "'Pixel Operator', 'VT323', monospace",
         fontSize: 16, color: "#3a2412", zIndex: 31, minWidth: 85, textAlign: "left",
       }}>
         <b>{t("about.age_label")}</b> <span style={{ color: "#b89254" }}>{t("about.age_value")}</span>
@@ -123,7 +126,8 @@ const AboutSection = () => {
 
       {/* --- XP BAR (PNG filled + empty + valori) --- */}
       <div style={{
-        position: "absolute", top: 118, left: 136, fontFamily: "'VT323', monospace",
+        position: "absolute", top: 118, left: 136,
+        fontFamily: "'Pixel Operator', 'VT323', monospace",
         fontSize: 16, color: "#3a2412", zIndex: 32, minWidth: 140, textAlign: "left",
         display: "flex", alignItems: "center", gap: 0,
       }}>
@@ -138,14 +142,18 @@ const AboutSection = () => {
             width: 30, height: 30, marginLeft: "-3px", imageRendering: "pixelated",
             verticalAlign: "middle", marginTop: "4px",
           }} draggable={false} />
-        <span style={{ fontSize: 13, marginLeft: 3, color: "#d98e42" }}>
+        <span style={{
+          fontFamily: "'Pixel Operator', 'VT323', monospace",
+          fontSize: 13, marginLeft: 3, color: "#d98e42"
+        }}>
           (1250/<span style={{ color: "#b89254" }}>2000</span>)
         </span>
       </div>
 
       {/* --- RUOLO/ROLE --- */}
       <div style={{
-        position: "absolute", top: 146, left: 135, fontFamily: "'VT323', monospace",
+        position: "absolute", top: 146, left: 135,
+        fontFamily: "'Pixel Operator', 'VT323', monospace",
         fontSize: 16, color: "#3a2412", zIndex: 33, minWidth: 145, textAlign: "left",
       }}>
         <b>{t("about.role_label")}</b>
@@ -154,7 +162,8 @@ const AboutSection = () => {
 
       {/* --- SCRITTA "Skills:" --- */}
       <div style={{
-        position: "absolute", top: 165, left: 60, fontFamily: "'VT323', monospace",
+        position: "absolute", top: 165, left: 60,
+        fontFamily: "'Pixel Operator', 'VT323', monospace",
         fontSize: 16, color: "#3a2412", zIndex: 40, textShadow: "0 1px 0 #fff", letterSpacing: -0.5,
       }}>
         {t("about.skills_label")}
@@ -173,6 +182,7 @@ const AboutSection = () => {
         top={186}
         left={26}
         zIndex={60}
+        fontFamily={"'Pixel Operator', monospace"} // <- per sicurezza lo passi anche qui
       />
     </PageWrapper>
   );
