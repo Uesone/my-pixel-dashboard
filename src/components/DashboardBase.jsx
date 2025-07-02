@@ -16,10 +16,11 @@ import Compass from "./Compass";
 import ClockAnimated from "./ClockAnimated";
 
 /**
- * DashboardBase (ora accetta ref!)
- * - Layout con scaling unico per retro/pixel art UI
- * - Il ref permette overlay esterni ancorati in pixel-perfect sopra la dashboard
+ * DashboardBase (ottimizzata performance/pixel art)
  */
+const DASHBOARD_WIDTH = 487;
+const DASHBOARD_HEIGHT = 399;
+
 const DashboardBase = forwardRef(({
   scale = 1.4,
   children,
@@ -36,151 +37,199 @@ const DashboardBase = forwardRef(({
       transformOrigin: "top left",
       display: "inline-block",
       position: "relative",
-      width: "487px",
-      height: "399px",
+      width: DASHBOARD_WIDTH,
+      height: DASHBOARD_HEIGHT,
+      // Riserva sempre spazio fisso = no CLS
+      minWidth: DASHBOARD_WIDTH,
+      minHeight: DASHBOARD_HEIGHT,
+      maxWidth: DASHBOARD_WIDTH,
+      maxHeight: DASHBOARD_HEIGHT,
+      overflow: "hidden"
     }}
   >
-    {/* Foglio arrotolato (se attivo) */}
+    {/* Foglio arrotolato */}
     {showPageRoll && (
       <img
         src={pageRollPng}
         alt="Foglio arrotolato in alto"
+        width={650}
+        height={500}
         style={{
           position: "absolute",
           top: -65,
           left: -85,
-          width: 650,
-          height: 500,
           zIndex: 9999,
           pointerEvents: "none",
-          imageRendering: "pixelated",
+          imageRendering: "pixelated"
         }}
         draggable={false}
+        loading="eager"
       />
     )}
+
     {/* Frame bordo */}
     <img
       src={frame}
       alt="frame"
+      width={DASHBOARD_WIDTH}
+      height={DASHBOARD_HEIGHT}
       style={{
         position: "absolute",
         top: 0,
         left: 0,
-        width: "487px",
-        height: "399px",
         zIndex: 1,
         pointerEvents: "none",
+        imageRendering: "pixelated"
       }}
       draggable={false}
+      loading="eager"
     />
+
     {/* Barra laterale sinistra */}
     <img
       src={leftBar}
       alt="left bar"
+      width={129}
+      height={373}
       style={{
         position: "absolute",
-        top: "13px",
-        left: "36px",
-        width: "129px",
-        height: "373px",
+        top: 13,
+        left: 36,
         zIndex: 2,
         pointerEvents: "none",
+        imageRendering: "pixelated"
       }}
       draggable={false}
+      loading="lazy"
     />
+
     {/* Sfondo centrale */}
     <img
       src={background}
       alt="background"
+      width={370}
+      height={380}
       style={{
         position: "absolute",
-        top: "5px",
-        left: "103px",
-        width: "370px",
-        height: "380px",
+        top: 5,
+        left: 103,
         zIndex: 3,
         pointerEvents: "none",
+        imageRendering: "pixelated"
       }}
       draggable={false}
+      loading="eager"
     />
+
     {/* Area contenuto */}
     <div
       style={{
         position: "absolute",
-        top: "52px",
-        left: "130px",
-        width: "310px",
-        height: "290px",
+        top: 52,
+        left: 130,
+        width: 310,
+        height: 290,
         zIndex: 10,
-        overflow: "hidden",
+        overflow: "hidden"
       }}
     >
       {children}
       {pageFlipOverlay}
     </div>
-    {/* Decorazione angoli (solo se non flip) */}
+
+    {/* Decorazione angoli */}
     {!isFlipping && (
       <img
         src={corners}
         alt="corners"
+        width={343}
+        height={385}
         style={{
           position: "absolute",
-          top: "3px",
-          left: "116px",
-          width: "343px",
-          height: "385px",
+          top: 3,
+          left: 116,
           zIndex: 20,
           pointerEvents: "none",
+          imageRendering: "pixelated"
         }}
         draggable={false}
+        loading="lazy"
       />
     )}
+
     {/* Power hub: tubo, glow, box */}
     <img
       src={powerHubTube}
       alt="power hub tube"
+      width={438}
+      height={325}
       style={{
         position: "absolute",
-        top: "23px",
-        left: "25px",
-        width: "438px",
-        height: "325px",
+        top: 23,
+        left: 25,
         zIndex: 30,
         pointerEvents: "none",
+        imageRendering: "pixelated"
       }}
       draggable={false}
+      loading="lazy"
     />
-    {/* Glow orizzontali */}
-    <img src={powerHubGlow} alt="glow horizontal 1" style={{ position: "absolute", top: "50px", left: "35px", width: "32px", height: "32px", zIndex: 31, pointerEvents: "none" }} draggable={false} />
-    <img src={powerHubGlow} alt="glow horizontal 2" style={{ position: "absolute", top: "150px", left: "35px", width: "32px", height: "32px", zIndex: 31, pointerEvents: "none" }} draggable={false} />
-    <img src={powerHubGlow} alt="glow horizontal 3" style={{ position: "absolute", top: "65px", left: "428px", width: "32px", height: "32px", zIndex: 31, pointerEvents: "none" }} draggable={false} />
-    <img src={powerHubGlow} alt="glow horizontal 4" style={{ position: "absolute", top: "170px", left: "428px", width: "32px", height: "32px", zIndex: 31, pointerEvents: "none" }} draggable={false} />
-    <img src={powerHubGlow} alt="glow horizontal 5" style={{ position: "absolute", top: "250px", left: "35px", width: "32px", height: "32px", zIndex: 31, pointerEvents: "none" }} draggable={false} />
-    {/* Glow verticali */}
-    <img src={powerHubGlow} alt="glow vertical 1" style={{ position: "absolute", top: "36px", left: "400px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
-    <img src={powerHubGlow} alt="glow vertical 2" style={{ position: "absolute", top: "36px", left: "320px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
-    <img src={powerHubGlow} alt="glow vertical 3" style={{ position: "absolute", top: "36px", left: "245px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
-    <img src={powerHubGlow} alt="glow vertical 4" style={{ position: "absolute", top: "36px", left: "160px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
-    <img src={powerHubGlow} alt="glow vertical 5" style={{ position: "absolute", top: "36px", left: "80px", width: "32px", height: "32px", zIndex: 32, pointerEvents: "none", transform: "rotate(90deg)", transformOrigin: "center center" }} draggable={false} />
+
+    {/* Glow orizzontali e verticali (mappati) */}
+    {[
+      // orizzontali
+      { top: 50, left: 35 }, { top: 150, left: 35 }, { top: 65, left: 428 }, { top: 170, left: 428 }, { top: 250, left: 35 },
+      // verticali
+      { top: 36, left: 400, vertical: true },
+      { top: 36, left: 320, vertical: true },
+      { top: 36, left: 245, vertical: true },
+      { top: 36, left: 160, vertical: true },
+      { top: 36, left: 80, vertical: true }
+    ].map((glow, i) => (
+      <img
+        key={i}
+        src={powerHubGlow}
+        alt={`power hub glow ${glow.vertical ? "vertical" : "horizontal"} ${i + 1}`}
+        width={32}
+        height={32}
+        style={{
+          position: "absolute",
+          top: glow.top,
+          left: glow.left,
+          zIndex: glow.vertical ? 32 : 31,
+          pointerEvents: "none",
+          imageRendering: "pixelated",
+          ...(glow.vertical ? { transform: "rotate(90deg)", transformOrigin: "center center" } : {})
+        }}
+        draggable={false}
+        loading="lazy"
+      />
+    ))}
+
     {/* Box power hub */}
     <img
       src={powerHubBox}
       alt="power hub box"
+      width={77}
+      height={123}
       style={{
         position: "absolute",
-        top: "230px",
-        left: "418px",
-        width: "77px",
-        height: "123px",
+        top: 230,
+        left: 418,
         zIndex: 33,
         pointerEvents: "none",
+        imageRendering: "pixelated"
       }}
       draggable={false}
+      loading="lazy"
     />
+
     {/* Power hub animato */}
     <PowerHubLights {...PowerHubProps} />
+
     {/* Bussola */}
     <Compass />
+
     {/* Clock */}
     <ClockAnimated />
   </div>

@@ -1,8 +1,9 @@
 import React from "react";
 import PageWrapper from "../components/PageWrapper";
 import CarouselSkills from "../components/CarouselSkills";
-import { useLanguage } from "../components/LanguageContext.jsx"; // <-- path corretto (di solito src/LanguageContext)
+import { useLanguage } from "../components/LanguageContext.jsx";
 
+// --- Import delle immagini/icone (come hai fatto tu) ---
 import holder0 from "../assets/page-content-sprites/holders/8.png";
 import holderIcon from "../assets/page-content-sprites/holders/6.png";
 import linePng from "../assets/page-content-sprites/holders/0.png";
@@ -28,7 +29,7 @@ import icon15 from "../assets/ui/tech-icons/15.png";
 import icon16 from "../assets/ui/tech-icons/16.png";
 import icon17 from "../assets/ui/tech-icons/17.png";
 
-// skillIcons statico (le label sono nei JSON e sostituite sotto!)
+// --- Definizione array icone skill statiche ---
 const skillIcons = [
   { src: icon0,   iconSize: 20, offsetX: 0,    offsetY: -1 },
   { src: icon1,   iconSize: 21, offsetX: 0,    offsetY: 0 },
@@ -53,8 +54,7 @@ const skillIcons = [
 const AboutSection = () => {
   const { t } = useLanguage();
   const skillLabels = t("about.skills");
-
-  // Unisci le icone con le label della lingua corrente
+  // --- Mappa icone skill con label localizzata ---
   const localizedSkillIcons = skillIcons.map((icon, i) => ({
     ...icon,
     label: skillLabels[i] || "",
@@ -62,14 +62,19 @@ const AboutSection = () => {
 
   return (
     <PageWrapper>
-      {/* --- CORNICE TONDA AVATAR --- */}
-      <img src={holder0} alt="holder"
+      {/* --- AVATAR E DECORAZIONI --- */}
+      <img
+        src={holder0}
+        alt="Avatar frame"
+        width={100}
+        height={100}
         style={{
-          position: "absolute", top: 70, left: 25, width: 100, height: 100,
-          zIndex: 12, pointerEvents: "none",
-        }} draggable={false} />
-
-      {/* --- AVATAR ANIMATO/STATICO --- */}
+          position: "absolute", top: 70, left: 25,
+          zIndex: 12, pointerEvents: "none", imageRendering: "pixelated"
+        }}
+        draggable={false}
+        loading="lazy"
+      />
       <div style={{
         position: "absolute", top: 80, left: 35, width: 80, height: 80,
         borderRadius: "50%", overflow: "hidden", zIndex: 11,
@@ -77,36 +82,40 @@ const AboutSection = () => {
       }}>
         <AvatarAnimato talking={false} />
       </div>
-
-      {/* --- LINEE DECORATIVE SINISTRE --- */}
-      <img src={linePng} alt="linea1"
+      <img src={linePng} alt="left deco line"
+        width={90} height={70}
         style={{
-          position: "absolute", top: 20, left: 10, width: 90, height: 70,
+          position: "absolute", top: 15, left: 10,
+          zIndex: 13, pointerEvents: "none", imageRendering: "pixelated"
+        }} draggable={false} loading="lazy" />
+      <img src={linePng} alt="left bottom deco"
+        width={35} height={50}
+        style={{
+          position: "absolute", top: 163, left: 27,
+          zIndex: 13, opacity: 0.92, pointerEvents: "none", imageRendering: "pixelated"
+        }} draggable={false} loading="lazy" />
+      <img src={linePng} alt="right deco line"
+        width={90} height={70}
+        style={{
+          position: "absolute", top: 15, left: 213,
           zIndex: 13, pointerEvents: "none",
-        }} draggable={false} />
-      <img src={linePng} alt="linea2"
-        style={{
-          position: "absolute", top: 156, left: 27, width: 35, height: 50,
-          zIndex: 13, opacity: 0.92, pointerEvents: "none",
-        }} draggable={false} />
-      {/* --- LINEA DECORATIVA DESTRA (specchiata) --- */}
-      <img src={linePng} alt="linea specchiata"
-        style={{
-          position: "absolute", top: 20, left: 213, width: 90, height: 70,
-          zIndex: 13, pointerEvents: "none", transform: "scaleX(-1)", transformOrigin: "center center",
-        }} draggable={false} />
+          transform: "scaleX(-1)", transformOrigin: "center center",
+          imageRendering: "pixelated"
+        }} draggable={false} loading="lazy" />
 
-      {/* --- TITOLO TESTO ("About") --- */}
+      {/* --- TITOLO --- */}
       <div style={{
-        position: "absolute", top: 3, left: 90,
+        position: "absolute", top: 9, left: 90,
         fontFamily: "'Pixel Operator', 'VT323', monospace",
         fontSize: 52, color: "#24170b", letterSpacing: 0, padding: "3px 16px",
-        zIndex: 20, textShadow: `-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643`
+        zIndex: 20, textShadow: `-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643`,
+        userSelect: "none",
+        whiteSpace: "nowrap"
       }}>
         {t("about.title")}
       </div>
 
-      {/* --- NOME/NICKNAME --- */}
+      {/* --- INFO PROFILO --- */}
       <div style={{
         position: "absolute", top: 72, left: 135,
         fontFamily: "'Pixel Operator', 'VT323', monospace",
@@ -114,8 +123,6 @@ const AboutSection = () => {
       }}>
         <b>{t("about.name_label")}</b> <span style={{ color: "#b89254" }}>{t("about.name_value")}</span>
       </div>
-
-      {/* --- LEVEL/AGE --- */}
       <div style={{
         position: "absolute", top: 98, left: 135,
         fontFamily: "'Pixel Operator', 'VT323', monospace",
@@ -123,25 +130,25 @@ const AboutSection = () => {
       }}>
         <b>{t("about.age_label")}</b> <span style={{ color: "#b89254" }}>{t("about.age_value")}</span>
       </div>
-
-      {/* --- XP BAR (PNG filled + empty + valori) --- */}
       <div style={{
-        position: "absolute", top: 118, left: 136,
+        position: "absolute", top: 104, left: 136,
         fontFamily: "'Pixel Operator', 'VT323', monospace",
         fontSize: 16, color: "#3a2412", zIndex: 32, minWidth: 140, textAlign: "left",
         display: "flex", alignItems: "center", gap: 0,
       }}>
         <b>{t("about.xp_label")}</b>
         <img src={xpBarPng} alt="XP Progress"
+          width={60} height={30}
           style={{
-            width: 60, height: 30, marginLeft: 0, marginRight: "-3px",
+            marginLeft: 0, marginRight: "-3px",
             imageRendering: "pixelated", verticalAlign: "middle", marginTop: "4px",
-          }} draggable={false} />
+          }} draggable={false} loading="lazy" />
         <img src={xpBarEmptyPng} alt="XP Progress Empty"
+          width={30} height={30}
           style={{
-            width: 30, height: 30, marginLeft: "-3px", imageRendering: "pixelated",
+            marginLeft: "-3px", imageRendering: "pixelated",
             verticalAlign: "middle", marginTop: "4px",
-          }} draggable={false} />
+          }} draggable={false} loading="lazy" />
         <span style={{
           fontFamily: "'Pixel Operator', 'VT323', monospace",
           fontSize: 13, marginLeft: 3, color: "#d98e42"
@@ -149,8 +156,6 @@ const AboutSection = () => {
           (1250/<span style={{ color: "#b89254" }}>2000</span>)
         </span>
       </div>
-
-      {/* --- RUOLO/ROLE --- */}
       <div style={{
         position: "absolute", top: 146, left: 135,
         fontFamily: "'Pixel Operator', 'VT323', monospace",
@@ -159,8 +164,6 @@ const AboutSection = () => {
         <b>{t("about.role_label")}</b>
         <span style={{ fontSize: 15, marginLeft: 4, color: "#b89254" }}>{t("about.role_value")}</span>
       </div>
-
-      {/* --- SCRITTA "Skills:" --- */}
       <div style={{
         position: "absolute", top: 165, left: 60,
         fontFamily: "'Pixel Operator', 'VT323', monospace",
@@ -169,7 +172,7 @@ const AboutSection = () => {
         {t("about.skills_label")}
       </div>
 
-      {/* --- CAROSELLO SKILLS CON TOOLTIP 8BIT --- */}
+      {/* --- CAROSELLO SKILL ICONS + TOOLTIP 8bit --- */}
       <CarouselSkills
         icons={localizedSkillIcons}
         holderIcon={holderIcon}
@@ -179,10 +182,18 @@ const AboutSection = () => {
         gapX={4}
         gapY={8}
         speed={0.1}
-        top={186}
+        top={198} // --- posizione carosello ---
         left={26}
         zIndex={60}
-        fontFamily={"'Pixel Operator', monospace"} // <- per sicurezza lo passi anche qui
+        fontFamily={"'Pixel Operator', monospace"}
+        // === Tooltip sempre SOTTO e CENTRATO rispetto l’icona ===
+        tooltipPositionFn={(e, icon) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          return {
+            x: rect.left + rect.width / 2, // centro orizzontale icona
+            y: rect.bottom + -5            // 10px sotto. Cambia qui: metti -5 per "sopra", aumenta/diminuisci per spazio.
+          };
+        }}
       />
     </PageWrapper>
   );

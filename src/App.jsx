@@ -19,12 +19,12 @@ const FLIP_DURATION = 820;
 const DASHBOARD_SCALE = 1.5;
 
 // === POSIZIONAMENTO AVATAR E CERCHIO ===
-const AVATAR_ORIG_LEFT = 270;
+const AVATAR_ORIG_LEFT = 262;
 const AVATAR_ORIG_TOP = 185;
 const AVATAR_WIDTH = 80;
 const AVATAR_HEIGHT = 80;
 
-const CIRCLE_ORIG_LEFT = 260;
+const CIRCLE_ORIG_LEFT = 250;
 const CIRCLE_ORIG_TOP = 175;
 const CIRCLE_WIDTH = 100;
 const CIRCLE_HEIGHT = 100;
@@ -159,7 +159,7 @@ function App() {
         zIndex={20000}
         containerRef={dashboardRef}
         holeTop={316 + 87}
-        holeLeft={814 + 16}
+        holeLeft={814 + -4}
         holeWidth={61}
         holeHeight={140}
         borderRadius={9}

@@ -37,31 +37,11 @@ const ARROW_NEXT_TOP = 298, ARROW_NEXT_LEFT = 375, ARROW_NEXT_WIDTH = 32, ARROW_
 
 // === OGGETTI PORTFOLIO (solo dati tecnici, niente testo qui!) ===
 const PROJECTS = [
-  {
-    id: "pokecard",
-    icon: item0,
-    iconSize: 25, iconTop: 3, iconLeft: 3.6
-  },
-  {
-    id: "pokecard-backend",
-    icon: item1,
-    iconSize: 25, iconTop: 3, iconLeft: 3.5
-  },
-  {
-    id: "spotify",
-    icon: item2,
-    iconSize: 25, iconTop: 3, iconLeft: 3.5
-  },
-  {
-    id: "meteo",
-    icon: item3,
-    iconSize: 25, iconTop: 3, iconLeft: 3
-  },
-  {
-    id: "trasporti",
-    icon: item4,
-    iconSize: 25, iconTop: 2, iconLeft: 4
-  }
+  { id: "pokecard", icon: item0, iconSize: 25, iconTop: 3, iconLeft: 3.6 },
+  { id: "pokecard-backend", icon: item1, iconSize: 25, iconTop: 3, iconLeft: 3.5 },
+  { id: "spotify", icon: item2, iconSize: 25, iconTop: 3, iconLeft: 3.5 },
+  { id: "meteo", icon: item3, iconSize: 25, iconTop: 3, iconLeft: 3 },
+  { id: "trasporti", icon: item4, iconSize: 25, iconTop: 2, iconLeft: 4 }
 ];
 
 // === HOOK Typewriter per descrizione progetto ===
@@ -108,9 +88,7 @@ const ProjectsSection = () => {
 
   // Mappa id -> testo tradotto
   const projectMap = Object.fromEntries(
-    translatedProjects.map((p, idx) => {
-      return [PROJECTS[idx]?.id, p];
-    })
+    translatedProjects.map((p, idx) => [PROJECTS[idx]?.id, p])
   );
 
   // --- Accoppia asset tecnici a testo tradotto ---
@@ -161,6 +139,9 @@ const ProjectsSection = () => {
   const end = start + GRID_ROWS_VISIBLE * GRID_COLS;
   const visibleSlots = slots.slice(start, end);
 
+  // --- Riserva sempre spazio per infobar per evitare layout shift (CLS) ---
+  const hasSelected = selected !== null && slots[selected];
+
   return (
     <PageWrapper>
       {/* --- LINEE DECORATIVE + TITOLO --- */}
@@ -168,13 +149,17 @@ const ProjectsSection = () => {
         style={{
           position: "absolute", top: 20, left: 15,
           width: 50, height: 70, zIndex: 13, pointerEvents: "none"
-        }} draggable={false} />
+        }} draggable={false}
+        width={50} height={70} loading="lazy"
+      />
       <img src={linePng} alt="linea destra"
         style={{
           position: "absolute", top: 20, left: 251,
           width: 50, height: 70, zIndex: 13, pointerEvents: "none",
           transform: "scaleX(-1)", transformOrigin: "center center"
-        }} draggable={false} />
+        }} draggable={false}
+        width={50} height={70} loading="lazy"
+      />
       <div style={{
         position: "absolute", top: 4, left: 55,
         fontFamily: "'VT323', monospace", fontSize: 52, color: "#24170b",
@@ -230,6 +215,8 @@ const ProjectsSection = () => {
                 onMouseEnter={e => handleMouseEnter(e, project)}
                 onMouseMove={e => handleMouseEnter(e, project)}
                 onMouseLeave={handleMouseLeave}
+                aria-label={project ? project.name : ""}
+                role={project ? "button" : "presentation"}
               >
                 <img
                   src={project && selected === i + start ? holderFilledPng : holderPng}
@@ -239,6 +226,9 @@ const ProjectsSection = () => {
                     imageRendering: "pixelated", display: "block"
                   }}
                   draggable={false}
+                  width={SLOT_SIZE}
+                  height={SLOT_SIZE}
+                  loading="lazy"
                 />
                 {project && (
                   <img
@@ -251,6 +241,9 @@ const ProjectsSection = () => {
                       imageRendering: "pixelated", pointerEvents: "none"
                     }}
                     draggable={false}
+                    width={size}
+                    height={size}
+                    loading="lazy"
                   />
                 )}
               </div>
@@ -272,73 +265,89 @@ const ProjectsSection = () => {
         )}
       </div>
 
-      {/* --- INFO BAR + ICONA + DESCRIZIONE: SOLO SE SLOT SELEZIONATO --- */}
-      {selected !== null && slots[selected] && (
-        <>
-          <img src={infoBarPng} alt="info bar"
-            style={{
-              position: "absolute", top: INFOBAR_TOP, left: INFOBAR_LEFT,
-              width: INFOBAR_WIDTH, height: INFOBAR_HEIGHT,
-              imageRendering: "pixelated", zIndex: 15, pointerEvents: "none"
-            }} draggable={false} />
-
-          {/* --- Icona del progetto selezionato nell'infobar --- */}
+      {/* --- INFO BAR + ICONA + DESCRIZIONE: SEMPRE PRESENTE, SPAZIO RISERVATO --- */}
+      <div style={{
+        position: "absolute", top: INFOBAR_TOP, left: INFOBAR_LEFT,
+        width: INFOBAR_WIDTH, height: INFOBAR_HEIGHT,
+        zIndex: 15,
+        visibility: hasSelected ? "visible" : "hidden",
+        pointerEvents: "none"
+      }}>
+        <img
+          src={infoBarPng}
+          alt="info bar"
+          style={{
+            position: "absolute", top: 0, left: 0,
+            width: INFOBAR_WIDTH, height: INFOBAR_HEIGHT,
+            imageRendering: "pixelated"
+          }}
+          draggable={false}
+          width={INFOBAR_WIDTH}
+          height={INFOBAR_HEIGHT}
+        />
+        {/* Icona progetto selezionato */}
+        {hasSelected && (
           <img
             src={slots[selected].icon}
             alt={slots[selected].name}
             style={{
               position: "absolute",
-              top: INFOBAR_TOP + INFOBAR_ICON_TOP,      // USO TOP CONFIGURABILE
-              left: INFOBAR_LEFT + INFOBAR_ICON_LEFT,   // USO LEFT CONFIGURABILE
+              top: INFOBAR_ICON_TOP,
+              left: INFOBAR_ICON_LEFT,
               width: INFOBAR_ICON_WIDTH,
               height: INFOBAR_ICON_HEIGHT,
               imageRendering: "pixelated",
-              zIndex: 16,
-              pointerEvents: "none"
+              zIndex: 16
             }}
             draggable={false}
+            width={INFOBAR_ICON_WIDTH}
+            height={INFOBAR_ICON_HEIGHT}
           />
+        )}
 
-          <div
-            style={{
-              position: "absolute",
-              top: INFOBAR_TOP + DESC_TOP,
-              left: INFOBAR_LEFT + DESC_LEFT,
-              width: DESC_WIDTH,
-              height: DESC_HEIGHT,
-              fontFamily: DESC_FONT_FAMILY,
-              fontSize: DESC_FONT_SIZE,
-              color: DESC_COLOR,
-              letterSpacing: DESC_LETTER_SPACING,
-              zIndex: 16,
-              overflow: "hidden",
-              whiteSpace: "pre-line",
-              wordBreak: "break-word",
-              userSelect: "none"
-            }}
-          >
-            {displayed}
-          </div>
+        {/* Descrizione animata */}
+        <div
+          style={{
+            position: "absolute",
+            top: DESC_TOP,
+            left: DESC_LEFT,
+            width: DESC_WIDTH,
+            height: DESC_HEIGHT,
+            fontFamily: DESC_FONT_FAMILY,
+            fontSize: DESC_FONT_SIZE,
+            color: DESC_COLOR,
+            letterSpacing: DESC_LETTER_SPACING,
+            zIndex: 16,
+            overflow: "hidden",
+            whiteSpace: "pre-line",
+            wordBreak: "break-word",
+            userSelect: "none"
+          }}
+        >
+          {hasSelected ? displayed : ""}
+        </div>
+      </div>
 
-          {done && hasNext && (
-            <img
-              src={nextArrowPng}
-              alt="continua"
-              onClick={next}
-              style={{
-                position: "fixed",
-                top: ARROW_NEXT_TOP,
-                left: ARROW_NEXT_LEFT,
-                width: ARROW_NEXT_WIDTH,
-                height: ARROW_NEXT_HEIGHT,
-                zIndex: 9999,
-                cursor: "pointer",
-                transition: "opacity 0.15s"
-              }}
-              draggable={false}
-            />
-          )}
-        </>
+      {/* --- NEXT ARROW (pagina descrizione lunga) --- */}
+      {hasSelected && done && hasNext && (
+        <img
+          src={nextArrowPng}
+          alt="continua"
+          onClick={next}
+          style={{
+            position: "fixed",
+            top: ARROW_NEXT_TOP,
+            left: ARROW_NEXT_LEFT,
+            width: ARROW_NEXT_WIDTH,
+            height: ARROW_NEXT_HEIGHT,
+            zIndex: 9999,
+            cursor: "pointer",
+            transition: "opacity 0.15s"
+          }}
+          draggable={false}
+          width={ARROW_NEXT_WIDTH}
+          height={ARROW_NEXT_HEIGHT}
+        />
       )}
 
       {/* --- TOOLTIP PIXEL ART --- */}

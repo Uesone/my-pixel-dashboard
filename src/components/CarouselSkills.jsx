@@ -2,10 +2,10 @@ import React, { useRef, useEffect, useState } from "react";
 import PixelTooltip from "./PixelTooltip";
 
 /**
- * CarouselSkills
- * - Carosello automatico (2 righe) di holders+icone, si ferma all'hover su qualsiasi icona.
- * - Tooltip 8bit compare **sotto il cursore** (se è presente la prop "label").
- * - Gestisce posizione corretta anche con dashboard scalata.
+ * CarouselSkills - carosello pixel-art a doppia riga con tooltip 8bit.
+ * Props:
+ * - icons: array di oggetti {src, label, ...}
+ * - tooltipPositionFn: funzione custom per posizionare il tooltip (opzionale)
  */
 export default function CarouselSkills({
   icons,
@@ -21,11 +21,9 @@ export default function CarouselSkills({
   left = 26,
   zIndex = 50,
   style = {},
+  tooltipPositionFn,
 }) {
-  // --- CONFIG: SCALA DASHBOARD (usato solo se vuoi logiche custom)
-  const SCALE = 1.4;
-
-  // Stato carosello (pausa su hover) e tooltip
+  // Stato carosello e tooltip
   const [paused, setPaused] = useState(false);
   const [scroll, setScroll] = useState(0);
   const [tooltip, setTooltip] = useState({ visible: false, label: "", x: 0, y: 0 });
@@ -33,38 +31,38 @@ export default function CarouselSkills({
   const frame = useRef();
   const animation = useRef();
 
-  // --- Normalizzazione icone
+  // Normalizzazione icone
   const normalizedIcons = icons.map(icon =>
     typeof icon === "string" ? { src: icon } : icon
   );
 
-  // --- Divisione in due righe alternate
+  // Divisione in due righe alternate
   const rows = [[], []];
   normalizedIcons.forEach((ic, i) => rows[i % 2].push(ic));
   const longestRow = Math.max(...rows.map(r => r.length));
 
-  // --- Animazione carosello infinita
+  // --- Animazione infinita (performance e cleanup)
   useEffect(() => {
     if (paused) return;
     animation.current = requestAnimationFrame(() => {
       setScroll((s) => (s + speed) % ((holderSize + gapX) * longestRow));
     });
-    return () => cancelAnimationFrame(animation.current);
-    // eslint-disable-next-line
+    return () => {
+      if (animation.current) cancelAnimationFrame(animation.current);
+    };
   }, [scroll, paused, speed, holderSize, gapX, longestRow]);
 
-  /**
-   * showTooltip: Mostra tooltip esattamente sotto il cursore,
-   * indipendentemente dallo scaling della dashboard.
-   * Usa e.clientX/e.clientY che sono già "scalate" (viewport absolute).
-   */
+  // Tooltip con posizione custom (fixato!)
   function showTooltip(e, icon) {
     if (!icon.label) return;
+    let pos = { x: e.clientX, y: e.clientY + 16 }; // fallback
+    if (typeof tooltipPositionFn === "function") {
+      pos = tooltipPositionFn(e, icon);
+    }
     setTooltip({
       visible: true,
       label: icon.label,
-      x: e.clientX,         // posizione X del mouse nella viewport
-      y: e.clientY + 16,    // 16px sotto il cursore (modifica per più/meno distanza)
+      ...pos,
     });
     setPaused(true);
   }
@@ -74,7 +72,7 @@ export default function CarouselSkills({
     setPaused(false);
   }
 
-  // --- RENDER ---
+  // --- RENDER
   return (
     <>
       {/* Tooltip 8bit sotto il cursore */}
@@ -114,7 +112,7 @@ export default function CarouselSkills({
               width: "100%",
               height: holderSize,
               willChange: "transform",
-              pointerEvents: "none", // Disattiva eventi per evitare overlay non necessari
+              pointerEvents: "none", // evita overlay artefatti
             }}
           >
             <div
@@ -123,11 +121,11 @@ export default function CarouselSkills({
                 flexDirection: "row",
                 gap: gapX,
                 transform: `translateX(${-scroll}px)`,
-                pointerEvents: "auto", // Riattiva eventi solo sulle icone
+                pointerEvents: "auto",
               }}
             >
-              {/* Icone vere */}
-              {rows[rowIdx].map((icon, i) => (
+              {/* Icone vere + duplicato per effetto infinito */}
+              {[...rows[rowIdx], ...rows[rowIdx]].map((icon, i) => (
                 <span
                   key={i}
                   style={{
@@ -138,28 +136,34 @@ export default function CarouselSkills({
                     cursor: icon.label ? "pointer" : "default",
                     pointerEvents: "auto",
                   }}
-                  tabIndex={0}
+                  tabIndex={icon.label ? 0 : -1}
+                  aria-label={icon.label || undefined}
                   onMouseEnter={e => showTooltip(e, icon)}
                   onMouseMove={e => showTooltip(e, icon)}
                   onMouseLeave={hideTooltip}
+                  onFocus={icon.label ? e => showTooltip(e, icon) : undefined}
+                  onBlur={icon.label ? hideTooltip : undefined}
                 >
-                  {/* Holder PNG frame */}
+                  {/* Holder frame */}
                   <img
                     src={holderIcon}
-                    alt={`holder${i}`}
+                    alt=""
+                    width={holderSize}
+                    height={holderSize}
                     style={{
-                      width: holderSize,
-                      height: holderSize,
                       imageRendering: "pixelated",
                       opacity: 0.98,
                       display: "block",
                     }}
                     draggable={false}
+                    loading="lazy"
                   />
                   {/* Icona vera */}
                   <img
                     src={icon.src}
-                    alt={`icon${i}`}
+                    alt={icon.label ? icon.label : `icon${i}`}
+                    width={icon.iconSize || iconSize}
+                    height={icon.iconSize || iconSize}
                     style={{
                       position: "absolute",
                       top:
@@ -168,61 +172,11 @@ export default function CarouselSkills({
                       left:
                         (holderSize - (icon.iconSize || iconSize)) / 2 +
                         (icon.offsetX || 0),
-                      width: icon.iconSize || iconSize,
-                      height: icon.iconSize || iconSize,
                       imageRendering: "pixelated",
                       pointerEvents: "none",
                     }}
                     draggable={false}
-                  />
-                </span>
-              ))}
-              {/* Duplicato per effetto infinito */}
-              {rows[rowIdx].map((icon, i) => (
-                <span
-                  key={`repeat-${i}`}
-                  style={{
-                    width: holderSize,
-                    height: holderSize,
-                    position: "relative",
-                    display: "block",
-                    cursor: icon.label ? "pointer" : "default",
-                    pointerEvents: "auto",
-                  }}
-                  tabIndex={0}
-                  onMouseEnter={e => showTooltip(e, icon)}
-                  onMouseMove={e => showTooltip(e, icon)}
-                  onMouseLeave={hideTooltip}
-                >
-                  <img
-                    src={holderIcon}
-                    alt={`holder-repeat${i}`}
-                    style={{
-                      width: holderSize,
-                      height: holderSize,
-                      imageRendering: "pixelated",
-                      opacity: 0.98,
-                      display: "block",
-                    }}
-                    draggable={false}
-                  />
-                  <img
-                    src={icon.src}
-                    alt={`icon-repeat${i}`}
-                    style={{
-                      position: "absolute",
-                      top:
-                        (holderSize - (icon.iconSize || iconSize)) / 2 +
-                        (icon.offsetY || 0),
-                      left:
-                        (holderSize - (icon.iconSize || iconSize)) / 2 +
-                        (icon.offsetX || 0),
-                      width: icon.iconSize || iconSize,
-                      height: icon.iconSize || iconSize,
-                      imageRendering: "pixelated",
-                      pointerEvents: "none",
-                    }}
-                    draggable={false}
+                    loading="lazy"
                   />
                 </span>
               ))}

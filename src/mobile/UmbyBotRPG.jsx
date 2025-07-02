@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import DialogueBox from "./DialogueBox";
 import BotAnimato from "./BotAnimato";
 import "./styles/rpg-mobile.css";
 
-// ==== Hook solo per animazione typewriter testo ====
-function useTypewriterText(text, active, textSpeed = 30) {
+// === HOOK Typewriter con callback onEnd ===
+function useTypewriterText(text, active, textSpeed = 30, onEnd) {
   const [displayed, setDisplayed] = useState("");
 
   useEffect(() => {
     if (!active) {
       setDisplayed(text);
+      if (onEnd) onEnd(); // Se non attivo, chiama comunque onEnd (es: bocca chiusa)
       return;
     }
     setDisplayed("");
@@ -17,20 +18,24 @@ function useTypewriterText(text, active, textSpeed = 30) {
     const textInterval = setInterval(() => {
       i++;
       setDisplayed(text.slice(0, i));
-      if (i >= text.length) clearInterval(textInterval);
+      if (i >= text.length) {
+        clearInterval(textInterval);
+        if (onEnd) onEnd(); // CALLBACK QUI: scrittura completata!
+      }
     }, textSpeed);
-
     return () => clearInterval(textInterval);
-  }, [text, active, textSpeed]);
+  }, [text, active, textSpeed, onEnd]);
   return displayed;
 }
 
-// ==== Costanti e dati base ====
+// === Utility: lingua di default ===
 function getDefaultLang() {
   const lang = navigator.language || "en";
   if (lang.startsWith("it")) return "it";
   return "en";
 }
+
+// === Costanti dati & testo ===
 const INITIAL_HISTORY = {
   it: [{
     user: "Chi sei?",
@@ -95,31 +100,27 @@ const DAILY_QUESTION_LIMIT = 10;
 const STORAGE_KEY = "umbybot-usage";
 const MAX_INPUT_CHARS = 200;
 
-// ============== COMPONENTE PRINCIPALE ==============
+// ============== MAIN COMPONENT ==============
 export default function UmbyBotRPG({
   spriteSize = 208,
   spriteMarginTop = 0,
   textSpeed = 30,
 }) {
-  // ==== Lingua, stato conversazione, contatori ====
+  // === Stato base ===
   const [userLang, setUserLang] = useState(getDefaultLang());
   const [history, setHistory] = useState(INITIAL_HISTORY[userLang] || INITIAL_HISTORY["en"]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isBotTyping, setIsBotTyping] = useState(false);
+  const [isBotTyping, setIsBotTyping] = useState(false); // ⬅️ Controlla animazione bocca
   const [error, setError] = useState(null);
 
-  // ==== Limite domande e stato ====
+  // === Limite domande giornaliero ===
   const [questionsLeft, setQuestionsLeft] = useState(DAILY_QUESTION_LIMIT);
   const [limitReached, setLimitReached] = useState(false);
 
-  // === Aggiorna limite domande (all'avvio e ogni domanda) ===
-  useEffect(() => {
-    updateUsage();
-    // eslint-disable-next-line
-  }, []);
-
+  // === Init limiti e suggerimenti ===
+  useEffect(() => { updateUsage(); }, []);
   function updateUsage() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -145,7 +146,7 @@ export default function UmbyBotRPG({
     }
   }
 
-  // ==== Suggerimento dinamico che ruota ====
+  // === Suggerimenti randomici ===
   const tips = suggestions[userLang] || suggestions["en"];
   const [tipIndex, setTipIndex] = useState(() => Math.floor(Math.random() * tips.length));
   useEffect(() => {
@@ -155,11 +156,9 @@ export default function UmbyBotRPG({
     }, 7000);
     return () => clearInterval(interval);
   }, [userLang]);
-  useEffect(() => {
-    setTipIndex(Math.floor(Math.random() * tips.length));
-  }, [userLang]);
+  useEffect(() => { setTipIndex(Math.floor(Math.random() * tips.length)); }, [userLang]);
 
-  // ==== LocalStorage: ripristina conversazione ====
+  // === Restore history da localStorage ===
   useEffect(() => {
     const saved = localStorage.getItem("umbybot-history");
     if (saved) {
@@ -173,12 +172,12 @@ export default function UmbyBotRPG({
     }
   }, []);
 
-  // ==== Salva la conversazione ====
+  // === Salva la chat ===
   useEffect(() => {
     localStorage.setItem("umbybot-history", JSON.stringify(history));
   }, [history]);
 
-  // ==== Scroll sempre in fondo ====
+  // === Scroll sempre in fondo ===
   const messagesEndRef = useRef(null);
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -186,20 +185,24 @@ export default function UmbyBotRPG({
     }
   }, [history.length]);
 
-  // ==== Gestione invio (lingua, limite domande, limite caratteri) ====
+  // === Callback per typewriter: inizia/ferma bocca ===
+  const handleTypewriterStart = useCallback(() => setIsBotTyping(true), []);
+  const handleTypewriterEnd = useCallback(() => setIsBotTyping(false), []);
+
+  // === Gestione invio domanda ===
   async function handleSend(e) {
     e.preventDefault();
     if (!input.trim() || loading || limitReached) return;
     setError(null);
     const domanda = input.trim();
 
-    // Check: limite caratteri
+    // Check lunghezza domanda
     if (domanda.length > MAX_INPUT_CHARS) {
       setError(ERRORS[userLang].tooLong);
       return;
     }
 
-    // Rileva lingua della domanda
+    // Rileva lingua
     const isEnglish = new RegExp("\\b(" + enWords.join("|") + ")\\b", "i").test(domanda);
     const isItalian = new RegExp("\\b(" + itWords.join("|") + ")\\b", "i").test(domanda);
     let detectedLang = userLang;
@@ -211,7 +214,7 @@ export default function UmbyBotRPG({
     setInput("");
     setLoading(true);
 
-    // === Limite domande: aggiorna storage ===
+    // === Update usage ===
     const saved = localStorage.getItem(STORAGE_KEY);
     let newCount = 1;
     let now = Date.now();
@@ -238,17 +241,16 @@ export default function UmbyBotRPG({
     setQuestionsLeft(Math.max(0, DAILY_QUESTION_LIMIT - newCount));
     setLimitReached(newCount >= DAILY_QUESTION_LIMIT);
 
-    // === Invio domanda al backend ===
+    // === Aggiungi domanda in history ===
     const newHistory = [...history, { user: domanda, bot: null }];
     setHistory(newHistory);
     setCurrentIdx(newHistory.length - 1);
 
-    // Lingua nota?
+    // === Check lingua supportata ===
     const isKnownLang = detectedLang === "it" || detectedLang === "en";
     const lang = isKnownLang ? detectedLang : "en";
     if (!isKnownLang) {
       const warningMsg = ERRORS[lang].onlyEnIt;
-      setIsBotTyping(true); // Attiva bocca anche in errore lingua
       const updatedHistory = [
         ...newHistory.slice(0, -1),
         { user: domanda, bot: warningMsg }
@@ -260,7 +262,7 @@ export default function UmbyBotRPG({
     }
 
     try {
-      setIsBotTyping(true); // Attiva bocca subito!
+      // FETCH risposta bot
       const res = await fetch(import.meta.env.VITE_UMBYBOT_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -276,8 +278,8 @@ export default function UmbyBotRPG({
       ];
       setHistory(updatedHistory);
       setCurrentIdx(updatedHistory.length - 1);
+
     } catch (err) {
-      setIsBotTyping(true); // Bocca animata anche in caso di errore!
       setError(ERRORS[lang].connection + (err.message || ERRORS[lang].unknown));
       const updatedHistory = [
         ...newHistory.slice(0, -1),
@@ -290,38 +292,38 @@ export default function UmbyBotRPG({
     }
   }
 
-  // ==== Typewriter per il testo (solo testo!) ====
+  // === Sync bocca/typewriter (callback usata!) ===
   const current = history[currentIdx];
   const isLast = currentIdx === history.length - 1;
-  const showTypewriter = isLast && isBotTyping;
+
+  // === Typewriter "controllato" (parte/fine bocca in modo preciso) ===
   const botText = useTypewriterText(
     current.bot || "",
-    showTypewriter,
-    textSpeed
+    isLast && !!current.bot,     // Attivo SOLO su ultima risposta
+    textSpeed,
+    handleTypewriterEnd          // Callback: FINE -> ferma bocca!
   );
-  // Quando finisce il typewriter, bocca si ferma
+  // Bocca parte solo quando si anima la risposta
   useEffect(() => {
-    if (showTypewriter && botText === current.bot) {
-      const t = setTimeout(() => setIsBotTyping(false), 400);
-      return () => clearTimeout(t);
-    }
-  }, [botText, showTypewriter, current.bot]);
+    if (isLast && !!current.bot) handleTypewriterStart(); // Start quando la risposta è pronta da scrivere
+  }, [current.bot, isLast, handleTypewriterStart]);
+
+  // === Navigazione chat ===
   const goPrev = () => setCurrentIdx(idx => Math.max(0, idx - 1));
   const goNext = () => setCurrentIdx(idx => Math.min(history.length - 1, idx + 1));
 
-  // ============= RENDER =============
+  // === Render ===
   return (
     <div className="device-frame">
       <div className="device-inner-glass">
         <div className="umbybot-mobile-wrapper">
-          {/* === Sprite animato (bocca) === */}
+          {/* === Sprite animato mascotte === */}
           <div className="umbybot-sprite-box is-centered" style={{ marginTop: spriteMarginTop }}>
             <div className="umbybot-sprite-fix">
-              <BotAnimato talking={showTypewriter} size={spriteSize} />
+              <BotAnimato talking={isLast && isBotTyping} size={spriteSize} />
             </div>
           </div>
-
-          {/* === Dialogue Box === */}
+          {/* === Fumetto/dialogo === */}
           <div className="dialogue-box-bleed">
             <DialogueBox
               npcName="Golem"
@@ -341,8 +343,7 @@ export default function UmbyBotRPG({
               }
             />
           </div>
-
-          {/* === Navigazione dialoghi === */}
+          {/* === Navigazione risposte === */}
           <div className="dialogue-navigation">
             <button type="button" onClick={goPrev} disabled={currentIdx === 0} className="nes-btn">
               <span style={{ display: "inline-block", transform: "scaleX(-1)", fontSize: 15 }}>➤</span>
@@ -353,14 +354,13 @@ export default function UmbyBotRPG({
             </button>
           </div>
         </div>
-
-        {/* === Counter domande rimaste === */}
+        {/* === Contatore domande rimaste === */}
         <div style={{ padding: "2px 10px 3px 10px", fontSize: 13, color: "#ffe8ad", textAlign: "center", fontWeight: 500 }}>
           {userLang === "it"
             ? `Domande rimaste oggi: ${questionsLeft} / ${DAILY_QUESTION_LIMIT}`
             : `Questions left today: ${questionsLeft} / ${DAILY_QUESTION_LIMIT}`}
         </div>
-        {/* === Input chat === */}
+        {/* === Box input utente === */}
         <form className="input-chatbox" onSubmit={handleSend} autoComplete="off">
           <div style={{ position: "relative", width: "100%" }}>
             <input
@@ -389,7 +389,7 @@ export default function UmbyBotRPG({
               }}
               autoFocus
             />
-            {/* Counter caratteri dentro l'input */}
+            {/* Char counter */}
             <span
               style={{
                 position: "absolute",
@@ -425,13 +425,12 @@ export default function UmbyBotRPG({
             ➤
           </button>
         </form>
-        {/* === Suggerimento dinamico che ruota === */}
+        {/* === Suggerimenti rotanti === */}
         <div style={{ padding: "8px 10px 3px 10px", fontSize: 13, color: "#b8ffd9bb", textAlign: "center" }}>
           {userLang === "it"
             ? <>Prova a chiedere: <b>{tips[tipIndex]}</b></>
             : <>Try asking: <b>{tips[tipIndex]}</b></>}
         </div>
-
       </div>
     </div>
   );
