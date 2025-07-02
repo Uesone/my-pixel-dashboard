@@ -25,16 +25,14 @@ const defaultSidebarWidth = 120;
 const defaultSidebarHeight = 520;
 
 // === PERSONALIZZA QUI LA POSIZIONE DELL’ICONA HOME! ===
-const homeIconOffsetX = -2.2; // px (positivo = destra, negativo = sinistra)
-const homeIconOffsetY = 0; // px (positivo = basso, negativo = alto)
+const homeIconOffsetX = -2.2;
+const homeIconOffsetY = 0;
 
 // Personalizzazione posizione/dimensione solo per il bottone lingua
 const langButtonOffsetTop = 0;
 const langButtonOffsetLeft = 2;
 const langButtonSize = 74;
 const langIconSize = 32;
-
-// Offset bandierina lingua
 const langIconOffsetX = 0.5;
 const langIconOffsetY = 1;
 
@@ -56,13 +54,28 @@ const TOOLTIP_TEXTS = {
   }
 };
 
+/**
+ * Configurazione CENTRALIZZATA della posizione tooltip!
+ * Modifica qui per cambiare la posizione di tutti i tooltip sidebar.
+ * - tooltipTop: offset verticale rispetto al top del bottone (default: -65)
+ * - tooltipLeft: offset orizzontale aggiuntivo (default: 0 = centrato)
+ * Puoi anche sovrascrivere per un bottone singolo, es: { home: { tooltipTop: -90 } }
+ */
+const TOOLTIP_POSITION_CONFIG = {
+  default: {
+    tooltipTop:  73.5,
+    tooltipLeft: 0
+  },
+  // Per bottoni singoli: sovrascrivi così
+  // home: { tooltipTop: -90, tooltipLeft: 0 }
+};
+
 // ====== DEFINIZIONE BOTTONI ======
 const BUTTONS_BASE = [
   { key: "home",     icon: icon0, alt: "Home",     iconSize: 58, buttonSize: defaultButtonSize },
   { key: "about",    icon: icon1, alt: "About",    iconSize: 26, buttonSize: defaultButtonSize },
   { key: "projects", icon: icon2, alt: "Projects", iconSize: 48, buttonSize: defaultButtonSize },
   { key: "contacts", icon: icon3, alt: "Contacts", iconSize: 28, buttonSize: defaultButtonSize },
-  // Pulsante lingua in fondo, icon e label vengono assegnate dopo!
   { key: "lang",     icon: null,  alt: "Language", iconSize: langIconSize, buttonSize: langButtonSize },
 ];
 
@@ -90,66 +103,49 @@ const Sidebar = ({
     return TOOLTIP_TEXTS[language][key] || "";
   };
 
-  // ========= LOGICA OFFSET PER HOME =========
-  // Puoi espandere anche per altri bottoni, qui solo per "home"
+  // LOGICA OFFSET ICONE E TOOLTIP
   const BUTTONS = BUTTONS_BASE.map((btn, idx) => {
+    let iconOffsetX = 0, iconOffsetY = 0;
     if (btn.key === "home") {
-      // Applica offset personalizzato solo a Home!
-      return {
-        ...btn,
-        tooltip: getTooltip(btn.key),
-        style: {
-          top: startingTop + idx * buttonSpacing,
-          left: buttonLeft,
-          width: btn.buttonSize,
-          height: btn.buttonSize,
-        },
-        iconOffsetX: homeIconOffsetX,
-        iconOffsetY: homeIconOffsetY,
-      };
+      iconOffsetX = homeIconOffsetX;
+      iconOffsetY = homeIconOffsetY;
     }
-    if (btn.key !== "lang") {
-      // Altri bottoni standard
-      return {
-        ...btn,
-        tooltip: getTooltip(btn.key),
-        style: {
-          top: startingTop + idx * buttonSpacing,
-          left: buttonLeft,
-          width: btn.buttonSize,
-          height: btn.buttonSize,
-        },
-        iconOffsetX: 0,
-        iconOffsetY: 0,
-      };
-    } else {
-      // Bottone lingua (in fondo)
-      return {
-        ...btn,
-        icon: flagIcon,
-        alt: flagAlt,
-        tooltip: getTooltip("lang"),
-        style: {
-          top: startingTop + idx * buttonSpacing + langButtonOffsetTop,
-          left: buttonLeft + langButtonOffsetLeft,
-          width: langButtonSize,
-          height: langButtonSize,
-        },
-        iconOffsetX: langIconOffsetX,
-        iconOffsetY: langIconOffsetY,
-      };
+    if (btn.key === "lang") {
+      btn.icon = flagIcon;
+      btn.alt = flagAlt;
+      iconOffsetX = langIconOffsetX;
+      iconOffsetY = langIconOffsetY;
     }
+
+    // Prendi la posizione tooltip custom oppure la default centrale
+    const tooltipPos =
+      TOOLTIP_POSITION_CONFIG[btn.key] || TOOLTIP_POSITION_CONFIG.default;
+
+    return {
+      ...btn,
+      tooltip: getTooltip(btn.key),
+      style: {
+        top: startingTop + idx * buttonSpacing + (btn.key === "lang" ? langButtonOffsetTop : 0),
+        left: buttonLeft + (btn.key === "lang" ? langButtonOffsetLeft : 0),
+        width: btn.buttonSize,
+        height: btn.buttonSize,
+      },
+      iconOffsetX,
+      iconOffsetY,
+      tooltipTop: tooltipPos.tooltipTop,
+      tooltipLeft: tooltipPos.tooltipLeft
+    };
   });
 
-  // === Gestione hover per tooltip ===
+  // Gestione hover per tooltip (posizione custom)
   const handleMouseEnter = (btn, e) => {
     setHovered(btn.key);
     const rect = e.currentTarget.getBoundingClientRect();
     setTooltip({
       visible: true,
       text: btn.tooltip,
-      x: rect.left + rect.width / 2,
-      y: rect.top - 65, // tooltip sopra il bottone
+      x: rect.left + rect.width / 2 + (btn.tooltipLeft || 0),
+      y: rect.top + (btn.tooltipTop !== undefined ? btn.tooltipTop : -65)
     });
   };
 
@@ -181,7 +177,6 @@ const Sidebar = ({
           alt={btn.alt}
           isActive={selected === btn.key}
           isHovered={hovered === btn.key}
-          // Tooltip
           onMouseEnter={(e) => handleMouseEnter(btn, e)}
           onMouseLeave={handleMouseLeave}
           onClick={() => {
@@ -191,7 +186,6 @@ const Sidebar = ({
           buttonSize={btn.buttonSize}
           iconSize={btn.iconSize}
           style={btn.style}
-          // Offset per l'icona
           iconOffsetX={btn.iconOffsetX}
           iconOffsetY={btn.iconOffsetY}
         />
