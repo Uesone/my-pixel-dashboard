@@ -1,11 +1,10 @@
-// src/mobile/BotAnimato.jsx
 import React, { useEffect, useState } from "react";
 import umbybotIdle from "./assets/sprites/umbybot-idle.png";
 import umbybotTalking from "./assets/sprites/umbybot-talking.png";
 
 /**
- * BotAnimato: Sprite Golem con bocca animata quando "talking" è true.
- * La bocca si anima a intervalli finché talking è true.
+ * Sprite animato: cambia PNG quando "talking" è true
+ * - Alterna bocca aperta/chiusa ogni 120ms solo quando talking=true
  */
 export default function BotAnimato({ talking, size = 208 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +12,7 @@ export default function BotAnimato({ talking, size = 208 }) {
   useEffect(() => {
     let interval;
     if (talking) {
-      interval = setInterval(() => setIsOpen(open => !open), 120); // Velocità bocca
+      interval = setInterval(() => setIsOpen(open => !open), 120);
     } else {
       setIsOpen(false);
     }
@@ -24,13 +23,13 @@ export default function BotAnimato({ talking, size = 208 }) {
     <img
       src={talking && isOpen ? umbybotTalking : umbybotIdle}
       alt="Golem pixel NPC"
+      className="umbybot-sprite"
+      draggable={false}
       style={{
         width: size,
         height: size,
-        imageRendering: "pixelated",
-        pointerEvents: "none"
+        imageRendering: "pixelated"
       }}
-      draggable={false}
     />
   );
 }

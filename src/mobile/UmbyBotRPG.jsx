@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import DialogueBox from "./DialogueBox";
-import BotAnimato from "./BotAnimato"; // <--- nuovo import!
+import BotAnimato from "./BotAnimato";
 import "./styles/rpg-mobile.css";
 
 // ==== Hook solo per animazione typewriter testo ====
@@ -17,9 +17,7 @@ function useTypewriterText(text, active, textSpeed = 30) {
     const textInterval = setInterval(() => {
       i++;
       setDisplayed(text.slice(0, i));
-      if (i >= text.length) {
-        clearInterval(textInterval);
-      }
+      if (i >= text.length) clearInterval(textInterval);
     }, textSpeed);
 
     return () => clearInterval(textInterval);
@@ -102,7 +100,6 @@ export default function UmbyBotRPG({
   spriteSize = 208,
   spriteMarginTop = 0,
   textSpeed = 30,
-  mouthSpeed = 110 // ignorato, ora non serve più
 }) {
   // ==== Lingua, stato conversazione, contatori ====
   const [userLang, setUserLang] = useState(getDefaultLang());
@@ -123,7 +120,6 @@ export default function UmbyBotRPG({
     // eslint-disable-next-line
   }, []);
 
-  // Reset se passate 24h dall’ultima domanda
   function updateUsage() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -389,7 +385,7 @@ export default function UmbyBotRPG({
                 flex: 1,
                 fontSize: 16,
                 width: "100%",
-                paddingRight: 60,  // Lascia spazio al counter!
+                paddingRight: 60,
               }}
               autoFocus
             />
