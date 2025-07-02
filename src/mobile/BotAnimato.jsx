@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import umbybotIdleWebp from "./assets/sprites/umbybot-idle.webp";
 import umbybotTalkingWebp from "./assets/sprites/umbybot-talking.webp";
-// (PNG fallback opzionale, puoi anche togliere se non ti serve legacy)
-import umbybotIdlePng from "./assets/sprites/umbybot-idle.png";
-import umbybotTalkingPng from "./assets/sprites/umbybot-talking.png";
+
 
 /**
  * BotAnimato: Sprite animato della mascotte/chatbot.

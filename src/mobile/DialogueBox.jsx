@@ -1,6 +1,6 @@
 // /src/mobile/DialogueBox.jsx
 import React from "react";
-import umbybotIcon from "./assets/sprites/umbybot-idle.png";
+import umbybotIcon from "./assets/sprites/umbybot-idle.webp";
 
 /**
  * DialogueBox: NES style, altezza fissa, larghezza sempre 100%, contenuto non shrinka mai

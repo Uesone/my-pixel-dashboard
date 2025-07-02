@@ -1,8 +1,8 @@
 import React from "react";
 import PageWrapper from "../components/PageWrapper";
 import { useLanguage } from "../components/LanguageContext.jsx";
-import linePng from "../assets/page-content-sprites/holders/0.png"; // Linee deco
-import HomeDialogBox from "../components/animation/HomeDialogBox.jsx"; // Baloon/dialogo
+import linePng from "../assets/page-content-sprites/holders/0.png";
+import HomeDialogBox from "../components/animation/HomeDialogBox.jsx";
 
 /**
  * HomeSection (senza avatar/circle che ora sono overlay in App.jsx)
@@ -39,7 +39,7 @@ const HomeSection = ({ dialogBoxVisible, onAvatarTalking = () => {} }) => {
             letterSpacing={0}
             fontWeight="400"
             color="#f5ecd7"
-            onTalkingChange={onAvatarTalking} // <-- Collega qui!
+            onTalkingChange={onAvatarTalking}
           />
         </div>
       )}
@@ -80,7 +80,7 @@ const HomeSection = ({ dialogBoxVisible, onAvatarTalking = () => {} }) => {
           position: "absolute",
           top: 4,
           left: 95,
-          fontFamily: "'VT323', monospace",
+          fontFamily: "'VT323', monospace", // ATTENZIONE: Assicurati che sia già caricato, meglio locale o &display=swap!
           fontSize: 52,
           color: "#24170b",
           letterSpacing: 2,
