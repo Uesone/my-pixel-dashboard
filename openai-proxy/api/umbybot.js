@@ -79,6 +79,16 @@ Be a friendly, pixel-perfect assistant from a retro-futuristic workshop!
 // ==== API Handler: Chiamata a OpenAI GPT-4o ====
 // Gestisce la POST, limita la domanda a 200 caratteri, risponde con max 300 token, restituisce errore custom
 export default async function handler(req, res) {
+  // === CORS FIX: permette chiamate cross-domain dal frontend ===
+  res.setHeader("Access-Control-Allow-Origin", "https://uesone.vercel.app");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // Gestione preflight CORS (richieste OPTIONS)
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   // ✅ Consenti solo POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
