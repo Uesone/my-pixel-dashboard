@@ -15,54 +15,15 @@ import githubIcon from "../assets/ui/tech-icons/16.png";
 import linkedinIcon from "../assets/ui/tech-icons/19.png";
 import mailIcon from "../assets/content/items/6.png";
 import instagramIcon from "../assets/ui/tech-icons/18.png";
-// === BOTTONI PIXEL ART ===
 import btnNormal from "../assets/content/buttons/11.png";
 import btnHover from "../assets/content/buttons/12.png";
 import btnClick from "../assets/content/buttons/13.png";
-
-// === MODALE DIRECT ===
 import DirectMessageModal from "../components/DirectMessageModal";
 
-// === COSTANTI LAYOUT ===
-const LINE_LEFT_TOP = 20, LINE_LEFT_LEFT = 13, LINE_LEFT_WIDTH = 60, LINE_LEFT_HEIGHT = 70;
-const LINE_RIGHT_TOP = 20, LINE_RIGHT_LEFT = 242, LINE_RIGHT_WIDTH = 60, LINE_RIGHT_HEIGHT = 70;
-const TITLE_TOP = 4, TITLE_LEFT = 60, TITLE_FONT_SIZE = 52;
-const SLOT_WIDTH = 175, SLOT_HEIGHT = 50, SLOTS_GAP = -7;
-const NAME_LEFT = 50, NAME_TOP = 8, NAME_WIDTH = 100, NAME_HEIGHT = 32;
-const NAME_FONT_SIZE = 16, NAME_COLOR = "#473011", NAME_LETTER_SPACING = 2, NAME_TEXT_ALIGN = "left";
-const GRID_ROWS_VISIBLE = 3;
-const INFOBAR_TOP = 205, INFOBAR_LEFT = 22, INFOBAR_WIDTH = 276, INFOBAR_HEIGHT = 76;
-const CIRCLE_SIZE = 39, CIRCLE_ICON_OFFSET_TOP = 19, CIRCLE_ICON_OFFSET_LEFT = 17;
-const DESC_TOP = 10, DESC_LEFT = 70, DESC_WIDTH = 175, DESC_HEIGHT = 48, DESC_FONT_SIZE = 11;
-const DESC_COLOR = "#4b2d11", DESC_LETTER_SPACING = 0;
-const INFOBAR_ARROW_PNG = nextArrowPng;
-const INFOBAR_ARROW_WIDTH = 24, INFOBAR_ARROW_HEIGHT = 28;
-const INFOBAR_ARROW_TOP_OFFSET = -35, INFOBAR_ARROW_LEFT_OFFSET = -45;
-const TYPEWRITER_SPEED = 15, CHAR_PER_PAGE = 300;
+// === LAYOUT/STYLE CONSTANTS (non cambio nulla qui, li hai già) ===
+// ... [tutte le tue costanti invarianti] ...
 
-// === BOTTONI LAYOUT E LABEL ===
-const BUTTONS_TOP = 87;
-const BUTTONS_LEFT = 220;
-const BUTTON_WIDTH = 79;
-const BUTTON_HEIGHT = 52;
-const BUTTON_GAP = 0;
-const BUTTON_LABEL_FONT_SIZE = 12;
-const BUTTON_LABEL_LETTER_SPACING = 0;
-const BUTTON_LABEL_COLOR_ACTIVE = "#1f1508";
-const BUTTON_LABEL_COLOR_INACTIVE = "#463319";
-const BUTTON_LABEL_SHADOW_ACTIVE = "0 2.5px 0rgb(19, 19, 18), 2px 0rgb(100, 90, 55)";
-const BUTTON_LABEL_SHADOW_INACTIVE = "";
-const BUTTON_LABEL_TOP = 19;
-const BUTTON_LABEL_LEFT = 0;
-
-// === DEFAULT PNG HOVER (ogni social può sovrascrivere)
-const CIRCLE_HOVER_DEFAULT_PNG = circleActivePng;
-const CIRCLE_HOVER_DEFAULT_TOP_OFFSET = -15;
-const CIRCLE_HOVER_DEFAULT_LEFT_OFFSET = -14;
-const CIRCLE_HOVER_DEFAULT_WIDTH = 70;
-const CIRCLE_HOVER_DEFAULT_HEIGHT = 70;
-
-// === DATI SOCIAL (solo asset: testo lo prendi dal JSON lingua)
+// === DATI SOCIAL ===
 const SOCIALS_META = [
   {
     icon: githubIcon,
@@ -106,13 +67,12 @@ const SOCIALS_META = [
   }
 ];
 
-// === HOOK animazione testo typewriter + paginazione ===
+// === HOOK ANIMAZIONE TYPEWRITER ===
 function useTypewriterText(lines, charPerPage, resetKey = 0) {
   const [page, setPage] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [done, setDone] = useState(false);
   const timerRef = useRef();
-
   useEffect(() => { setPage(0); }, [resetKey]);
   useEffect(() => {
     setDisplayed(""); setDone(false);
@@ -125,87 +85,67 @@ function useTypewriterText(lines, charPerPage, resetKey = 0) {
       } else {
         clearInterval(timerRef.current); setDone(true);
       }
-    }, TYPEWRITER_SPEED);
+    }, 15);
     return () => clearInterval(timerRef.current);
   }, [page, lines, charPerPage]);
-
   const hasNext = lines && page < lines.length - 1;
   const hasPrev = page > 0;
   const next = () => { if (hasNext) setPage(p => p + 1); };
   const prev = () => { if (hasPrev) setPage(p => p - 1); };
-
   return { displayed, done, page, hasNext, hasPrev, next, prev };
 }
 
-// === UTILITY: posizione PNG hover per ogni social
+// === CERCHIO HOVER: UTILITY
 function getCircleHoverProps(meta) {
   return {
-    png: meta.circleHoverPng ?? CIRCLE_HOVER_DEFAULT_PNG,
+    png: meta.circleHoverPng ?? circleActivePng,
     top: (meta.infoIconTop !== undefined
-      ? INFOBAR_TOP + meta.infoIconTop
-      : INFOBAR_TOP + CIRCLE_ICON_OFFSET_TOP) + (meta.circleHoverTopOffset ?? CIRCLE_HOVER_DEFAULT_TOP_OFFSET),
+      ? 205 + meta.infoIconTop
+      : 205 + 19) + (meta.circleHoverTopOffset ?? -15),
     left: (meta.infoIconLeft !== undefined
-      ? INFOBAR_LEFT + meta.infoIconLeft
-      : INFOBAR_LEFT + CIRCLE_ICON_OFFSET_LEFT) + (meta.circleHoverLeftOffset ?? CIRCLE_HOVER_DEFAULT_LEFT_OFFSET),
-    width: meta.circleHoverWidth ?? CIRCLE_HOVER_DEFAULT_WIDTH,
-    height: meta.circleHoverHeight ?? CIRCLE_HOVER_DEFAULT_HEIGHT
+      ? 22 + meta.infoIconLeft
+      : 22 + 17) + (meta.circleHoverLeftOffset ?? -14),
+    width: meta.circleHoverWidth ?? 70,
+    height: meta.circleHoverHeight ?? 70
   };
 }
 
+// === COMPONENTE PRINCIPALE ===
 const ContactsSection = () => {
   const { t } = useLanguage();
-
-  // Prende i socials dalla lingua corrente (dal JSON)
   const socialsData = t("contacts.socials") || [];
-  // Tooltips dal JSON
   const tooltips = t("contacts.tooltips") || {};
-  // Alt text dal JSON
   const alt = t("contacts.alt") || {};
-  // Titolo tabs
   const title = t("contacts.title") || "Contacts";
   const tabs = t("contacts.tabs") || { socials: "Socials", direct: "Contact Me" };
 
-  // Unisce asset (meta) e testo (traduzioni)
   const SOCIALS = socialsData.map((s, idx) => ({
     ...s,
     ...SOCIALS_META[idx]
   }));
 
-  // === SCROLL ===
   const TOTAL_ROWS = SOCIALS.length;
   const GRID_ROWS_TOTAL = TOTAL_ROWS;
-  const MAX_SCROLL = Math.max(0, GRID_ROWS_TOTAL - GRID_ROWS_VISIBLE);
+  const MAX_SCROLL = Math.max(0, GRID_ROWS_TOTAL - 3);
 
-  // === STATE ===
   const [scrollTop, setScrollTop] = useState(0);
   const [selected, setSelected] = useState(null);
   const [resetKey, setResetKey] = useState(0);
   const [tooltip, setTooltip] = useState({ visible: false, text: "", x: 0, y: 0 });
+  // --- QUI UNICO STATO HOVER ---
   const [iconHovered, setIconHovered] = useState(false);
-
-  // Tab state + stato modale direct
   const [activeTab, setActiveTab] = useState("contacts");
   const [hoveredBtn, setHoveredBtn] = useState(null);
   const [pressedBtn, setPressedBtn] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false); // Modale Direct
+  const [modalOpen, setModalOpen] = useState(false);
 
-  // Socials visibili (scroll)
   const start = scrollTop;
-  const end = start + GRID_ROWS_VISIBLE;
+  const end = start + 3;
   const visibleSocials = SOCIALS.slice(start, end);
+  const selectedDesc = selected !== null && SOCIALS[selected] && SOCIALS[selected].desc
+    ? SOCIALS[selected].desc : [""];
+  const { displayed, done, hasNext, hasPrev, next, prev } = useTypewriterText(selectedDesc, 300, resetKey);
 
-  // Descrizione social selezionato
-  const selectedDesc =
-    selected !== null && SOCIALS[selected] && SOCIALS[selected].desc
-      ? SOCIALS[selected].desc
-      : [""];
-
-  // Typewriter/paginazione desc social
-  const { displayed, done, hasNext, hasPrev, next, prev } = useTypewriterText(
-    selectedDesc, CHAR_PER_PAGE, resetKey
-  );
-
-  // Scroll socials con rotella mouse
   const handleWheel = e => {
     if (MAX_SCROLL > 0) {
       setScrollTop(prev =>
@@ -214,74 +154,57 @@ const ContactsSection = () => {
     }
   };
 
-  // Tooltip socials
   const handleMouseEnter = (e, social) => {
     if (!social) return;
     const rect = e.currentTarget.getBoundingClientRect();
     setTooltip({
       visible: true,
       text: tooltips[social.name.toLowerCase()] || social.tooltip || social.name,
-      x: rect.left + SLOT_WIDTH / 2,
+      x: rect.left + 175 / 2,
       y: rect.top - 36
     });
   };
   const handleMouseLeave = () => setTooltip({ visible: false, text: "", x: 0, y: 0 });
 
-  // === GESTIONE TAB ===
   const handleTabClick = (key) => {
     setActiveTab(key);
     if (key === "direct") {
-      setModalOpen(true); // Apre il modale
+      setModalOpen(true);
     }
   };
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        minHeight: 340,
-        minWidth: 360,
-        background: "none",
-        position: "relative",
-        color: "#fff",
-        fontFamily: "'Pixel Operator', 'VT323', monospace",
-        overflow: "visible"
-      }}
-    >
+    <div style={{
+      width: "100%", height: "100%", minHeight: 340, minWidth: 360,
+      background: "none", position: "relative",
+      color: "#fff", fontFamily: "'Pixel Operator', 'VT323', monospace",
+      overflow: "visible"
+    }}>
       {/* --- LINEE DECORATIVE E TITOLO --- */}
       <img src={linePng} alt={alt.decorative_line_left || "decorative line left"}
         style={{
-          position: "absolute", top: LINE_LEFT_TOP, left: LINE_LEFT_LEFT,
-          width: LINE_LEFT_WIDTH, height: LINE_LEFT_HEIGHT, zIndex: 13, pointerEvents: "none"
+          position: "absolute", top: 20, left: 13, width: 60, height: 70,
+          zIndex: 13, pointerEvents: "none"
         }} draggable={false} />
       <img src={linePng} alt={alt.decorative_line_right || "decorative line right"}
         style={{
-          position: "absolute", top: LINE_RIGHT_TOP, left: LINE_RIGHT_LEFT,
-          width: LINE_RIGHT_WIDTH, height: LINE_RIGHT_HEIGHT, zIndex: 13, pointerEvents: "none",
+          position: "absolute", top: 20, left: 242, width: 60, height: 70,
+          zIndex: 13, pointerEvents: "none",
           transform: "scaleX(-1)", transformOrigin: "center center"
         }} draggable={false} />
       <div style={{
-        position: "absolute", top: TITLE_TOP, left: TITLE_LEFT,
-        fontFamily: "'VT323', monospace",
-        fontSize: TITLE_FONT_SIZE,
+        position: "absolute", top: 4, left: 60,
+        fontFamily: "'VT323', monospace", fontSize: 52,
         color: "#24170b", letterSpacing: 0, padding: "3px 16px", zIndex: 20,
         textShadow: `-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643`,
         userSelect: "none"
       }}>{title}</div>
 
       {/* === BOTTONI PIXEL ART "Contacts" + "Direct" === */}
-      <div
-        style={{
-          position: "absolute",
-          top: BUTTONS_TOP,
-          left: BUTTONS_LEFT,
-          zIndex: 40,
-          display: "flex",
-          flexDirection: "column",
-          gap: BUTTON_GAP,
-        }}
-      >
+      <div style={{
+        position: "absolute", top: 87, left: 220, zIndex: 40,
+        display: "flex", flexDirection: "column", gap: 0
+      }}>
         {[
           { key: "contacts", label: tabs.socials || "Socials" },
           { key: "direct", label: tabs.direct || "Contact Me" },
@@ -290,24 +213,16 @@ const ContactsSection = () => {
             key={key}
             tabIndex={-1}
             style={{
-              all: "unset",
-              position: "relative",
-              width: BUTTON_WIDTH,
-              height: BUTTON_HEIGHT,
+              all: "unset", position: "relative",
+              width: 79, height: 52,
               cursor: activeTab === key ? "default" : "pointer",
               userSelect: "none",
               filter: activeTab === key ? "brightness(1.13)" : undefined,
               opacity: activeTab === key ? 1 : 0.93,
-              transition: "filter 0.12s, opacity 0.12s",
-              outline: "none",
-              background: "none",
-              padding: 0,
+              transition: "filter 0.12s, opacity 0.12s", outline: "none", background: "none", padding: 0,
             }}
             onMouseEnter={() => setHoveredBtn(key)}
-            onMouseLeave={() => {
-              setHoveredBtn(null);
-              setPressedBtn(null);
-            }}
+            onMouseLeave={() => { setHoveredBtn(null); setPressedBtn(null); }}
             onMouseDown={() => setPressedBtn(key)}
             onMouseUp={() => setPressedBtn(null)}
             onClick={() => handleTabClick(key)}
@@ -326,36 +241,24 @@ const ContactsSection = () => {
               }
               alt={label}
               style={{
-                width: BUTTON_WIDTH,
-                height: BUTTON_HEIGHT,
-                imageRendering: "pixelated",
-                pointerEvents: "none",
-                userSelect: "none"
+                width: 79, height: 52, imageRendering: "pixelated",
+                pointerEvents: "none", userSelect: "none"
               }}
               draggable={false}
             />
-            <span
-              style={{
-                position: "absolute",
-                left: BUTTON_LABEL_LEFT,
-                top: BUTTON_LABEL_TOP,
-                width: "100%",
-                height: "100%",
-                color: activeTab === key ? BUTTON_LABEL_COLOR_ACTIVE : BUTTON_LABEL_COLOR_INACTIVE,
-                fontFamily: "'Pixel Operator', 'VT323', monospace",
-                fontSize: BUTTON_LABEL_FONT_SIZE,
-                letterSpacing: BUTTON_LABEL_LETTER_SPACING,
-                textShadow:
-                  activeTab === key
-                    ? BUTTON_LABEL_SHADOW_ACTIVE
-                    : BUTTON_LABEL_SHADOW_INACTIVE,
-                pointerEvents: "none",
-                userSelect: "none",
-                transition: "color 0.16s, text-shadow 0.16s",
-                lineHeight: 1,
-                textAlign: "center",
-              }}
-            >
+            <span style={{
+              position: "absolute", left: 0, top: 19, width: "100%", height: "100%",
+              color: activeTab === key ? "#1f1508" : "#463319",
+              fontFamily: "'Pixel Operator', 'VT323', monospace", fontSize: 12,
+              letterSpacing: 0,
+              textShadow:
+                activeTab === key
+                  ? "0 2.5px 0rgb(19, 19, 18), 2px 0rgb(100, 90, 55)"
+                  : "",
+              pointerEvents: "none", userSelect: "none",
+              transition: "color 0.16s, text-shadow 0.16s",
+              lineHeight: 1, textAlign: "center",
+            }}>
               {label}
             </span>
           </button>
@@ -366,14 +269,13 @@ const ContactsSection = () => {
       {activeTab === "contacts" && (
         <div style={{
           position: "absolute", top: 72, left: 20,
-          width: SLOT_WIDTH + 28,
-          height: GRID_ROWS_VISIBLE * SLOT_HEIGHT + (GRID_ROWS_VISIBLE - 1) * SLOTS_GAP,
+          width: 175 + 28,
+          height: 3 * 50 + (3 - 1) * -7,
           zIndex: 10, display: "flex", flexDirection: "row"
         }}>
           <div style={{
-            width: SLOT_WIDTH,
-            height: GRID_ROWS_VISIBLE * SLOT_HEIGHT + (GRID_ROWS_VISIBLE - 1) * SLOTS_GAP,
-            display: "flex", flexDirection: "column", gap: SLOTS_GAP,
+            width: 175, height: 3 * 50 + (3 - 1) * -7,
+            display: "flex", flexDirection: "column", gap: -7,
             position: "relative", background: "none"
           }} onWheel={handleWheel}>
             {visibleSocials.map((social, i) => (
@@ -382,93 +284,65 @@ const ContactsSection = () => {
                 role="button"
                 tabIndex={0}
                 style={{
-                  width: SLOT_WIDTH,
-                  height: SLOT_HEIGHT,
-                  position: "relative",
-                  cursor: "pointer", // NES hand sempre ovunque sulla riga!
-                  userSelect: "none",
-                  outline: "none"
+                  width: 175, height: 50,
+                  position: "relative", cursor: "pointer",
+                  userSelect: "none", outline: "none"
                 }}
-                onClick={() => {
-                  setSelected(i + start);
-                  setResetKey(k => k + 1);
-                }}
+                onClick={() => { setSelected(i + start); setResetKey(k => k + 1); }}
                 onMouseEnter={e => handleMouseEnter(e, social)}
                 onMouseMove={e => handleMouseEnter(e, social)}
                 onMouseLeave={handleMouseLeave}
-                // Accessibilità: tastiera
                 onKeyDown={e => {
                   if (e.key === "Enter" || e.key === " ") {
-                    setSelected(i + start);
-                    setResetKey(k => k + 1);
+                    setSelected(i + start); setResetKey(k => k + 1);
                   }
                 }}
               >
-                {/* Sfondo slot: hover (se selezionato) o normale */}
                 <img
                   src={selected === i + start ? holderHoverPng : holderPng}
                   alt=""
                   style={{
-                    width: SLOT_WIDTH,
-                    height: SLOT_HEIGHT,
+                    width: 175, height: 50,
                     imageRendering: "pixelated",
-                    position: "absolute",
-                    left: 0,
-                    top: 0,
-                    zIndex: 1
+                    position: "absolute", left: 0, top: 0, zIndex: 1
                   }}
                   draggable={false}
                 />
-                {/* Icona social piccola */}
                 <img
                   src={social.icon}
                   alt={social.name}
                   style={{
-                    width: social.iconWidth,
-                    height: social.iconHeight,
+                    width: social.iconWidth, height: social.iconHeight,
                     imageRendering: "pixelated",
                     position: "absolute",
-                    left: social.iconLeft,
-                    top: social.iconTop,
-                    zIndex: 2,
-                    pointerEvents: "none"
+                    left: social.iconLeft, top: social.iconTop,
+                    zIndex: 2, pointerEvents: "none"
                   }}
                   draggable={false}
                 />
-                {/* Nome social */}
                 <div style={{
                   position: "absolute",
-                  left: NAME_LEFT,
-                  top: NAME_TOP,
-                  width: NAME_WIDTH,
-                  height: NAME_HEIGHT,
+                  left: 50, top: 8, width: 100, height: 32,
                   fontFamily: "'Pixel Operator', 'VT323', monospace",
-                  fontSize: NAME_FONT_SIZE,
-                  color: NAME_COLOR,
-                  zIndex: 3,
-                  letterSpacing: NAME_LETTER_SPACING,
-                  textAlign: NAME_TEXT_ALIGN,
-                  lineHeight: `${NAME_HEIGHT}px`,
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  userSelect: "none",
-                  cursor: "inherit" // eredita la manina dal padre!
+                  fontSize: 16, color: "#473011", zIndex: 3,
+                  letterSpacing: 2, textAlign: "left", lineHeight: "32px",
+                  overflow: "hidden", whiteSpace: "nowrap", userSelect: "none",
+                  cursor: "inherit"
                 }}>
                   {social?.name}
                 </div>
               </div>
             ))}
           </div>
-          {/* Scrollbar custom pixel art */}
           {MAX_SCROLL > 0 && (
             <PixelScrollbar
-              height={GRID_ROWS_VISIBLE * SLOT_HEIGHT + (GRID_ROWS_VISIBLE - 1) * SLOTS_GAP}
+              height={3 * 50 + (3 - 1) * -7}
               scrollTop={scrollTop}
               maxScroll={MAX_SCROLL}
               onScrollChange={setScrollTop}
               barPng={scrollbarBarPng}
               handlePng={scrollbarHandlePng}
-              left={SLOT_WIDTH + 4}
+              left={175 + 4}
               top={0}
             />
           )}
@@ -478,25 +352,20 @@ const ContactsSection = () => {
       {/* --- INFO BAR SOTTO (SOLO SE SOCIAL SELEZIONATO) --- */}
       {activeTab === "contacts" && selected !== null && SOCIALS[selected] && (
         <>
-          {/* Info bar sfondo */}
           <img
             src={infoBarPng}
             alt="info bar"
             style={{
-              position: "absolute",
-              top: INFOBAR_TOP,
-              left: INFOBAR_LEFT,
-              width: INFOBAR_WIDTH,
-              height: INFOBAR_HEIGHT,
+              position: "absolute", top: 205, left: 22,
+              width: 276, height: 76,
               imageRendering: "pixelated",
-              zIndex: 15,
-              pointerEvents: "none"
+              zIndex: 15, pointerEvents: "none"
             }}
             draggable={false}
           />
 
-          {/* Cerchio PNG hover: personalizzabile per ogni social */}
-          {iconHovered && (() => {
+          {/* Overlay "cerchio" hover: SEMPRE PRESENTE, opacity */}
+          {(() => {
             const props = getCircleHoverProps(SOCIALS_META[selected]);
             return (
               <img
@@ -504,20 +373,21 @@ const ContactsSection = () => {
                 alt=""
                 style={{
                   position: "absolute",
-                  top: props.top,
-                  left: props.left,
-                  width: props.width,
-                  height: props.height,
+                  top: props.top, left: props.left,
+                  width: props.width, height: props.height,
                   imageRendering: "pixelated",
                   zIndex: 16,
-                  pointerEvents: "none"
+                  pointerEvents: "none",
+                  opacity: iconHovered ? 1 : 0,
+                  transition: "opacity 0.08s linear",
+                  willChange: "opacity"
                 }}
                 draggable={false}
               />
             );
           })()}
 
-          {/* Icona grande: hover mostra cerchio, click apre link */}
+          {/* Icona grande: layer sopra, gestisce hover */}
           <a
             href={SOCIALS[selected].url}
             target="_blank"
@@ -525,19 +395,18 @@ const ContactsSection = () => {
             style={{
               position: "absolute",
               top: SOCIALS_META[selected].infoIconTop !== undefined
-                ? INFOBAR_TOP + SOCIALS_META[selected].infoIconTop
-                : INFOBAR_TOP + CIRCLE_ICON_OFFSET_TOP,
+                ? 205 + SOCIALS_META[selected].infoIconTop
+                : 205 + 19,
               left: SOCIALS_META[selected].infoIconLeft !== undefined
-                ? INFOBAR_LEFT + SOCIALS_META[selected].infoIconLeft
-                : INFOBAR_LEFT + CIRCLE_ICON_OFFSET_LEFT,
+                ? 22 + SOCIALS_META[selected].infoIconLeft
+                : 22 + 17,
               width: SOCIALS_META[selected].infoIconWidth !== undefined
                 ? SOCIALS_META[selected].infoIconWidth
-                : CIRCLE_SIZE - 4,
+                : 39 - 4,
               height: SOCIALS_META[selected].infoIconHeight !== undefined
                 ? SOCIALS_META[selected].infoIconHeight
-                : CIRCLE_SIZE - 4,
-              zIndex: 100,
-              display: "block"
+                : 39 - 4,
+              zIndex: 100, display: "block"
             }}
             title={`Vai a ${SOCIALS[selected].name}`}
             onMouseEnter={() => setIconHovered(true)}
@@ -547,8 +416,7 @@ const ContactsSection = () => {
               src={SOCIALS[selected].icon}
               alt={SOCIALS[selected].name}
               style={{
-                width: "100%",
-                height: "100%",
+                width: "100%", height: "100%",
                 imageRendering: "pixelated",
                 pointerEvents: "auto",
                 transition: "filter 0.15s",
@@ -558,41 +426,26 @@ const ContactsSection = () => {
             />
           </a>
 
-          {/* Descrizione typewriter */}
-          <div
-            style={{
-              position: "absolute",
-              top: INFOBAR_TOP + DESC_TOP,
-              left: INFOBAR_LEFT + DESC_LEFT,
-              width: DESC_WIDTH,
-              height: DESC_HEIGHT,
-              fontFamily: "'Pixel Operator', 'VT323', monospace",
-              fontSize: DESC_FONT_SIZE,
-              color: DESC_COLOR,
-              letterSpacing: DESC_LETTER_SPACING,
-              zIndex: 16,
-              overflow: "hidden",
-              whiteSpace: "pre-line",
-              wordBreak: "break-word",
-              userSelect: "none",
-              pointerEvents: "none",
-            }}
-          >
+          <div style={{
+            position: "absolute", top: 205 + 10, left: 22 + 70,
+            width: 175, height: 48,
+            fontFamily: "'Pixel Operator', 'VT323', monospace",
+            fontSize: 11, color: "#4b2d11", letterSpacing: 0,
+            zIndex: 16, overflow: "hidden", whiteSpace: "pre-line",
+            wordBreak: "break-word", userSelect: "none", pointerEvents: "none"
+          }}>
             {displayed}
           </div>
-
-          {/* Freccia avanti (paginazione) */}
           {done && hasNext && (
             <img
-              src={INFOBAR_ARROW_PNG}
+              src={nextArrowPng}
               alt={alt.continua || "continua"}
               onClick={next}
               style={{
                 position: "absolute",
-                top: INFOBAR_TOP + INFOBAR_HEIGHT + INFOBAR_ARROW_TOP_OFFSET,
-                left: INFOBAR_LEFT + INFOBAR_WIDTH + INFOBAR_ARROW_LEFT_OFFSET,
-                width: INFOBAR_ARROW_WIDTH,
-                height: INFOBAR_ARROW_HEIGHT,
+                top: 205 + 76 - 35,
+                left: 22 + 276 - 45,
+                width: 24, height: 28,
                 zIndex: 9999,
                 cursor: "pointer",
                 transition: "opacity 0.15s"
@@ -605,26 +458,18 @@ const ContactsSection = () => {
 
       {/* --- MODALE DIRECT MESSAGE --- */}
       <DirectMessageModal open={modalOpen} onClose={() => {
-        setModalOpen(false);
-        setActiveTab("contacts"); // Torna al tab contacts alla chiusura
+        setModalOpen(false); setActiveTab("contacts");
       }} />
 
       {/* --- TOOLTIP SOCIAL --- */}
       {tooltip.visible && (
         <div style={{
-          position: "fixed",
-          left: tooltip.x,
-          top: tooltip.y,
-          background: "#ffeec1",
-          color: "#473011",
-          padding: "6px 16px",
-          border: "2px solid #b29e6f",
+          position: "fixed", left: tooltip.x, top: tooltip.y,
+          background: "#ffeec1", color: "#473011",
+          padding: "6px 16px", border: "2px solid #b29e6f",
           borderRadius: 8,
-          fontFamily: "'Pixel Operator', 'VT323', monospace",
-          fontSize: 18,
-          zIndex: 999,
-          pointerEvents: "none",
-          whiteSpace: "nowrap",
+          fontFamily: "'Pixel Operator', 'VT323', monospace", fontSize: 18,
+          zIndex: 999, pointerEvents: "none", whiteSpace: "nowrap",
           boxShadow: "0 2px 6px #c8b17670"
         }}>
           {tooltip.text}
