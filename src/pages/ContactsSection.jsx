@@ -29,13 +29,12 @@ const LINE_RIGHT_TOP = 20, LINE_RIGHT_LEFT = 242, LINE_RIGHT_WIDTH = 60, LINE_RI
 const TITLE_TOP = 4, TITLE_LEFT = 60, TITLE_FONT_SIZE = 52;
 const SLOT_WIDTH = 175, SLOT_HEIGHT = 50, SLOTS_GAP = -7;
 const NAME_LEFT = 50, NAME_TOP = 8, NAME_WIDTH = 100, NAME_HEIGHT = 32;
-const NAME_FONT_SIZE = 16, NAME_COLOR = "#473011", NAME_FONT_FAMILY = "'VT323', monospace";
-const NAME_LETTER_SPACING = 2, NAME_TEXT_ALIGN = "left";
+const NAME_FONT_SIZE = 16, NAME_COLOR = "#473011", NAME_LETTER_SPACING = 2, NAME_TEXT_ALIGN = "left";
 const GRID_ROWS_VISIBLE = 3;
 const INFOBAR_TOP = 205, INFOBAR_LEFT = 22, INFOBAR_WIDTH = 276, INFOBAR_HEIGHT = 76;
 const CIRCLE_SIZE = 39, CIRCLE_ICON_OFFSET_TOP = 19, CIRCLE_ICON_OFFSET_LEFT = 17;
 const DESC_TOP = 10, DESC_LEFT = 70, DESC_WIDTH = 175, DESC_HEIGHT = 48, DESC_FONT_SIZE = 11;
-const DESC_FONT_FAMILY = "'VT323', monospace", DESC_COLOR = "#4b2d11", DESC_LETTER_SPACING = 0;
+const DESC_COLOR = "#4b2d11", DESC_LETTER_SPACING = 0;
 const INFOBAR_ARROW_PNG = nextArrowPng;
 const INFOBAR_ARROW_WIDTH = 24, INFOBAR_ARROW_HEIGHT = 28;
 const INFOBAR_ARROW_TOP_OFFSET = -35, INFOBAR_ARROW_LEFT_OFFSET = -45;
@@ -51,8 +50,8 @@ const BUTTON_LABEL_FONT_SIZE = 12;
 const BUTTON_LABEL_LETTER_SPACING = 0;
 const BUTTON_LABEL_COLOR_ACTIVE = "#1f1508";
 const BUTTON_LABEL_COLOR_INACTIVE = "#463319";
-const BUTTON_LABEL_SHADOW_ACTIVE = "0 2.5px 0 #ffeeb5, 0 -1.5px 0 #eedd8b, 2px 0 #e9d79c";
-const BUTTON_LABEL_SHADOW_INACTIVE = "0 1.2px 0 #d1c07f, 0 -1.5px 0 #e9d79c";
+const BUTTON_LABEL_SHADOW_ACTIVE = "0 2.5px 0rgb(19, 19, 18), 2px 0rgb(100, 90, 55)";
+const BUTTON_LABEL_SHADOW_INACTIVE = "";
 const BUTTON_LABEL_TOP = 19;
 const BUTTON_LABEL_LEFT = 0;
 
@@ -246,7 +245,7 @@ const ContactsSection = () => {
         background: "none",
         position: "relative",
         color: "#fff",
-        fontFamily: "'VT323', monospace",
+        fontFamily: "'Pixel Operator', 'VT323', monospace",
         overflow: "visible"
       }}
     >
@@ -264,7 +263,8 @@ const ContactsSection = () => {
         }} draggable={false} />
       <div style={{
         position: "absolute", top: TITLE_TOP, left: TITLE_LEFT,
-        fontFamily: "'VT323', monospace", fontSize: TITLE_FONT_SIZE,
+        fontFamily: "'VT323', monospace",
+        fontSize: TITLE_FONT_SIZE,
         color: "#24170b", letterSpacing: 0, padding: "3px 16px", zIndex: 20,
         textShadow: `-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643`,
         userSelect: "none"
@@ -342,7 +342,7 @@ const ContactsSection = () => {
                 width: "100%",
                 height: "100%",
                 color: activeTab === key ? BUTTON_LABEL_COLOR_ACTIVE : BUTTON_LABEL_COLOR_INACTIVE,
-                fontFamily: "'VT323', monospace",
+                fontFamily: "'Pixel Operator', 'VT323', monospace",
                 fontSize: BUTTON_LABEL_FONT_SIZE,
                 letterSpacing: BUTTON_LABEL_LETTER_SPACING,
                 textShadow:
@@ -379,12 +379,15 @@ const ContactsSection = () => {
             {visibleSocials.map((social, i) => (
               <div
                 key={i + start}
+                role="button"
+                tabIndex={0}
                 style={{
                   width: SLOT_WIDTH,
                   height: SLOT_HEIGHT,
                   position: "relative",
-                  cursor: "pointer",
-                  userSelect: "none"
+                  cursor: "pointer", // NES hand sempre ovunque sulla riga!
+                  userSelect: "none",
+                  outline: "none"
                 }}
                 onClick={() => {
                   setSelected(i + start);
@@ -393,6 +396,13 @@ const ContactsSection = () => {
                 onMouseEnter={e => handleMouseEnter(e, social)}
                 onMouseMove={e => handleMouseEnter(e, social)}
                 onMouseLeave={handleMouseLeave}
+                // Accessibilità: tastiera
+                onKeyDown={e => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setSelected(i + start);
+                    setResetKey(k => k + 1);
+                  }
+                }}
               >
                 {/* Sfondo slot: hover (se selezionato) o normale */}
                 <img
@@ -432,7 +442,7 @@ const ContactsSection = () => {
                   top: NAME_TOP,
                   width: NAME_WIDTH,
                   height: NAME_HEIGHT,
-                  fontFamily: NAME_FONT_FAMILY,
+                  fontFamily: "'Pixel Operator', 'VT323', monospace",
                   fontSize: NAME_FONT_SIZE,
                   color: NAME_COLOR,
                   zIndex: 3,
@@ -441,7 +451,8 @@ const ContactsSection = () => {
                   lineHeight: `${NAME_HEIGHT}px`,
                   overflow: "hidden",
                   whiteSpace: "nowrap",
-                  userSelect: "none"
+                  userSelect: "none",
+                  cursor: "inherit" // eredita la manina dal padre!
                 }}>
                   {social?.name}
                 </div>
@@ -525,7 +536,7 @@ const ContactsSection = () => {
               height: SOCIALS_META[selected].infoIconHeight !== undefined
                 ? SOCIALS_META[selected].infoIconHeight
                 : CIRCLE_SIZE - 4,
-              zIndex: 17,
+              zIndex: 100,
               display: "block"
             }}
             title={`Vai a ${SOCIALS[selected].name}`}
@@ -555,7 +566,7 @@ const ContactsSection = () => {
               left: INFOBAR_LEFT + DESC_LEFT,
               width: DESC_WIDTH,
               height: DESC_HEIGHT,
-              fontFamily: DESC_FONT_FAMILY,
+              fontFamily: "'Pixel Operator', 'VT323', monospace",
               fontSize: DESC_FONT_SIZE,
               color: DESC_COLOR,
               letterSpacing: DESC_LETTER_SPACING,
@@ -563,7 +574,8 @@ const ContactsSection = () => {
               overflow: "hidden",
               whiteSpace: "pre-line",
               wordBreak: "break-word",
-              userSelect: "none"
+              userSelect: "none",
+              pointerEvents: "none",
             }}
           >
             {displayed}
@@ -608,7 +620,7 @@ const ContactsSection = () => {
           padding: "6px 16px",
           border: "2px solid #b29e6f",
           borderRadius: 8,
-          fontFamily: "'VT323', monospace",
+          fontFamily: "'Pixel Operator', 'VT323', monospace",
           fontSize: 18,
           zIndex: 999,
           pointerEvents: "none",

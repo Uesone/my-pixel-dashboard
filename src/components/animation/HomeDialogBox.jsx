@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import nextArrowPng from "../../assets/ui/dialog/arrow_next.png";
 import prevArrowPng from "../../assets/ui/dialog/arrow_prev.png";
 import { useLanguage } from "../LanguageContext.jsx";
@@ -16,7 +16,7 @@ export default function HomeDialogBox({
   fontWeight = "normal",
   color = "#24170b",
   lineHeight = 1.1,
-  fontFamily = "'VT323', monospace",
+  fontFamily = "'PixelOperator', monospace",
   textAlign = "center",
   arrowPrevTop = 85,
   arrowPrevLeft = -55,
@@ -39,7 +39,7 @@ export default function HomeDialogBox({
     return () => clearInterval(interval);
   }, []);
 
-  // Typewriter sincronizzato con onTalkingChange
+  // PATCH: Typewriter meno “aggressivo” per ridurre glitch su Chrome/Edge (28ms)
   useEffect(() => {
     setDisplayed("");
     setTalking(true);
@@ -57,7 +57,7 @@ export default function HomeDialogBox({
       } else {
         clearInterval(timerRef.current);
         setTalking(false);
-        onTalkingChange(false); // Fine: avatar smette di parlare
+        onTalkingChange(false);
       }
     }, 28);
 
@@ -68,7 +68,7 @@ export default function HomeDialogBox({
     // eslint-disable-next-line
   }, [step, onTalkingChange, lines]);
 
-  // Ombra invisibile per box fisso
+  // "ombra" per mantenere il testo centrato (scegli la stringa più lunga)
   const testText = lines.reduce((a, b) => (a.length > b.length ? a : b), "");
 
   return (
@@ -81,8 +81,8 @@ export default function HomeDialogBox({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 30,
-        willChange: "transform",
+        zIndex: 30, // PATCH: balloon sempre davanti
+        willChange: "transform", // PATCH: smooth su Chrome/Edge
       }}
     >
       {/* Balloon PNG */}
@@ -98,11 +98,12 @@ export default function HomeDialogBox({
           zIndex: 1,
           imageRendering: "pixelated",
           pointerEvents: "none",
-          willChange: "transform",
+          willChange: "transform", // PATCH: aiuta anti-flicker
         }}
         draggable={false}
       />
-      {/* Testo centrale */}
+
+      {/* Testo centrato, overlay sul balloon */}
       <div
         style={{
           position: "absolute",
@@ -125,7 +126,7 @@ export default function HomeDialogBox({
           pointerEvents: "auto",
         }}
       >
-        {/* Ombra invisibile */}
+        {/* Ombra invisibile per mantenere il box fisso */}
         <span style={{ opacity: 0, position: "absolute", pointerEvents: "none" }}>
           {testText}
         </span>
@@ -138,7 +139,8 @@ export default function HomeDialogBox({
           {displayed}
         </span>
       </div>
-      {/* Frecce */}
+
+      {/* Freccia Previous */}
       {!talking && step > 0 && (
         <img
           src={prevArrowPng}
@@ -158,6 +160,8 @@ export default function HomeDialogBox({
           }}
         />
       )}
+
+      {/* Freccia Next */}
       {!talking && step < lines.length - 1 && (
         <img
           src={nextArrowPng}

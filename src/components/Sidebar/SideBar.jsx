@@ -17,23 +17,26 @@ import itFlag from "../../assets/ui/flags/it.png";
 import enFlag from "../../assets/ui/flags/en.png";
 
 // ========== CONFIGURAZIONE LAYOUT ==========
-// Spacing globale e dimensioni sidebar
-const startingTop = 39;            // distanza dal top del container sidebar
-const buttonSpacing = 110;         // distanza tra i bottoni (verticale)
-const buttonLeft = 70;             // distanza dal bordo sinistro sidebar
-const defaultButtonSize = 78;      // dimensione base dei bottoni (quadrati)
-const defaultSidebarWidth = 120;   // larghezza totale sidebar
-const defaultSidebarHeight = 520;  // altezza totale sidebar
+const startingTop = 39;
+const buttonSpacing = 110;
+const buttonLeft = 70;
+const defaultButtonSize = 78;
+const defaultSidebarWidth = 120;
+const defaultSidebarHeight = 520;
+
+// === PERSONALIZZA QUI LA POSIZIONE DELL’ICONA HOME! ===
+const homeIconOffsetX = -2.2; // px (positivo = destra, negativo = sinistra)
+const homeIconOffsetY = 0; // px (positivo = basso, negativo = alto)
 
 // Personalizzazione posizione/dimensione solo per il bottone lingua
-const langButtonOffsetTop = 0;     // offset extra top per la lingua
-const langButtonOffsetLeft = 2;    // offset extra left per la lingua
-const langButtonSize = 74;         // dimensione bottone lingua
-const langIconSize = 32;           // dimensione bandierina lingua
+const langButtonOffsetTop = 0;
+const langButtonOffsetLeft = 2;
+const langButtonSize = 74;
+const langIconSize = 32;
 
-// ========== OFFSET ICONA BANDIERINA (solo lingua) ==========
-const langIconOffsetX = 0.5;   // <--- Modifica qui per spostare a destra/sinistra
-const langIconOffsetY = 1;  // <--- Modifica qui per spostare in alto/basso
+// Offset bandierina lingua
+const langIconOffsetX = 0.5;
+const langIconOffsetY = 1;
 
 // ====== TOOLTIP LOCALIZZATI ======
 const TOOLTIP_TEXTS = {
@@ -70,9 +73,7 @@ const Sidebar = ({
   height = defaultSidebarHeight,
   sidebarStyle = {},
 }) => {
-  // Bottone attualmente hoverato
   const [hovered, setHovered] = useState(null);
-  // Stato del tooltip
   const [tooltip, setTooltip] = useState({
     visible: false,
     text: "",
@@ -80,21 +81,35 @@ const Sidebar = ({
     y: 0,
   });
 
-  // Lingua corrente e funzione cambio lingua dal context
   const { language, setLanguage } = useLanguage();
-  // Lingua "dopo il click" e bandiera relativa
   const nextLang = language === "it" ? "en" : "it";
   const flagIcon = nextLang === "it" ? itFlag : enFlag;
   const flagAlt  = nextLang === "it" ? "Cambia lingua: Italiano" : "Change language: English";
 
-  // Tooltip localizzato per lingua corrente
   const getTooltip = (key) => {
     return TOOLTIP_TEXTS[language][key] || "";
   };
 
-  // Costruisci array bottoni sidebar (posizione, icona, alt, tooltip, ...)
+  // ========= LOGICA OFFSET PER HOME =========
+  // Puoi espandere anche per altri bottoni, qui solo per "home"
   const BUTTONS = BUTTONS_BASE.map((btn, idx) => {
+    if (btn.key === "home") {
+      // Applica offset personalizzato solo a Home!
+      return {
+        ...btn,
+        tooltip: getTooltip(btn.key),
+        style: {
+          top: startingTop + idx * buttonSpacing,
+          left: buttonLeft,
+          width: btn.buttonSize,
+          height: btn.buttonSize,
+        },
+        iconOffsetX: homeIconOffsetX,
+        iconOffsetY: homeIconOffsetY,
+      };
+    }
     if (btn.key !== "lang") {
+      // Altri bottoni standard
       return {
         ...btn,
         tooltip: getTooltip(btn.key),
@@ -108,7 +123,7 @@ const Sidebar = ({
         iconOffsetY: 0,
       };
     } else {
-      // Bottone lingua: aggiungi offset solo qui!
+      // Bottone lingua (in fondo)
       return {
         ...btn,
         icon: flagIcon,
@@ -126,7 +141,7 @@ const Sidebar = ({
     }
   });
 
-  // Gestione hover: mostra tooltip sopra al bottone
+  // === Gestione hover per tooltip ===
   const handleMouseEnter = (btn, e) => {
     setHovered(btn.key);
     const rect = e.currentTarget.getBoundingClientRect();
@@ -134,11 +149,10 @@ const Sidebar = ({
       visible: true,
       text: btn.tooltip,
       x: rect.left + rect.width / 2,
-      y: rect.top - -65, // tooltip sopra il bottone
+      y: rect.top - 65, // tooltip sopra il bottone
     });
   };
 
-  // Nascondi tooltip
   const handleMouseLeave = () => {
     setHovered(null);
     setTooltip(t => ({ ...t, visible: false }));
@@ -167,7 +181,7 @@ const Sidebar = ({
           alt={btn.alt}
           isActive={selected === btn.key}
           isHovered={hovered === btn.key}
-          // Passa event per posizione tooltip
+          // Tooltip
           onMouseEnter={(e) => handleMouseEnter(btn, e)}
           onMouseLeave={handleMouseLeave}
           onClick={() => {
@@ -177,7 +191,7 @@ const Sidebar = ({
           buttonSize={btn.buttonSize}
           iconSize={btn.iconSize}
           style={btn.style}
-          // Passa anche offset icona!
+          // Offset per l'icona
           iconOffsetX={btn.iconOffsetX}
           iconOffsetY={btn.iconOffsetY}
         />

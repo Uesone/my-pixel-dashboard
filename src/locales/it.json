@@ -1,14 +1,14 @@
 {
-"home": {
-  "dialog": [
-    "Onorevole visitatore, sii il benvenuto nella mia officina.",
-    "Ti accoglie Umberto Amoroso, artefice e custode di queste invenzioni.",
-    "Qui raccolgo esperimenti, cronache e progetti tra passato e futuro.",
-    "Ogni pagina racconta un percorso, ogni sezione una diversa sfida affrontata.",
-    "Entra pure: la curiosità è la chiave che mette in moto ogni ingranaggio.",
-    "Che l’esplorazione dei miei archivi abbia inizio!"
-  ]  
-},
+  "home": {
+    "dialog": [
+      "“Onorevole visitatore, sii il benvenuto nella mia officina.”",
+      "“Ti accoglie Umberto Amoroso, artefice e custode di queste invenzioni.”",
+      "“Qui raccolgo esperimenti, cronache e progetti tra passato e futuro.”",
+      "“Ogni pagina racconta un percorso, ogni sezione una diversa sfida affrontata.”",
+      "“Entra pure: la curiosità è la chiave che mette in moto ogni ingranaggio.”",
+      "“Che l’esplorazione dei miei archivi abbia inizio!”"
+    ]
+  },
   "about": {
     "title": "About",
     "name_label": "Nome:",
@@ -40,6 +40,7 @@
     "socials": [
       {
         "name": "GitHub",
+        "url": "https://github.com/Uesone",                   
         "desc": [
           "Tutti i miei progetti open source, side project, app React, backend Java e pixel art sono su GitHub.",
           "Scopri il mio codice, con README dettagliati e istruzioni per contribuire!",
@@ -49,22 +50,30 @@
       },
       {
         "name": "LinkedIn",
+        "url": "https://www.linkedin.com/in/umberto-amoroso-387394167",
         "desc": [
           "Qui trovi il mio profilo LinkedIn con esperienze lavorative, formazione e competenze.",
           "Aggiungimi alla rete per restare aggiornato o scrivimi in privato!",
           "Click sull'icona a sinistra per maggiori dettagli!"
         ]
       },
-      {
-        "name": "Mail",
-        "desc": [
-          "Scrivimi una mail per collaborazioni, domande tecniche, offerte di lavoro o anche solo per due chiacchiere.",
-          "Cerco nuovi spunti e rispondo entro poche ore!",
-          "Click sull'icona a sinistra per maggiori dettagli!"
-        ]
-      },
+
+{
+  "name": "Mail",
+  "url": "mailto:umberto12amoroso@gmail.com",
+  "desc": [
+    "Clicca sull’icona a sinistra per aprire il tuo client email.",
+    "In alternativa: scrivi direttamente a\numberto12amoroso@gmail.com",
+    "Oppure usa il pulsante 'Contattami' qui accanto.",
+    "Scrivimi per collaborazioni, offerte, domande tecniche o anche solo due chiacchiere.",
+    "Rispondo sempre entro poche ore!"
+  ]
+}
+
+,
       {
         "name": "Instagram",
+        "url": "https://www.instagram.com/ues.one/",           
         "desc": [
           "Profilo personale IG: foto di viaggi, pixel art, aggiornamenti tech e lifestyle.",
           "Seguimi per vedere il lato creativo o per DM informali!",

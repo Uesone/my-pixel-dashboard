@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 /* === FONT PIXELOPERATOR (REGULAR e BOLD) === */
 @font-face {
   font-family: 'PixelOperator';
@@ -13,13 +14,41 @@
   font-style: normal;
 }
 /* ================================== */
+
+/* --- UNIVERSAL NES CURSOR: TUTTO CIÒ CHE È INTERATTIVO --- */
+a,
+a:visited,
+a:active,
+button,
+[role="button"],
+[tabindex]:not([tabindex="-1"]),
+input[type="checkbox"],
+input[type="radio"],
+label[for],
+select,
+summary,
+.hoverable,
+.clickable,
+/* Tutto ciò che ha un evento onclick in React */
+*[onclick],
+/* E tutto ciò che ha tabindex (accessibile via tastiera) */
+*[tabindex]:not([tabindex="-1"]) {
+  cursor: url('/assets/ui/cursor-nes.png'), pointer !important;
+}
+
+/* Opzionale: se vuoi la manina ANCHE sugli <img> che sono hoverabili/clickabili */
+img:hover,
+img:active {
+  cursor: url('/assets/ui/cursor-nes.png'), pointer !important;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424; /* colore di fallback */
+  background-color: #242424;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

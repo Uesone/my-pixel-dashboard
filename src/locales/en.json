@@ -1,14 +1,14 @@
 {
   "home": {
-  "dialog": [
-    "Honorable visitor, be welcome to my workshop.",
-    "You are greeted by Umberto Amoroso, creator and custodian of these inventions.",
-    "Here I collect experiments, chronicles, and projects spanning past and future.",
-    "Each page tells a story, each section a different challenge faced.",
-    "Enter freely: curiosity is the key that sets every gear in motion.",
-    "Let the exploration of my archives begin!"
-  ]
-},
+    "dialog": [
+      "“Honorable visitor, be welcome to my workshop.”",
+      "“You are greeted by Umberto Amoroso, creator and custodian of these inventions.”",
+      "“Here I collect experiments, chronicles, and projects spanning past and future.”",
+      "“Each page tells a story, each section a different challenge faced.”",
+      "“Enter freely: curiosity is the key that sets every gear in motion.”",
+      "“Let the exploration of my archives begin!”"
+    ]
+  },
   "about": {
     "title": "About",
     "name_label": "Name:",
@@ -40,6 +40,7 @@
     "socials": [
       {
         "name": "GitHub",
+        "url": "https://github.com/Uesone",                 
         "desc": [
           "All my open source projects, side projects, React apps, Java backends, and pixel art are on GitHub.",
           "Check out my code, with detailed READMEs and contribution guides!",
@@ -49,22 +50,28 @@
       },
       {
         "name": "LinkedIn",
+        "url": "https://www.linkedin.com/in/umberto-amoroso-387394167",
         "desc": [
           "Here you'll find my LinkedIn profile with work experience, education, and skills.",
           "Add me to your network to stay updated or send me a private message!",
           "Click the icon on the left for more details!"
         ]
       },
-      {
-        "name": "Mail",
-        "desc": [
-          "Email me for collaborations, tech questions, job offers, or even just for a chat.",
-          "I'm always looking for new ideas and I reply within a few hours!",
-          "Click the icon on the left for more details!"
-        ]
-      },
+      
+{
+  "name": "Mail",
+  "url": "mailto:umberto12amoroso@gmail.com",
+  "desc": [
+    "Click the icon on the left to open your email client.",
+    "Alternatively, write directly to\numberto12amoroso@gmail.com",
+    "Or use the 'Contact Me' button on the right.",
+    "Reach out for collaborations, offers, tech questions, or just a chat.",
+    "I always reply within a few hours!"
+  ]
+},
       {
         "name": "Instagram",
+        "url": "https://www.instagram.com/ues.one/",        
         "desc": [
           "Personal IG profile: travel photos, pixel art, tech updates, and lifestyle.",
           "Follow me for a look at my creative side or for casual DMs!",
