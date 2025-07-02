@@ -31,6 +31,10 @@ const langButtonOffsetLeft = 2;    // offset extra left per la lingua
 const langButtonSize = 74;         // dimensione bottone lingua
 const langIconSize = 32;           // dimensione bandierina lingua
 
+// ========== OFFSET ICONA BANDIERINA (solo lingua) ==========
+const langIconOffsetX = 0.5;   // <--- Modifica qui per spostare a destra/sinistra
+const langIconOffsetY = 1;  // <--- Modifica qui per spostare in alto/basso
+
 // ====== TOOLTIP LOCALIZZATI ======
 const TOOLTIP_TEXTS = {
   it: {
@@ -100,9 +104,11 @@ const Sidebar = ({
           width: btn.buttonSize,
           height: btn.buttonSize,
         },
+        iconOffsetX: 0,
+        iconOffsetY: 0,
       };
     } else {
-      // Bottone lingua
+      // Bottone lingua: aggiungi offset solo qui!
       return {
         ...btn,
         icon: flagIcon,
@@ -114,6 +120,8 @@ const Sidebar = ({
           width: langButtonSize,
           height: langButtonSize,
         },
+        iconOffsetX: langIconOffsetX,
+        iconOffsetY: langIconOffsetY,
       };
     }
   });
@@ -169,6 +177,9 @@ const Sidebar = ({
           buttonSize={btn.buttonSize}
           iconSize={btn.iconSize}
           style={btn.style}
+          // Passa anche offset icona!
+          iconOffsetX={btn.iconOffsetX}
+          iconOffsetY={btn.iconOffsetY}
         />
       ))}
       {/* Tooltip pixel-art/steampunk */}

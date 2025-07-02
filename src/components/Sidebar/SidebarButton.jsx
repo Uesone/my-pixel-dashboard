@@ -11,6 +11,7 @@ import React from "react";
  * - onMouseEnter, onMouseLeave, onClick: eventi
  * - buttonSize: lato bottone (px)
  * - iconSize: lato icona centrale (px)
+ * - iconOffsetX, iconOffsetY: offset singolo icona centrale (default 0)
  * - style: oggetto {top, left, width, height, ...} posizione e dimensione
  */
 const SidebarButton = ({
@@ -26,6 +27,8 @@ const SidebarButton = ({
   alt,
   buttonSize = 64,
   iconSize = 36,
+  iconOffsetX = 0, // Offset X aggiuntivo (solo bandiera, normalmente 0)
+  iconOffsetY = 0, // Offset Y aggiuntivo (solo bandiera, normalmente 0)
   style = {}, // passa {top, left, width, height} dal parent!
 }) => (
   <button
@@ -73,8 +76,8 @@ const SidebarButton = ({
           height: iconSize,
           imageRendering: "pixelated",
           position: "absolute",
-          left: `calc(50% - ${iconSize / 2}px)`,
-          top: `calc(50% - ${iconSize / 2}px)`,
+          left: `calc(50% - ${iconSize / 2}px + ${iconOffsetX}px)`, // Applica offset X
+          top: `calc(50% - ${iconSize / 2}px + ${iconOffsetY}px)`,  // Applica offset Y
           pointerEvents: "none",
           zIndex: 2,
         }}
