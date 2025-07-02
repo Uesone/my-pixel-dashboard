@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import umbybotIdleWebp from "./assets/sprites/umbybot-idle.webp";
 import umbybotTalkingWebp from "./assets/sprites/umbybot-talking.webp";
-// (PNG fallback opzionale, puoi anche togliere se non ti serve legacy)
-import umbybotIdlePng from "./assets/sprites/umbybot-idle.png";
-import umbybotTalkingPng from "./assets/sprites/umbybot-talking.png";
 
 /**
  * BotAnimato: Sprite animato della mascotte/chatbot.
@@ -27,26 +24,23 @@ export default function BotAnimato({ talking, size = 208 }) {
     return () => clearInterval(interval);
   }, [talking]);
 
+  // Usa solo webp, browser moderni li supportano tutti
+  const sprite = talking && isOpen ? umbybotTalkingWebp : umbybotIdleWebp;
+
   return (
-    <picture>
-      <source
-        srcSet={talking && isOpen ? umbybotTalkingWebp : umbybotIdleWebp}
-        type="image/webp"
-      />
-      <img
-        src={talking && isOpen ? umbybotTalkingPng : umbybotIdlePng}
-        alt="Golem pixel NPC"
-        className="umbybot-sprite"
-        draggable={false}
-        style={{
-          width: size,
-          height: size,
-          imageRendering: "pixelated",
-        }}
-        width={size}
-        height={size}
-        loading="eager"
-      />
-    </picture>
+    <img
+      src={sprite}
+      alt="UmbyBot pixel sprite"
+      className="umbybot-sprite"
+      draggable={false}
+      style={{
+        width: size,
+        height: size,
+        imageRendering: "pixelated",
+      }}
+      width={size}
+      height={size}
+      loading="eager"
+    />
   );
 }
