@@ -1,44 +1,30 @@
 import React, { useState, useEffect, useRef } from "react";
 import DialogueBox from "./DialogueBox";
-import umbybotIdle from "./assets/sprites/umbybot-idle.png";
-import umbybotTalking from "./assets/sprites/umbybot-talking.png";
+import BotAnimato from "./BotAnimato"; // <--- nuovo import!
 import "./styles/rpg-mobile.css";
 
-// ==== Hook animazione typewriter + bocca ====
-function useTypewriterWithMouth(text, active, textSpeed = 60, mouthSpeed = 30) {
+// ==== Hook solo per animazione typewriter testo ====
+function useTypewriterText(text, active, textSpeed = 30) {
   const [displayed, setDisplayed] = useState("");
-  const [isMouthOpen, setIsMouthOpen] = useState(false);
 
   useEffect(() => {
     if (!active) {
       setDisplayed(text);
-      setIsMouthOpen(false);
       return;
     }
     setDisplayed("");
     let i = 0;
-    let mouthOpen = false;
     const textInterval = setInterval(() => {
       i++;
       setDisplayed(text.slice(0, i));
       if (i >= text.length) {
         clearInterval(textInterval);
-        cleanupTimeout = setTimeout(() => setIsMouthOpen(false), 250);
       }
     }, textSpeed);
-    const mouthInterval = setInterval(() => {
-      mouthOpen = !mouthOpen;
-      setIsMouthOpen(mouthOpen);
-    }, mouthSpeed);
-    let cleanupTimeout;
-    return () => {
-      clearInterval(textInterval);
-      clearInterval(mouthInterval);
-      if (cleanupTimeout) clearTimeout(cleanupTimeout);
-      setIsMouthOpen(false);
-    };
-  }, [text, active, textSpeed, mouthSpeed]);
-  return [displayed, isMouthOpen];
+
+    return () => clearInterval(textInterval);
+  }, [text, active, textSpeed]);
+  return displayed;
 }
 
 // ==== Costanti e dati base ====
@@ -116,7 +102,7 @@ export default function UmbyBotRPG({
   spriteSize = 208,
   spriteMarginTop = 0,
   textSpeed = 30,
-  mouthSpeed = 110
+  mouthSpeed = 110 // ignorato, ora non serve più
 }) {
   // ==== Lingua, stato conversazione, contatori ====
   const [userLang, setUserLang] = useState(getDefaultLang());
@@ -266,7 +252,7 @@ export default function UmbyBotRPG({
     const lang = isKnownLang ? detectedLang : "en";
     if (!isKnownLang) {
       const warningMsg = ERRORS[lang].onlyEnIt;
-      setIsBotTyping(true); // Fix: attiva animazione anche su errori lingua
+      setIsBotTyping(true); // Attiva bocca anche in errore lingua
       const updatedHistory = [
         ...newHistory.slice(0, -1),
         { user: domanda, bot: warningMsg }
@@ -278,7 +264,7 @@ export default function UmbyBotRPG({
     }
 
     try {
-      setIsBotTyping(true); // === FIX: ATTIVA SUBITO LA BOCca ANIMATA!
+      setIsBotTyping(true); // Attiva bocca subito!
       const res = await fetch(import.meta.env.VITE_UMBYBOT_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -295,7 +281,7 @@ export default function UmbyBotRPG({
       setHistory(updatedHistory);
       setCurrentIdx(updatedHistory.length - 1);
     } catch (err) {
-      setIsBotTyping(true); // === FIX: attiva bocca anche in errore
+      setIsBotTyping(true); // Bocca animata anche in caso di errore!
       setError(ERRORS[lang].connection + (err.message || ERRORS[lang].unknown));
       const updatedHistory = [
         ...newHistory.slice(0, -1),
@@ -308,16 +294,16 @@ export default function UmbyBotRPG({
     }
   }
 
-  // ==== Typewriter & bocca ====
+  // ==== Typewriter per il testo (solo testo!) ====
   const current = history[currentIdx];
   const isLast = currentIdx === history.length - 1;
   const showTypewriter = isLast && isBotTyping;
-  const [botText, isMouthOpen] = useTypewriterWithMouth(
+  const botText = useTypewriterText(
     current.bot || "",
     showTypewriter,
-    textSpeed,
-    mouthSpeed
+    textSpeed
   );
+  // Quando finisce il typewriter, bocca si ferma
   useEffect(() => {
     if (showTypewriter && botText === current.bot) {
       const t = setTimeout(() => setIsBotTyping(false), 400);
@@ -332,16 +318,10 @@ export default function UmbyBotRPG({
     <div className="device-frame">
       <div className="device-inner-glass">
         <div className="umbybot-mobile-wrapper">
-          {/* === Sprite animato === */}
+          {/* === Sprite animato (bocca) === */}
           <div className="umbybot-sprite-box is-centered" style={{ marginTop: spriteMarginTop }}>
             <div className="umbybot-sprite-fix">
-              <img
-                src={showTypewriter && isMouthOpen ? umbybotTalking : umbybotIdle}
-                alt="Golem pixel NPC"
-                className="umbybot-sprite"
-                draggable={false}
-                style={{ width: spriteSize, height: spriteSize, imageRendering: "pixelated" }}
-              />
+              <BotAnimato talking={showTypewriter} size={spriteSize} />
             </div>
           </div>
 
