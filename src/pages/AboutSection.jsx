@@ -3,52 +3,73 @@ import PageWrapper from "../components/PageWrapper";
 import CarouselSkills from "../components/CarouselSkills";
 import { useLanguage } from "../components/LanguageContext.jsx";
 
-// --- Import delle immagini/icone (come hai fatto tu) ---
+// --- Import immagini decorative (puoi ottimizzare anche queste a WebP/resize quando vuoi) ---
 import holder0 from "../assets/page-content-sprites/holders/8.png";
 import holderIcon from "../assets/page-content-sprites/holders/6.png";
 import linePng from "../assets/page-content-sprites/holders/0.png";
 import AvatarAnimato from "../components/animation/AvatarAnimato.jsx";
 import xpBarPng from "../assets/ui/progress-bars/3.png";
 import xpBarEmptyPng from "../assets/ui/progress-bars/6.png";
-import icon0 from "../assets/ui/tech-icons/0.png";
-import icon1 from "../assets/ui/tech-icons/1.png";
-import icon2 from "../assets/ui/tech-icons/2.png";
-import icon3 from "../assets/ui/tech-icons/3.png";
-import icon4 from "../assets/ui/tech-icons/4.png";
-import icon5 from "../assets/ui/tech-icons/5.png";
-import icon6 from "../assets/ui/tech-icons/6.png";
-import icon7 from "../assets/ui/tech-icons/7.png";
-import icon8 from "../assets/ui/tech-icons/8.png";
-import icon9 from "../assets/ui/tech-icons/9.png";
-import icon10 from "../assets/ui/tech-icons/10.png";
-import icon11 from "../assets/ui/tech-icons/11.png";
-import icon12 from "../assets/ui/tech-icons/12.png";
-import icon13 from "../assets/ui/tech-icons/13.png";
-import icon14 from "../assets/ui/tech-icons/14.png";
-import icon15 from "../assets/ui/tech-icons/15.png";
-import icon16 from "../assets/ui/tech-icons/16.png";
-import icon17 from "../assets/ui/tech-icons/17.png";
 
-// --- Definizione array icone skill statiche ---
+// --- Import icone skill: versione 32x32 (base) e 64x64 (retina) ---
+// Ricordati di generare i file 0-32.webp, 0-64.webp, ..., 17-32.webp, 17-64.webp nella cartella tech-icons!
+import icon0_32 from "../assets/ui/tech-icons/0-32.webp";
+import icon0_64 from "../assets/ui/tech-icons/0-64.webp";
+import icon1_32 from "../assets/ui/tech-icons/1-32.webp";
+import icon1_64 from "../assets/ui/tech-icons/1-64.webp";
+import icon2_32 from "../assets/ui/tech-icons/2-32.webp";
+import icon2_64 from "../assets/ui/tech-icons/2-64.webp";
+import icon3_32 from "../assets/ui/tech-icons/3-32.webp";
+import icon3_64 from "../assets/ui/tech-icons/3-64.webp";
+import icon4_32 from "../assets/ui/tech-icons/4-32.webp";
+import icon4_64 from "../assets/ui/tech-icons/4-64.webp";
+import icon5_32 from "../assets/ui/tech-icons/5-32.webp";
+import icon5_64 from "../assets/ui/tech-icons/5-64.webp";
+import icon6_32 from "../assets/ui/tech-icons/6-32.webp";
+import icon6_64 from "../assets/ui/tech-icons/6-64.webp";
+import icon7_32 from "../assets/ui/tech-icons/7-32.webp";
+import icon7_64 from "../assets/ui/tech-icons/7-64.webp";
+import icon8_32 from "../assets/ui/tech-icons/8-32.webp";
+import icon8_64 from "../assets/ui/tech-icons/8-64.webp";
+import icon9_32 from "../assets/ui/tech-icons/9-32.webp";
+import icon9_64 from "../assets/ui/tech-icons/9-64.webp";
+import icon10_32 from "../assets/ui/tech-icons/10-32.webp";
+import icon10_64 from "../assets/ui/tech-icons/10-64.webp";
+import icon11_32 from "../assets/ui/tech-icons/11-32.webp";
+import icon11_64 from "../assets/ui/tech-icons/11-64.webp";
+import icon12_32 from "../assets/ui/tech-icons/12-32.webp";
+import icon12_64 from "../assets/ui/tech-icons/12-64.webp";
+import icon13_32 from "../assets/ui/tech-icons/13-32.webp";
+import icon13_64 from "../assets/ui/tech-icons/13-64.webp";
+import icon14_32 from "../assets/ui/tech-icons/14-32.webp";
+import icon14_64 from "../assets/ui/tech-icons/14-64.webp";
+import icon15_32 from "../assets/ui/tech-icons/15-32.webp";
+import icon15_64 from "../assets/ui/tech-icons/15-64.webp";
+import icon16_32 from "../assets/ui/tech-icons/16-32.webp";
+import icon16_64 from "../assets/ui/tech-icons/16-64.webp";
+import icon17_32 from "../assets/ui/tech-icons/17-32.webp";
+import icon17_64 from "../assets/ui/tech-icons/17-64.webp";
+
+// --- Array delle skill icon, con src e srcSet responsive! ---
 const skillIcons = [
-  { src: icon0,   iconSize: 20, offsetX: 0,    offsetY: -1 },
-  { src: icon1,   iconSize: 21, offsetX: 0,    offsetY: 0 },
-  { src: icon2,   iconSize: 22, offsetX: 0,    offsetY: 0.5 },
-  { src: icon3,   iconSize: 22, offsetX: 0,    offsetY: -1 },
-  { src: icon4,   iconSize: 25, offsetX: 0,    offsetY: 0 },
-  { src: icon5,   iconSize: 21, offsetX: 0,    offsetY: -1 },
-  { src: icon6,   iconSize: 22, offsetX: -0.5, offsetY: -3 },
-  { src: icon7,   iconSize: 19, offsetX: 0,    offsetY: -3 },
-  { src: icon8,   iconSize: 22, offsetX: -0.5, offsetY: -1 },
-  { src: icon9,   iconSize: 21, offsetX: 0.5,  offsetY: -1.5 },
-  { src: icon10,  iconSize: 21, offsetX: 0.8,  offsetY: -1 },
-  { src: icon11,  iconSize: 24, offsetX: 1.5,  offsetY: -1 },
-  { src: icon12,  iconSize: 23, offsetX: 0,    offsetY: -1.5 },
-  { src: icon13,  iconSize: 23, offsetX: 1,    offsetY: 1 },
-  { src: icon14,  iconSize: 23, offsetX: -1.5, offsetY: 2 },
-  { src: icon15,  iconSize: 24, offsetX: 1.5,  offsetY: 1.5 },
-  { src: icon16,  iconSize: 22, offsetX: 1,    offsetY: 2 },
-  { src: icon17,  iconSize: 21, offsetX: -1,   offsetY: -1 },
+  { src: icon0_32, srcSet: `${icon0_64} 2x`, iconSize: 20, offsetX: 0,    offsetY: -1 },
+  { src: icon1_32, srcSet: `${icon1_64} 2x`, iconSize: 21, offsetX: 0,    offsetY: 0 },
+  { src: icon2_32, srcSet: `${icon2_64} 2x`, iconSize: 22, offsetX: 0,    offsetY: 0.5 },
+  { src: icon3_32, srcSet: `${icon3_64} 2x`, iconSize: 22, offsetX: 0,    offsetY: -1 },
+  { src: icon4_32, srcSet: `${icon4_64} 2x`, iconSize: 25, offsetX: 0,    offsetY: 0 },
+  { src: icon5_32, srcSet: `${icon5_64} 2x`, iconSize: 21, offsetX: 0,    offsetY: -1 },
+  { src: icon6_32, srcSet: `${icon6_64} 2x`, iconSize: 22, offsetX: -0.5, offsetY: -3 },
+  { src: icon7_32, srcSet: `${icon7_64} 2x`, iconSize: 19, offsetX: 0,    offsetY: -3 },
+  { src: icon8_32, srcSet: `${icon8_64} 2x`, iconSize: 22, offsetX: -0.5, offsetY: -1 },
+  { src: icon9_32, srcSet: `${icon9_64} 2x`, iconSize: 21, offsetX: 0.5,  offsetY: -1.5 },
+  { src: icon10_32, srcSet: `${icon10_64} 2x`, iconSize: 21, offsetX: 0.8,  offsetY: -1 },
+  { src: icon11_32, srcSet: `${icon11_64} 2x`, iconSize: 24, offsetX: 1.5,  offsetY: -1 },
+  { src: icon12_32, srcSet: `${icon12_64} 2x`, iconSize: 23, offsetX: 0,    offsetY: -1.5 },
+  { src: icon13_32, srcSet: `${icon13_64} 2x`, iconSize: 23, offsetX: 1,    offsetY: 1 },
+  { src: icon14_32, srcSet: `${icon14_64} 2x`, iconSize: 23, offsetX: -1.5, offsetY: 2 },
+  { src: icon15_32, srcSet: `${icon15_64} 2x`, iconSize: 24, offsetX: 1.5,  offsetY: 1.5 },
+  { src: icon16_32, srcSet: `${icon16_64} 2x`, iconSize: 22, offsetX: 1,    offsetY: 2 },
+  { src: icon17_32, srcSet: `${icon17_64} 2x`, iconSize: 21, offsetX: -1,   offsetY: -1 },
 ];
 
 const AboutSection = () => {
@@ -186,14 +207,32 @@ const AboutSection = () => {
         left={26}
         zIndex={60}
         fontFamily={"'Pixel Operator', monospace"}
-        // === Tooltip sempre SOTTO e CENTRATO rispetto l’icona ===
+        // Tooltip sempre SOTTO e CENTRATO rispetto l’icona
         tooltipPositionFn={(e, icon) => {
           const rect = e.currentTarget.getBoundingClientRect();
           return {
-            x: rect.left + rect.width / 2, // centro orizzontale icona
-            y: rect.bottom + -5            // 10px sotto. Cambia qui: metti -5 per "sopra", aumenta/diminuisci per spazio.
+            x: rect.left + rect.width / 2,
+            y: rect.bottom + -5
           };
         }}
+        // === Patch: Override render delle icone per usare srcSet e pixelated! ===
+        renderIcon={({ src, srcSet, label, iconSize, ...rest }) => (
+          <img
+            src={src}
+            srcSet={srcSet}
+            width={iconSize}
+            height={iconSize}
+            alt={label}
+            style={{
+              imageRendering: "pixelated",
+              display: "block",
+            }}
+            decoding="async"
+            loading="lazy"
+            draggable={false}
+            {...rest}
+          />
+        )}
       />
     </PageWrapper>
   );
