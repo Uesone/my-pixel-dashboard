@@ -1,7 +1,7 @@
 // src/components/PowerHubLights.jsx
 import React, { useEffect, useState, useRef } from "react";
-import bulbBase from "../assets/pixel-map-sprites/bulb/0.png";
-import bulbGlass from "../assets/pixel-map-sprites/bulb/1.png";
+import bulbBase from "../assets/pixel-map-sprites/bulb/0.webp";
+import bulbGlass from "../assets/pixel-map-sprites/bulb/1.webp";
 import powerHubLightOff from "../assets/pixel-map-sprites/power-hub/4.png";
 import powerHubLightOn from "../assets/pixel-map-sprites/power-hub/5.png";
 import powerHubBtnOff from "../assets/pixel-map-sprites/power-hub/6.png";
