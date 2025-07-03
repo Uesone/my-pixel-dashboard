@@ -181,7 +181,8 @@ export default function PowerHubLights({
           imageRendering: "pixelated"
         }}
         draggable={false}
-        loading="lazy"
+  loading="eager"              
+  fetchpriority="high"  
       />
       {/* LAMPADINA ACCESA */}
       {bulbOn && (
