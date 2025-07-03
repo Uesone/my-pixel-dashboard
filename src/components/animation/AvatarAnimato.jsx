@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import avatarIdle from "../../assets/page-content-sprites/icons/14.png";
-import avatarTalk from "../../assets/page-content-sprites/icons/15.png";
+import avatarIdle from "../../assets/page-content-sprites/icons/14.webp";
+import avatarTalk from "../../assets/page-content-sprites/icons/15.webp";
 
 /**
  * Avatar animato: pixel-art SEMPRE nitida.
