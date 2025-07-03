@@ -17,8 +17,12 @@ export default function OverlayWithHole({
   borderRadius = 6,
   transition = "opacity 0.65s"
 }) {
+  // DEBUG: per test deploy
+  if (typeof window !== "undefined") {
+    console.log("[OverlayWithHole] rendered! PATCH anti-CLS attiva", {holeTop, holeLeft});
+  }
+
   // PATCH ANTI-CLS: NON renderizzare nulla finché la posizione del buco è (0,0)
-  // (cioè prima che venga effettivamente calcolata dalle misure reali del DOM)
   if (!visible || (holeTop === 0 && holeLeft === 0)) return null;
 
   return (
@@ -73,4 +77,3 @@ export default function OverlayWithHole({
     </div>
   );
 }
-//prova
