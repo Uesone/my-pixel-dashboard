@@ -1,3 +1,4 @@
+// src/pages/AboutSection.jsx
 import React from "react";
 import PageWrapper from "../components/PageWrapper";
 import CarouselSkills from "../components/CarouselSkills";
@@ -33,23 +34,23 @@ import icon17_64 from "../assets/ui/tech-icons/17-64.webp";
 
 // === Array delle skill icon (solo 64x64) ===
 const skillIcons = [
-  { src: icon0_64, iconSize: 22, offsetX: 0,    offsetY: -1 },
-  { src: icon1_64, iconSize: 22, offsetX: 0,    offsetY: 0 },
-  { src: icon2_64, iconSize: 22, offsetX: 0,    offsetY: 0.5 },
-  { src: icon3_64, iconSize: 22, offsetX: 0,    offsetY: -1 },
-  { src: icon4_64, iconSize: 24, offsetX: 0,    offsetY: 0 },
-  { src: icon5_64, iconSize: 22, offsetX: 0,    offsetY: -1 },
-  { src: icon6_64, iconSize: 22, offsetX: -0.5, offsetY: -3 },
-  { src: icon7_64, iconSize: 20, offsetX: 0,    offsetY: -3 },
-  { src: icon8_64, iconSize: 22, offsetX: -0.5, offsetY: -1 },
-  { src: icon9_64, iconSize: 22, offsetX: 0,  offsetY: -1.5 },
+  { src: icon0_64,  iconSize: 22, offsetX: 0,    offsetY: -1 },
+  { src: icon1_64,  iconSize: 22, offsetX: 0,    offsetY: 0 },
+  { src: icon2_64,  iconSize: 22, offsetX: 0,    offsetY: 0.5 },
+  { src: icon3_64,  iconSize: 22, offsetX: 0,    offsetY: -1 },
+  { src: icon4_64,  iconSize: 24, offsetX: 0,    offsetY: 0 },
+  { src: icon5_64,  iconSize: 22, offsetX: 0,    offsetY: -1 },
+  { src: icon6_64,  iconSize: 22, offsetX: -0.5, offsetY: -3 },
+  { src: icon7_64,  iconSize: 20, offsetX: 0,    offsetY: -3 },
+  { src: icon8_64,  iconSize: 22, offsetX: -0.5, offsetY: -1 },
+  { src: icon9_64,  iconSize: 22, offsetX: 0,    offsetY: -1.5 },
   { src: icon10_64, iconSize: 22, offsetX: 0.8,  offsetY: -1 },
   { src: icon11_64, iconSize: 22, offsetX: 1.5,  offsetY: -1 },
   { src: icon12_64, iconSize: 22, offsetX: 0,    offsetY: -1.5 },
   { src: icon13_64, iconSize: 22, offsetX: 1,    offsetY: 1 },
   { src: icon14_64, iconSize: 22, offsetX: -1.5, offsetY: 2 },
   { src: icon15_64, iconSize: 22, offsetX: 1.5,  offsetY: 1.5 },
-  { src: icon16_64, iconSize: 22, offsetX: 0.8,    offsetY: 1 },
+  { src: icon16_64, iconSize: 22, offsetX: 0.8,  offsetY: 1 },
   { src: icon17_64, iconSize: 22, offsetX: -1,   offsetY: -1 },
 ];
 
@@ -66,19 +67,38 @@ const AboutSection = () => {
 
   return (
     <PageWrapper>
-      {/* --- AVATAR E DECORAZIONI --- */}
-      <img
-        src={holder0}
-        alt="Avatar frame"
-        width={100}
-        height={100}
+      {/* --- AVATAR FRAME anti-CLS + fetchpriority --- */}
+      <div
         style={{
-          position: "absolute", top: 70, left: 25,
-          zIndex: 12, pointerEvents: "none", imageRendering: "pixelated"
+          position: "absolute",
+          top: 70,
+          left: 25,
+          width: 100,
+          height: 100,
+          zIndex: 12,
+          pointerEvents: "none",
+          overflow: "hidden", // Blocca sforamenti e previene shift layout
         }}
-        draggable={false}
-        loading="lazy"
-      />
+      >
+        <img
+          src={holder0}
+          alt="Avatar frame"
+          width={100}
+          height={100}
+          style={{
+            imageRendering: "pixelated",
+            width: "100%",
+            height: "100%",
+            display: "block",
+          }}
+          draggable={false}
+          loading="eager"          // Priorità massima
+          fetchpriority="high"     // LCP: carica subito!
+          decoding="async"
+        />
+      </div>
+
+      {/* --- AVATAR ANIMATO (resta come prima) --- */}
       <div style={{
         position: "absolute", top: 80, left: 35, width: 80, height: 80,
         borderRadius: "50%", overflow: "hidden", zIndex: 11,
@@ -86,6 +106,8 @@ const AboutSection = () => {
       }}>
         <AvatarAnimato talking={false} />
       </div>
+
+      {/* --- DECORAZIONI PIXEL ART --- */}
       <img src={linePng} alt="left deco line"
         width={90} height={70}
         style={{
@@ -197,6 +219,7 @@ const AboutSection = () => {
             y: rect.bottom + -5
           };
         }}
+        // Patch: Icone pixelate responsive
         renderIcon={({ src, label, iconSize, ...rest }) => (
           <img
             src={src}
