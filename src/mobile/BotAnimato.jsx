@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import umbybotIdleWebp from "./assets/sprites/umbybot-idle.webp";
-import umbybotTalkingWebp from "./assets/sprites/umbybot-talking.webp";
+import umbybotIdle208 from "./assets/sprites/umbybot-idle-208.webp";
+import umbybotIdle416 from "./assets/sprites/umbybot-idle-416.webp";
+import umbybotTalking208 from "./assets/sprites/umbybot-talking-208.webp";
+import umbybotTalking416 from "./assets/sprites/umbybot-talking-416.webp";
 
 /**
- * BotAnimato: Sprite animato della mascotte/chatbot.
- * - La bocca si muove (alternando sprite) solo quando "talking" è true.
- * - Alterna bocca aperta/chiusa ogni 120ms.
- *
- * Props:
- * - talking: boolean (true se il bot "parla", cioè il typewriter è attivo)
- * - size: dimensione (px)
+ * BotAnimato
+ * Sprite animato: alterna sprite "idle" e "talking" per animare la bocca.
+ * Immagini responsive, ottimizzate per Lighthouse.
  */
 export default function BotAnimato({ talking, size = 208 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,12 +22,15 @@ export default function BotAnimato({ talking, size = 208 }) {
     return () => clearInterval(interval);
   }, [talking]);
 
-  // Usa solo webp, browser moderni li supportano tutti
-  const sprite = talking && isOpen ? umbybotTalkingWebp : umbybotIdleWebp;
+  // Sprite attivo (idle o talking)
+  const sprite208 = talking && isOpen ? umbybotTalking208 : umbybotIdle208;
+  const sprite416 = talking && isOpen ? umbybotTalking416 : umbybotIdle416;
 
   return (
     <img
-      src={sprite}
+      src={sprite208}
+      srcSet={`${sprite208} 208w, ${sprite416} 416w`}
+      sizes={`${size}px`}
       alt="UmbyBot pixel sprite"
       className="umbybot-sprite"
       draggable={false}
@@ -41,6 +42,8 @@ export default function BotAnimato({ talking, size = 208 }) {
       width={size}
       height={size}
       loading="eager"
+      fetchPriority="high"
+      decoding="async"
     />
   );
 }

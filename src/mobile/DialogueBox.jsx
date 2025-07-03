@@ -1,11 +1,15 @@
-// /src/mobile/DialogueBox.jsx
 import React from "react";
-import umbybotIcon from "./assets/sprites/umbybot-idle.webp";
+import umbybotIcon208 from "./assets/sprites/umbybot-idle-208.webp";
+import umbybotIcon416 from "./assets/sprites/umbybot-idle-416.webp";
 
 /**
- * DialogueBox: NES style, altezza fissa, larghezza sempre 100%, contenuto non shrinka mai
+ * DialogueBox
+ * Steampunk/NES style dialogue box con supporto per immagini responsive.
+ * - npcIcon: puoi passare una custom, altrimenti usa la default responsive.
  */
-export default function DialogueBox({ npcName, dialogue, npcIcon = umbybotIcon }) {
+export default function DialogueBox({ npcName, dialogue, npcIcon }) {
+  const icon208 = npcIcon || umbybotIcon208;
+  const icon416 = npcIcon || umbybotIcon416;
   return (
     <div
       className="dialogue-box-steampunk nes-container with-title is-rounded"
@@ -21,12 +25,16 @@ export default function DialogueBox({ npcName, dialogue, npcIcon = umbybotIcon }
       }}
     >
       <div className="dialogue-header-steampunk">
-        <img src={npcIcon} alt="NPC" className="dialogue-npc-icon" />
+        <img
+          src={icon208}
+          srcSet={`${icon208} 28w, ${icon416} 56w`}
+          sizes="28px"
+          alt="NPC"
+          className="dialogue-npc-icon"
+        />
         <span className="dialogue-npc-name">{npcName}</span>
       </div>
-      <div className="dialogue-content-steampunk">
-        {dialogue}
-      </div>
+      <div className="dialogue-content-steampunk">{dialogue}</div>
     </div>
   );
 }
