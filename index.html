@@ -7,21 +7,41 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- === PATCH: preconnect Google Fonts per performance (Lighthouse fix) === -->
+    <!-- === PATCH: Google Fonts NON BLOCKING === -->
+    <!-- Preconnect velocizza la connessione con i server Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Il font VT323 viene importato via CSS (vedi styles), ma preconnect qui migliora il punteggio -->
+
+    <!-- Preload e caricamento asincrono del font VT323 per evitare blocco rendering -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      />
+    </noscript>
+    <!-- FINE PATCH GOOGLE FONTS -->
 
     <title>Uesone's Portfolio</title>
 
-    <!-- TODO: Altri meta-tag SEO/opengraph/social (facoltativi) -->
+    <!-- (FACOLTATIVO) Altri meta-tag SEO/opengraph/social -->
     <!--
       <meta name="description" content="Il portfolio di Umberto Amoroso, full stack developer." />
       <meta property="og:title" content="Uesone's Portfolio" />
       <meta property="og:image" content="/og-image.png" />
     -->
 
-    <!-- TODO: Importa qui eventuali CSS globali se non li importi da JS -->
+    <!-- (FACOLTATIVO) Importa qui CSS globali se NON li importi da JS -->
     <!--
       <link rel="stylesheet" href="/src/styles/global.css" />
     -->
@@ -30,7 +50,7 @@
     <!-- Root principale di React -->
     <div id="root"></div>
 
-    <!-- Portal root: necessario per far apparire i modali sopra ogni altro componente React -->
+    <!-- Portal root: per modali sopra ogni altro componente React -->
     <div id="modal-root"></div>
 
     <!-- Entry point React/Vite (build genera qui il JS principale) -->
