@@ -8,6 +8,9 @@ import powerHubBtnOff from "../assets/pixel-map-sprites/power-hub/6.png";
 import powerHubBtnOn from "../assets/pixel-map-sprites/power-hub/7.png";
 import arrowPng from "../assets/ui/arrow/arrow-64.webp";
 
+/**
+ * PowerHubLights – versione anti-micro-movimento pixel-art.
+ */
 export default function PowerHubLights({
   animated = true,
   onPowerClick,
@@ -33,19 +36,12 @@ export default function PowerHubLights({
     };
   }, []);
 
-  useEffect(() => {
-    hasCalledOnFinished.current = false;
-  }, [isOn, animated, onPowerOnFinished]);
-
-  useEffect(() => {
-    if (typeof onBulbChange === "function") onBulbChange(bulbOn);
-    // eslint-disable-next-line
-  }, [bulbOn]);
+  useEffect(() => { hasCalledOnFinished.current = false; }, [isOn, animated, onPowerOnFinished]);
+  useEffect(() => { if (typeof onBulbChange === "function") onBulbChange(bulbOn); }, [bulbOn]);
 
   useEffect(() => {
     timeoutsRef.current.forEach((t) => clearTimeout(t));
     timeoutsRef.current = [];
-
     if (!animated) {
       setBulbOn(isOn);
       setLights(isOn ? [true, true, true, true, true] : [false, false, false, false, false]);
@@ -57,33 +53,19 @@ export default function PowerHubLights({
       }
       return;
     }
-
     if (isOn) {
-      setAnimating(true);
-      setBulbOn(false);
-      setBtnOn(false);
+      setAnimating(true); setBulbOn(false); setBtnOn(false);
       setLights([false, false, false, false, false]);
-
-      const BLINKS = [7, 5, 4, 4, 3];
-      const BLINK_INTERVAL = 90;
-
+      const BLINKS = [7, 5, 4, 4, 3], BLINK_INTERVAL = 90;
       function animateLight(i) {
         let blinkCount = 0;
         function blink() {
-          setLights((arr) => {
-            const copy = [...arr];
-            copy[i] = blinkCount % 2 === 1;
-            return copy;
-          });
+          setLights(arr => { const copy = [...arr]; copy[i] = blinkCount % 2 === 1; return copy; });
           blinkCount++;
           if (blinkCount < BLINKS[4 - i] * 2) {
             timeoutsRef.current.push(setTimeout(blink, BLINK_INTERVAL));
           } else {
-            setLights((arr) => {
-              const copy = [...arr];
-              copy[i] = true;
-              return copy;
-            });
+            setLights(arr => { const copy = [...arr]; copy[i] = true; return copy; });
             if (i > 0) {
               timeoutsRef.current.push(setTimeout(() => animateLight(i - 1), 80));
             } else {
@@ -93,76 +75,61 @@ export default function PowerHubLights({
         }
         blink();
       }
-
       function flickerBulb() {
         const flickerSeq = [90, 120, 70, 135, 95, 170, 260];
         let step = 0;
         function flick() {
-          setBulbOn((on) => !on);
+          setBulbOn(on => !on);
           if (step < flickerSeq.length) {
             timeoutsRef.current.push(setTimeout(flick, flickerSeq[step++]));
           } else {
-            setBulbOn(true); // rimane accesa
+            setBulbOn(true);
             if (typeof onPowerOnFinished === "function" && !hasCalledOnFinished.current) {
               hasCalledOnFinished.current = true;
               onPowerOnFinished();
             }
             timeoutsRef.current.push(setTimeout(() => {
-              setBtnOn(true);
-              setAnimating(false);
-              setLights((arr) => {
-                const fixed = [...arr];
-                fixed[0] = true;
-                return fixed;
-              });
+              setBtnOn(true); setAnimating(false);
+              setLights(arr => { const fixed = [...arr]; fixed[0] = true; return fixed; });
             }, 500));
           }
         }
         flick();
       }
-
       animateLight(4);
-
     } else {
-      // Spegnimento
-      setAnimating(true);
-      setBtnOn(false);
-      setBulbOn(false);
-
+      setAnimating(true); setBtnOn(false); setBulbOn(false);
       [0, 1, 2, 3, 4].forEach((i, idx) =>
         timeoutsRef.current.push(
-          setTimeout(() => setLights((arr) => {
-            const copy = [...arr];
-            copy[i] = false;
-            return copy;
-          }), idx * 50)
+          setTimeout(() => setLights(arr => { const copy = [...arr]; copy[i] = false; return copy; }), idx * 50)
         )
       );
       timeoutsRef.current.push(setTimeout(() => setAnimating(false), 350));
     }
-    // eslint-disable-next-line
   }, [isOn, animated, onPowerOnFinished]);
 
-  // Click bottone
   function handleBtnClick(e) {
     e.stopPropagation();
     if (!canClick || btnPressed) return;
     setBtnPressed(true);
     setShowArrow(false);
     setTimeout(() => setBtnPressed(false), 140);
-    setIsOn((prev) => !prev);
+    setIsOn(prev => !prev);
     if (typeof onPowerClick === "function") onPowerClick(!isOn);
   }
 
   // --- Posizione e stile freccia PNG
-  const arrowTop = 284;
-  const arrowLeft = 452;
-  const arrowWidth = 19;
-  const arrowHeight = 19;
-  const arrowRotation = 0;
+  const arrowTop = 284, arrowLeft = 452, arrowWidth = 19, arrowHeight = 19, arrowRotation = 0;
 
   return (
     <>
+      {/* ================= GHOST DIVs ANTI-CLS =============== */}
+      <div style={{ position: "absolute", top: 84, left: 34, width: 112, height: 240, opacity: 0, pointerEvents: "none", zIndex: 0 }} aria-hidden="true" />
+      <div style={{ position: "absolute", top: 275, left: 437, width: 16, height: 58, opacity: 0, pointerEvents: "none", zIndex: 0 }} aria-hidden="true" />
+      <div style={{ position: "absolute", top: 317, left: 454, width: 16, height: 16, opacity: 0, pointerEvents: "none", zIndex: 0 }} aria-hidden="true" />
+      <div style={{ position: "absolute", top: arrowTop, left: arrowLeft, width: arrowWidth, height: arrowHeight, opacity: 0, pointerEvents: "none", zIndex: 0 }} aria-hidden="true" />
+      {/* ================== END GHOSTS ==================== */}
+
       {/* BASE LAMPADINA */}
       <img
         src={bulbBase}
@@ -170,18 +137,14 @@ export default function PowerHubLights({
         width={112}
         height={240}
         style={{
-          position: "absolute",
-          top: 84, left: 34,
-          zIndex: 40,
-          pointerEvents: "none",
-          imageRendering: "pixelated",
-          display: "block",
+          position: "absolute", top: 84, left: 34, zIndex: 40,
+          pointerEvents: "none", imageRendering: "pixelated", display: "block"
         }}
         draggable={false}
         loading="eager"
         fetchPriority="high"
       />
-      {/* LAMPADINA ACCESA */}
+      {/* LAMPADINA ACCESA (animazione glow) */}
       {bulbOn && (
         <img
           src={bulbGlass}
@@ -189,13 +152,11 @@ export default function PowerHubLights({
           width={112}
           height={240}
           style={{
-            position: "absolute", top: 84, left: 34,
-            zIndex: 41, pointerEvents: "none",
-            opacity: 1,
-            transition: "opacity 0.17s",
+            position: "absolute", top: 84, left: 34, zIndex: 41,
+            pointerEvents: "none", opacity: 1, transition: "opacity 0.17s",
             imageRendering: "pixelated",
             filter: "drop-shadow(0 0 12px #fff8) drop-shadow(0 0 28px #ffe7)",
-            display: "block",
+            display: "block"
           }}
           draggable={false}
           loading="eager"
@@ -203,31 +164,63 @@ export default function PowerHubLights({
         />
       )}
 
-      {/* LUCI GIALLE */}
+      {/* LUCI GIALLE: ON/OFF sovrapposti per ciascuna */}
       {lights.map((on, i) => (
-        <img
+        <div
           key={i}
-          src={on ? powerHubLightOn : powerHubLightOff}
-          alt={`light-${i}`}
-          width={16}
-          height={16}
           style={{
             position: "absolute",
             top: 275 + i * 10,
             left: 437,
+            width: 16,
+            height: 16,
             zIndex: 34,
             pointerEvents: "none",
-            imageRendering: "pixelated",
-            filter: on
-              ? "drop-shadow(0 0 9px #ffe080) drop-shadow(0 0 20px #fff7)"
-              : undefined,
-            opacity: on ? 1 : 0.68,
-            transition: "opacity 0.16s",
             display: "block",
+            overflow: "hidden", // Important!
           }}
-          draggable={false}
-          loading="eager"
-        />
+        >
+          {/* OFF */}
+          <img
+            src={powerHubLightOff}
+            alt={`light-${i}-off`}
+            width={16}
+            height={16}
+            style={{
+              position: "absolute",
+              top: 0, left: 0,
+              width: 16, height: 16,
+              opacity: on ? 0 : 1,
+              transition: "opacity 0.13s",
+              imageRendering: "pixelated",
+              pointerEvents: "none",
+              display: "block",
+              filter: "drop-shadow(0 0 8px #0000)",
+            }}
+            draggable={false}
+            loading="eager"
+          />
+          {/* ON */}
+          <img
+            src={powerHubLightOn}
+            alt={`light-${i}-on`}
+            width={16}
+            height={16}
+            style={{
+              position: "absolute",
+              top: 0, left: 0,
+              width: 16, height: 16,
+              opacity: on ? 1 : 0,
+              transition: "opacity 0.13s",
+              imageRendering: "pixelated",
+              pointerEvents: "none",
+              display: "block",
+              filter: "drop-shadow(0 0 9px #ffe080) drop-shadow(0 0 20px #fff7)",
+            }}
+            draggable={false}
+            loading="eager"
+          />
+        </div>
       ))}
 
       {/* FRECCIA PNG ANIMATA */}
@@ -258,26 +251,52 @@ export default function PowerHubLights({
         />
       )}
 
-      {/* POWER BUTTON (immagine) */}
-      <img
-        src={btnOn ? powerHubBtnOn : powerHubBtnOff}
-        alt="power btn"
-        width={16}
-        height={16}
+      {/* POWER BUTTON: ON/OFF sovrapposti */}
+      <div
         style={{
           position: "absolute", top: 317, left: 454,
-          zIndex: 35, pointerEvents: "none",
-          transition: "filter 0.22s, boxShadow 0.16s",
-          filter: btnOn
-            ? (btnPressed ? "drop-shadow(0 0 4px #f66) brightness(0.88)" : "drop-shadow(0 0 8px #f66)")
-            : undefined,
-          boxShadow: btnPressed ? "0 1px 8px #a11" : undefined,
-          imageRendering: "pixelated",
-          display: "block",
+          width: 16, height: 16, zIndex: 35,
+          pointerEvents: "none", display: "block", overflow: "hidden",
         }}
-        draggable={false}
-        loading="eager"
-      />
+      >
+        {/* OFF */}
+        <img
+          src={powerHubBtnOff}
+          alt="power btn off"
+          width={16}
+          height={16}
+          style={{
+            position: "absolute", top: 0, left: 0, width: 16, height: 16,
+            opacity: btnOn ? 0 : 1,
+            transition: "opacity 0.13s, filter 0.22s, boxShadow 0.16s",
+            filter: "drop-shadow(0 0 8px #0000)",
+            imageRendering: "pixelated",
+            display: "block"
+          }}
+          draggable={false}
+          loading="eager"
+        />
+        {/* ON */}
+        <img
+          src={powerHubBtnOn}
+          alt="power btn on"
+          width={16}
+          height={16}
+          style={{
+            position: "absolute", top: 0, left: 0, width: 16, height: 16,
+            opacity: btnOn ? 1 : 0,
+            transition: "opacity 0.13s, filter 0.22s, boxShadow 0.16s",
+            filter: btnPressed
+              ? "drop-shadow(0 0 4px #f66) brightness(0.88)"
+              : "drop-shadow(0 0 8px #f66)",
+            boxShadow: btnPressed ? "0 1px 8px #a11" : "0 0 0 0 transparent",
+            imageRendering: "pixelated",
+            display: "block"
+          }}
+          draggable={false}
+          loading="eager"
+        />
+      </div>
       {/* POWER BUTTON (cliccabile invisibile) */}
       <button
         aria-label={isOn ? "Spegni Power Hub" : "Accendi Power Hub"}
@@ -286,7 +305,7 @@ export default function PowerHubLights({
         style={{
           position: "absolute", top: 317, left: 454,
           width: 16, height: 16, zIndex: 40,
-          opacity: 0, // invisibile ma cliccabile!
+          opacity: 0,
           cursor: (canClick && !btnPressed) ? "pointer" : "default",
           background: "none", border: "none", outline: "none", padding: 0,
           pointerEvents: "auto",
