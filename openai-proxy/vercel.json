@@ -6,6 +6,7 @@
   ],
   "routes": [
     { "src": "/api/umbybot", "dest": "api/umbybot.js" },
+    { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
