@@ -1,3 +1,4 @@
+// src/components/DashboardBase.jsx
 import React, { forwardRef } from "react";
 // --- ASSET principali ---
 import frame from "../assets/pixel-map-sprites/base/3.png";
@@ -16,7 +17,7 @@ import Compass from "./Compass";
 import ClockAnimated from "./ClockAnimated";
 
 /**
- * DashboardBase (ottimizzata performance/pixel art, no layout shift!)
+ * DashboardBase (pixel art, no layout shift)
  */
 const DASHBOARD_WIDTH = 487;
 const DASHBOARD_HEIGHT = 399;
@@ -46,6 +47,22 @@ const DashboardBase = forwardRef(({
       overflow: "hidden"
     }}
   >
+    {/* ==== RISERVA SPAZIO LAMPADINA (Ghost Div, NO contenuto, solo stile) ==== */}
+    <div
+      style={{
+        position: "absolute",
+        top: 84,
+        left: 34,
+        width: 112,
+        height: 240,
+        zIndex: 0,
+        pointerEvents: "none",
+        opacity: 0,
+        userSelect: "none"
+      }}
+      aria-hidden="true"
+    />
+
     {/* Foglio arrotolato */}
     {showPageRoll && (
       <img
@@ -180,7 +197,7 @@ const DashboardBase = forwardRef(({
       loading="eager"
     />
 
-    {/* Glow orizzontali e verticali (mappati) */}
+    {/* Glow orizzontali e verticali */}
     {[
       // orizzontali
       { top: 50, left: 35 }, { top: 150, left: 35 }, { top: 65, left: 428 }, { top: 170, left: 428 }, { top: 250, left: 35 },

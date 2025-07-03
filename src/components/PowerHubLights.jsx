@@ -1,3 +1,4 @@
+// src/components/PowerHubLights.jsx
 import React, { useEffect, useState, useRef } from "react";
 import bulbBase from "../assets/pixel-map-sprites/bulb/0.webp";
 import bulbGlass from "../assets/pixel-map-sprites/bulb/1.webp";
@@ -13,7 +14,6 @@ export default function PowerHubLights({
   onBulbChange,
   onPowerOnFinished,
 }) {
-  // === State & animazione ===
   const [isOn, setIsOn] = useState(false);
   const [animating, setAnimating] = useState(false);
   const [showArrow, setShowArrow] = useState(true);
@@ -143,7 +143,7 @@ export default function PowerHubLights({
     // eslint-disable-next-line
   }, [isOn, animated, onPowerOnFinished]);
 
-  // === Click bottone ===
+  // Click bottone
   function handleBtnClick(e) {
     e.stopPropagation();
     if (!canClick || btnPressed) return;
@@ -175,7 +175,7 @@ export default function PowerHubLights({
           zIndex: 40,
           pointerEvents: "none",
           imageRendering: "pixelated",
-          display: "block",         // PATCH ANTI-CLS
+          display: "block",
         }}
         draggable={false}
         loading="eager"
@@ -198,7 +198,8 @@ export default function PowerHubLights({
             display: "block",
           }}
           draggable={false}
-          loading="lazy"
+          loading="eager"
+          fetchpriority="high"
         />
       )}
 
@@ -230,32 +231,32 @@ export default function PowerHubLights({
       ))}
 
       {/* FRECCIA PNG ANIMATA */}
-    {showArrow && !isOn && (
-  <img
-    src={arrowPng}
-    alt="arrow"
-    width={arrowWidth}
-    height={arrowHeight}
-    style={{
-      position: "absolute",
-      top: arrowTop,
-      left: arrowLeft,
-      zIndex: 42,
-      pointerEvents: "none",
-      userSelect: "none",
-      animation: "tooltipArrow 0.72s ease-in-out infinite",
-      transform: `rotate(${arrowRotation}deg)`,
-      transition: "transform 0.18s",
-      filter: "drop-shadow(1px 2px 0 #bbb)",
-      imageRendering: "pixelated",
-      display: "block", // PATCH anti-CLS
-    }}
-    draggable={false}
-    loading="**eager**"      // PATCH QUI! Cambia da lazy a eager!
-    decoding="async"
-    fetchpriority="high"     // PATCH: Altro bonus!
-  />
-)}
+      {showArrow && !isOn && (
+        <img
+          src={arrowPng}
+          alt="arrow"
+          width={arrowWidth}
+          height={arrowHeight}
+          style={{
+            position: "absolute",
+            top: arrowTop,
+            left: arrowLeft,
+            zIndex: 42,
+            pointerEvents: "none",
+            userSelect: "none",
+            animation: "tooltipArrow 0.72s ease-in-out infinite",
+            transform: `rotate(${arrowRotation}deg)`,
+            transition: "transform 0.18s",
+            filter: "drop-shadow(1px 2px 0 #bbb)",
+            imageRendering: "pixelated",
+            display: "block",
+          }}
+          draggable={false}
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+      )}
 
       {/* POWER BUTTON (immagine) */}
       <img
