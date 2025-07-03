@@ -93,7 +93,7 @@ const AboutSection = () => {
           }}
           draggable={false}
           loading="eager"          // Priorità massima
-          fetchpriority="high"     // LCP: carica subito!
+          fetchPriority="high"     // LCP: carica subito!
           decoding="async"
         />
       </div>
