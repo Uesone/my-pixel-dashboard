@@ -181,32 +181,93 @@ const AboutSection = () => {
         }}>
           <b>{t("about.age_label")}</b> <span style={{ color: "#b89254" }}>{t("about.age_value")}</span>
         </div>
-        <div style={{
-          position: "absolute", top: 104, left: 136,
-          fontFamily: "'Pixel Operator', 'VT323', monospace",
-          fontSize: 16, color: "#3a2412", zIndex: 32, minWidth: 140, textAlign: "left",
-          display: "flex", alignItems: "center", gap: 0,
-        }}>
-          <b>{t("about.xp_label")}</b>
-          <img src={xpBarPng} alt="XP Progress"
-            width={60} height={30}
-            style={{
-              marginLeft: 0, marginRight: "-3px",
-              imageRendering: "pixelated", verticalAlign: "middle", marginTop: "4px",
-            }} draggable={false} loading="eager" />
-          <img src={xpBarEmptyPng} alt="XP Progress Empty"
-            width={30} height={30}
-            style={{
-              marginLeft: "-3px", imageRendering: "pixelated",
-              verticalAlign: "middle", marginTop: "4px",
-            }} draggable={false} loading="eager" />
-          <span style={{
-            fontFamily: "'Pixel Operator', 'VT323', monospace",
-            fontSize: 13, marginLeft: 3, color: "#d98e42"
-          }}>
-            (1250/<span style={{ color: "#b89254" }}>2000</span>)
-          </span>
-        </div>
+<div style={{
+  position: "absolute",
+  top: 115,
+  left: 136,
+  width: 180,
+  height: 38,
+  fontFamily: "'Pixel Operator', 'VT323', monospace",
+  fontSize: 16,
+  color: "#3a2412",
+  zIndex: 32,
+  textAlign: "left",
+  boxSizing: "border-box",
+}}>
+  {/* Label */}
+  <span style={{
+    position: "absolute",
+    top: 0,
+    left: 0,
+    fontWeight: "bold",
+    height: 38,
+    lineHeight: "38px",
+    pointerEvents: "none",
+  }}>
+    {t("about.xp_label")}
+  </span>
+  {/* XP Bar Full */}
+  <span style={{
+    position: "absolute",
+    top: 6,          // cambia come vuoi
+    left: 20,        // cambia come vuoi
+    width: 60,
+    height: 30,
+    display: "inline-block",
+  }}>
+    <img
+      src={xpBarPng}
+      alt="XP Progress"
+      width={60}
+      height={30}
+      style={{
+        imageRendering: "pixelated",
+        width: "100%",
+        height: "100%",
+        display: "block",
+      }}
+      draggable={false}
+      loading="eager"
+    />
+  </span>
+  {/* XP Bar Empty */}
+  <span style={{
+    position: "absolute",
+    top: 6,           // cambia come vuoi
+    left:75,        // cambia come vuoi
+    width: 30,
+    height: 30,
+    display: "inline-block",
+  }}>
+    <img
+      src={xpBarEmptyPng}
+      alt="XP Progress Empty"
+      width={30}
+      height={30}
+      style={{
+        imageRendering: "pixelated",
+        width: "100%",
+        height: "100%",
+        display: "block",
+      }}
+      draggable={false}
+      loading="eager"
+    />
+  </span>
+  {/* XP Text */}
+  <span style={{
+    position: "absolute",
+    top: 10,           // cambia come vuoi
+    left: 107,         // cambia come vuoi
+    fontSize: 13,
+    color: "#d98e42",
+    fontFamily: "'Pixel Operator', 'VT323', monospace",
+  }}>
+    (1250/<span style={{ color: "#b89254" }}>2000</span>)
+  </span>
+</div>
+
+
         <div style={{
           position: "absolute", top: 146, left: 135,
           fontFamily: "'Pixel Operator', 'VT323', monospace",
