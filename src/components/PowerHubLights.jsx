@@ -5,7 +5,7 @@ import powerHubLightOff from "../assets/pixel-map-sprites/power-hub/4.png";
 import powerHubLightOn from "../assets/pixel-map-sprites/power-hub/5.png";
 import powerHubBtnOff from "../assets/pixel-map-sprites/power-hub/6.png";
 import powerHubBtnOn from "../assets/pixel-map-sprites/power-hub/7.png";
-import arrowPng from "../assets/ui/arrow/arrow.png";
+import arrowPng from "../assets/ui/arrow/arrow-64.webp";
 
 export default function PowerHubLights({
   animated = true,
@@ -250,6 +250,7 @@ export default function PowerHubLights({
           }}
           draggable={false}
           loading="lazy"
+          decoding="async"
         />
       )}
 
