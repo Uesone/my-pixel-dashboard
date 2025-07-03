@@ -1,3 +1,4 @@
+// src/components/PowerHubLights.jsx
 import React, { useEffect, useState, useRef } from "react";
 import bulbBase from "../assets/pixel-map-sprites/bulb/0.png";
 import bulbGlass from "../assets/pixel-map-sprites/bulb/1.png";
@@ -224,7 +225,7 @@ export default function PowerHubLights({
             transition: "opacity 0.16s"
           }}
           draggable={false}
-          loading="lazy"
+          loading="eager" // PATCH CLS: queste luci devono essere eagerly caricate!
         />
       ))}
 
@@ -301,4 +302,3 @@ export default function PowerHubLights({
     </>
   );
 }
-
