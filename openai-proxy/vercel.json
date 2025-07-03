@@ -1,10 +1,6 @@
+
 {
   "version": 2,
-  "builds": [
-    { "src": "api/umbybot.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/api/umbybot", "dest": "api/umbybot.js" },
-    { "src": "/(.*)", "dest": "/" }
-  ]
+  "builds": [{ "src": "api/umbybot.js", "use": "@vercel/node" }],
+  "routes": [{ "src": "/api/umbybot", "dest": "api/umbybot.js" }]
 }
