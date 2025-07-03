@@ -195,6 +195,25 @@ function AnimatedDashboard({
           minHeight: 600,
         }}
       >
+        {/* === GHOST DIV ANTI-CLS: FISSA lo spazio della dashboard scalata === */}
+        <div
+          style={{
+            width: 487 * DASHBOARD_SCALE,
+            height: 399 * DASHBOARD_SCALE,
+            minWidth: 487 * DASHBOARD_SCALE,
+            minHeight: 399 * DASHBOARD_SCALE,
+            maxWidth: 487 * DASHBOARD_SCALE,
+            maxHeight: 399 * DASHBOARD_SCALE,
+            pointerEvents: "none",
+            opacity: 0,
+            position: "absolute",
+            left: 0, top: 0, zIndex: 0,
+            userSelect: "none",
+          }}
+          aria-hidden="true"
+        />
+        {/* === END GHOST DIV === */}
+
         <Sidebar
           selected={selectedSection}
           navigate={navigate}
