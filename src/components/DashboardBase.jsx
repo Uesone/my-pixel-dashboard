@@ -1,5 +1,7 @@
+// src/components/DashboardBase.jsx
 import React, { forwardRef } from "react";
-// ...ASSET IMPORTS...
+
+// === ASSET IMPORTS ===
 import frame from "../assets/pixel-map-sprites/base/3.png";
 import background from "../assets/pixel-map-sprites/base/0.png";
 import corners from "../assets/pixel-map-sprites/base/1.png";
@@ -12,9 +14,15 @@ import pageRollPng from "../assets/content/page-flip/next-page/11.png";
 import Compass from "./Compass";
 import ClockAnimated from "./ClockAnimated";
 
+// === COSTANTI DASHBOARD ===
 const DASHBOARD_WIDTH = 487;
 const DASHBOARD_HEIGHT = 399;
 
+/**
+ * DashboardBase
+ * - Ghost div riserva sempre spazio per il buco dell'overlay (NO CLS)
+ * - Tutto il layout pixel-perfect
+ */
 const DashboardBase = forwardRef(({
   scale = 1.4,
   children,
@@ -22,8 +30,8 @@ const DashboardBase = forwardRef(({
   pageFlipOverlay = null,
   isFlipping = false,
   PowerHubProps = {},
-  // Overlay hole config (passati da App, così non c'è divergenza!)
-  holeTop = 403,    // DEFAULT, override da App.jsx
+  // Overlay hole config (arrivano già SCALATE da App.jsx!)
+  holeTop = 403,
   holeLeft = 810,
   holeWidth = 61,
   holeHeight = 140
@@ -45,8 +53,9 @@ const DashboardBase = forwardRef(({
       overflow: "hidden"
     }}
   >
-    {/* ==== GHOST DIV: RISERVA SPAZIO BUCO OVERLAY (no CLS, sempre in posizione!) ==== */}
+    {/* ==== GHOST DIV: RISERVA SPAZIO BUCO OVERLAY (CLS = 0) ==== */}
     <div
+      id="dashboard-hole-placeholder"
       style={{
         position: "absolute",
         top: holeTop,
@@ -56,14 +65,12 @@ const DashboardBase = forwardRef(({
         opacity: 0,
         pointerEvents: "none",
         zIndex: 0,
-        minWidth: holeWidth,
-        minHeight: holeHeight,
         userSelect: "none"
       }}
       aria-hidden="true"
     />
 
-    {/* Foglio arrotolato */}
+    {/* ==== Foglio arrotolato sopra ==== */}
     {showPageRoll && (
       <img
         src={pageRollPng}
@@ -83,7 +90,8 @@ const DashboardBase = forwardRef(({
         loading="eager"
       />
     )}
-    {/* ...tutto il resto come prima... */}
+
+    {/* ==== FRAME ==== */}
     <img
       src={frame}
       alt="frame"
@@ -101,6 +109,8 @@ const DashboardBase = forwardRef(({
       draggable={false}
       loading="eager"
     />
+
+    {/* ==== BAR LATERALE ==== */}
     <img
       src={leftBar}
       alt="left bar"
@@ -118,6 +128,8 @@ const DashboardBase = forwardRef(({
       draggable={false}
       loading="eager"
     />
+
+    {/* ==== SFONDO ==== */}
     <img
       src={background}
       alt="background"
@@ -135,6 +147,8 @@ const DashboardBase = forwardRef(({
       draggable={false}
       loading="eager"
     />
+
+    {/* ==== AREA CONTENUTO ==== */}
     <div
       style={{
         position: "absolute",
@@ -149,6 +163,8 @@ const DashboardBase = forwardRef(({
       {children}
       {pageFlipOverlay}
     </div>
+
+    {/* ==== ANGOLI ==== */}
     {!isFlipping && (
       <img
         src={corners}
@@ -168,6 +184,8 @@ const DashboardBase = forwardRef(({
         loading="eager"
       />
     )}
+
+    {/* ==== POWER HUB: tubo, glow, box ==== */}
     <img
       src={powerHubTube}
       alt="power hub tube"
@@ -185,7 +203,9 @@ const DashboardBase = forwardRef(({
       draggable={false}
       loading="eager"
     />
-    {[ // Glow
+
+    {/* ==== GLOW EFFECTS ==== */}
+    {[
       { top: 50, left: 35 }, { top: 150, left: 35 }, { top: 65, left: 428 }, { top: 170, left: 428 }, { top: 250, left: 35 },
       { top: 36, left: 400, vertical: true },
       { top: 36, left: 320, vertical: true },
@@ -213,6 +233,8 @@ const DashboardBase = forwardRef(({
         loading="eager"
       />
     ))}
+
+    {/* ==== POWER HUB BOX ==== */}
     <img
       src={powerHubBox}
       alt="power hub box"
@@ -230,9 +252,14 @@ const DashboardBase = forwardRef(({
       draggable={false}
       loading="eager"
     />
+
+    {/* ==== POWER HUB LIGHTS ==== */}
     <PowerHubLights {...PowerHubProps} />
+
+    {/* ==== BUSSOLA & OROLOGIO ==== */}
     <Compass />
     <ClockAnimated />
   </div>
 ));
+
 export default DashboardBase;

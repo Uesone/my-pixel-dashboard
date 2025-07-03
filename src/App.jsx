@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar/SideBar";
@@ -14,16 +15,22 @@ import holder0 from "./assets/page-content-sprites/holders/8.png";
 import useIsMobile from "./hooks/useIsMobile";
 import UmbyBotRPG from "./mobile/UmbyBotRPG";
 
-// --- CONFIG BUCO POWER HUB (centralizzata qui, riusata ovunque) ---
-const HOLE_TOP = 316 + 87;
-const HOLE_LEFT = 814 - 4;
-const HOLE_WIDTH = 61;
-const HOLE_HEIGHT = 140;
-const HOLE_RADIUS = 9;
+// --- CONFIG POSIZIONE DEL BUCO (in pixel RELATIVI ALLA DASHBOARD NON SCALATA) ---
+const HOLE_DASHBOARD_TOP = 268;   // Cambia qui la Y: 0 = in alto, 316+87 = posizione originale lampadina
+const HOLE_DASHBOARD_LEFT = 410;  // Cambia qui la X: 0 = tutto a sinistra
+const HOLE_WIDTH = 30;
+const HOLE_HEIGHT = 93;
+const HOLE_RADIUS = 4;
+
+// --- DASHBOARD ---
+const DASHBOARD_WIDTH = 487;
+const DASHBOARD_HEIGHT = 399;
+const DASHBOARD_SCALE = 1.5;
 
 const SECTIONS = ["home", "about", "projects", "contacts"];
 const FLIP_DURATION = 820;
-const DASHBOARD_SCALE = 1.5;
+
+// Avatar/circle (sempre SCALATI rispetto design base)
 const AVATAR_ORIG_LEFT = 262, AVATAR_ORIG_TOP = 185, AVATAR_WIDTH = 80, AVATAR_HEIGHT = 80;
 const CIRCLE_ORIG_LEFT = 250, CIRCLE_ORIG_TOP = 175, CIRCLE_WIDTH = 100, CIRCLE_HEIGHT = 100;
 
@@ -35,7 +42,6 @@ function AnimatedDashboard({
 }) {
   const [overlayVisible, setOverlayVisible] = useState(true);
   const [bulbLight, setBulbLight] = useState(false);
-  const [dialogBoxVisible, setDialogBoxVisible] = useState(false);
 
   const [pendingSection, setPendingSection] = useState(null);
   const [isFlipping, setIsFlipping] = useState(false);
@@ -43,15 +49,36 @@ function AnimatedDashboard({
   const [hasInteracted, setHasInteracted] = useState(false);
   const prevSectionRef = useRef(selectedSection);
 
-  // Overlay/avatar positioning (responsive, no CLS)
+  // Ref alla dashboard (serve per overlay e avatar positioning)
   const dashboardRef = useRef();
+
+  // Stato assoluto per overlay hole
+  const [holeAbs, setHoleAbs] = useState({
+    top: 0,
+    left: 0,
+    width: HOLE_WIDTH * DASHBOARD_SCALE,
+    height: HOLE_HEIGHT * DASHBOARD_SCALE
+  });
+
+  // Stato assoluto per avatar/circle (rimangono *sempre* scalati, non fluid)
   const [avatarAbs, setAvatarAbs] = useState({ left: 0, top: 0 });
   const [circleAbs, setCircleAbs] = useState({ left: 0, top: 0 });
 
+  // --- Aggiorna posizione avatar + buco overlay ---
   useEffect(() => {
     function updatePos() {
       if (!dashboardRef.current) return;
       const rect = dashboardRef.current.getBoundingClientRect();
+
+      // BUCO OVERLAY: responsivo/fluid per CLS=0
+      setHoleAbs({
+        top: rect.top + HOLE_DASHBOARD_TOP * (rect.height / DASHBOARD_HEIGHT),
+        left: rect.left + HOLE_DASHBOARD_LEFT * (rect.width / DASHBOARD_WIDTH),
+        width: HOLE_WIDTH * (rect.width / DASHBOARD_WIDTH),
+        height: HOLE_HEIGHT * (rect.height / DASHBOARD_HEIGHT)
+      });
+
+      // AVATAR & CERCHIO: SOLO SCALATI, non fluid!
       setAvatarAbs({
         left: rect.left + AVATAR_ORIG_LEFT * DASHBOARD_SCALE,
         top: rect.top + AVATAR_ORIG_TOP * DASHBOARD_SCALE,
@@ -61,31 +88,24 @@ function AnimatedDashboard({
         top: rect.top + CIRCLE_ORIG_TOP * DASHBOARD_SCALE,
       });
     }
-    let tries = 0;
-    function tryUpdate() {
-      updatePos();
-      tries++;
-      if (tries < 12) setTimeout(tryUpdate, 85);
-    }
-    tryUpdate();
+    updatePos();
     window.addEventListener("resize", updatePos);
     window.addEventListener("scroll", updatePos);
     return () => {
       window.removeEventListener("resize", updatePos);
       window.removeEventListener("scroll", updatePos);
     };
-  }, [selectedSection, DASHBOARD_SCALE]);
+  }, [selectedSection]);
 
+  // Flip route
   useEffect(() => {
     if (prevSectionRef.current !== selectedSection) {
       const prevIdx = SECTIONS.indexOf(prevSectionRef.current);
       const newIdx = SECTIONS.indexOf(selectedSection);
       setFlipDirection(newIdx > prevIdx ? "forward" : "backward");
-
       setHasInteracted(true);
       setPendingSection(selectedSection);
       setIsFlipping(true);
-
       const timeout = setTimeout(() => {
         setIsFlipping(false);
         setPendingSection(null);
@@ -95,18 +115,11 @@ function AnimatedDashboard({
     }
   }, [selectedSection]);
 
-  // CALLBACKS: PowerHub (overlay, dialogBox, bulb)
-  const handlePowerOnFinished = useCallback(() => {
-    setOverlayVisible(false);
-    setDialogBoxVisible(true);
-  }, []);
-  const handlePowerClick = useCallback(() => {
-    setOverlayVisible(true);
-    setDialogBoxVisible(false);
-  }, []);
+  // CALLBACKS: PowerHub
+  const handlePowerOnFinished = useCallback(() => setOverlayVisible(false), []);
+  const handlePowerClick = useCallback(() => setOverlayVisible(true), []);
   const handleBulbChange = useCallback((on) => setBulbLight(on), []);
 
-  // Visualizza la pagina arrotolata se non sei su Home
   const showPageRoll = selectedSection !== "home";
 
   return (
@@ -121,20 +134,19 @@ function AnimatedDashboard({
         overflow: "hidden",
       }}
     >
-      {/* === Overlay DINAMICO sopra tutto === */}
+      {/* === Overlay DINAMICO responsive, CLS 0 === */}
       <OverlayWithHole
         visible={overlayVisible}
         opacity={bulbLight ? 0.12 : 0.77}
         zIndex={20000}
-        containerRef={dashboardRef}
-        holeTop={HOLE_TOP}
-        holeLeft={HOLE_LEFT}
-        holeWidth={HOLE_WIDTH}
-        holeHeight={HOLE_HEIGHT}
-        borderRadius={HOLE_RADIUS}
+        holeTop={holeAbs.top}
+        holeLeft={holeAbs.left}
+        holeWidth={holeAbs.width}
+        holeHeight={holeAbs.height}
+        borderRadius={HOLE_RADIUS * (holeAbs.width / HOLE_WIDTH)}
       />
 
-      {/* === Cerchio + Avatar (solo su Home) === */}
+      {/* Avatar/circle */}
       {selectedSection === "home" && !isFlipping && (
         <>
           <img
@@ -212,10 +224,10 @@ function AnimatedDashboard({
             scale={DASHBOARD_SCALE}
             showPageRoll={showPageRoll}
             isFlipping={isFlipping}
-            holeTop={HOLE_TOP}
-            holeLeft={HOLE_LEFT}
-            holeWidth={HOLE_WIDTH}
-            holeHeight={HOLE_HEIGHT}
+            holeTop={HOLE_DASHBOARD_TOP * DASHBOARD_SCALE}
+            holeLeft={HOLE_DASHBOARD_LEFT * DASHBOARD_SCALE}
+            holeWidth={HOLE_WIDTH * DASHBOARD_SCALE}
+            holeHeight={HOLE_HEIGHT * DASHBOARD_SCALE}
             pageFlipOverlay={
               isFlipping && hasInteracted ? (
                 <PageFlipTransition
@@ -239,7 +251,7 @@ function AnimatedDashboard({
   );
 }
 
-// ...AppRoutes e App come prima...
+// --- ROUTING LOGIC ---
 function AppRoutes() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -286,4 +298,5 @@ function App() {
     </BrowserRouter>
   );
 }
+
 export default App;
