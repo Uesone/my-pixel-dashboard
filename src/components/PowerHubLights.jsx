@@ -179,7 +179,7 @@ export default function PowerHubLights({
         }}
         draggable={false}
         loading="eager"
-        fetchpriority="high"
+        fetchPriority="high"
       />
       {/* LAMPADINA ACCESA */}
       {bulbOn && (
@@ -199,7 +199,7 @@ export default function PowerHubLights({
           }}
           draggable={false}
           loading="eager"
-          fetchpriority="high"
+          fetchPriority="high"
         />
       )}
 
@@ -254,7 +254,7 @@ export default function PowerHubLights({
           draggable={false}
           loading="eager"
           decoding="async"
-          fetchpriority="high"
+          fetchPriority="high"
         />
       )}
 
