@@ -230,31 +230,32 @@ export default function PowerHubLights({
       ))}
 
       {/* FRECCIA PNG ANIMATA */}
-      {showArrow && !isOn && (
-        <img
-          src={arrowPng}
-          alt="arrow"
-          width={arrowWidth}
-          height={arrowHeight}
-          style={{
-            position: "absolute",
-            top: arrowTop,
-            left: arrowLeft,
-            zIndex: 42,
-            pointerEvents: "none",
-            userSelect: "none",
-            animation: "tooltipArrow 0.72s ease-in-out infinite",
-            transform: `rotate(${arrowRotation}deg)`,
-            transition: "transform 0.18s",
-            filter: "drop-shadow(1px 2px 0 #bbb)",
-            imageRendering: "pixelated",
-            display: "block",
-          }}
-          draggable={false}
-          loading="lazy"
-          decoding="async"
-        />
-      )}
+    {showArrow && !isOn && (
+  <img
+    src={arrowPng}
+    alt="arrow"
+    width={arrowWidth}
+    height={arrowHeight}
+    style={{
+      position: "absolute",
+      top: arrowTop,
+      left: arrowLeft,
+      zIndex: 42,
+      pointerEvents: "none",
+      userSelect: "none",
+      animation: "tooltipArrow 0.72s ease-in-out infinite",
+      transform: `rotate(${arrowRotation}deg)`,
+      transition: "transform 0.18s",
+      filter: "drop-shadow(1px 2px 0 #bbb)",
+      imageRendering: "pixelated",
+      display: "block", // PATCH anti-CLS
+    }}
+    draggable={false}
+    loading="**eager**"      // PATCH QUI! Cambia da lazy a eager!
+    decoding="async"
+    fetchpriority="high"     // PATCH: Altro bonus!
+  />
+)}
 
       {/* POWER BUTTON (immagine) */}
       <img
