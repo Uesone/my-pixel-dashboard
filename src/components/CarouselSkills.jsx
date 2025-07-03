@@ -156,7 +156,7 @@ export default function CarouselSkills({
                       display: "block",
                     }}
                     draggable={false}
-                    loading="lazy"
+                    loading={i < holdersPerRow ? "eager" : "lazy"} // PATCH: prime visibili eagerly!
                   />
                   {/* Icona vera */}
                   <img
@@ -176,7 +176,7 @@ export default function CarouselSkills({
                       pointerEvents: "none",
                     }}
                     draggable={false}
-                    loading="lazy"
+                    loading={i < holdersPerRow ? "eager" : "lazy"} // PATCH: prime visibili eagerly!
                   />
                 </span>
               ))}

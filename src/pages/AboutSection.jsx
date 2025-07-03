@@ -256,7 +256,7 @@ const AboutSection = () => {
                 display: "block",
               }}
               decoding="async"
-              loading="lazy"
+              loading="eager"
               draggable={false}
               {...rest}
             />
