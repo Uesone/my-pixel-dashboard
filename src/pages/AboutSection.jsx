@@ -121,27 +121,28 @@ const AboutSection = () => {
           <AvatarAnimato talking={false} />
         </div>
 
-        {/* --- DECORAZIONI PIXEL ART --- */}
-        <img src={linePng} alt="left deco line"
-          width={90} height={70}
-          style={{
-            position: "absolute", top: 15, left: 10,
-            zIndex: 13, pointerEvents: "none", imageRendering: "pixelated"
-          }} draggable={false} loading="lazy" />
-        <img src={linePng} alt="left bottom deco"
-          width={35} height={50}
-          style={{
-            position: "absolute", top: 163, left: 27,
-            zIndex: 13, opacity: 0.92, pointerEvents: "none", imageRendering: "pixelated"
-          }} draggable={false} loading="lazy" />
-        <img src={linePng} alt="right deco line"
-          width={90} height={70}
-          style={{
-            position: "absolute", top: 15, left: 213,
-            zIndex: 13, pointerEvents: "none",
-            transform: "scaleX(-1)", transformOrigin: "center center",
-            imageRendering: "pixelated"
-          }} draggable={false} loading="lazy" />
+{/* --- DECORAZIONI PIXEL ART --- */}
+<img src={linePng} alt="left deco line"
+  width={90} height={70}
+  style={{
+    position: "absolute", top: 15, left: 10,
+    zIndex: 13, pointerEvents: "none", imageRendering: "pixelated"
+  }} draggable={false} loading="eager" /> {/* PATCH: eager! */}
+<img src={linePng} alt="left bottom deco"
+  width={35} height={50}
+  style={{
+    position: "absolute", top: 163, left: 27,
+    zIndex: 13, opacity: 0.92, pointerEvents: "none", imageRendering: "pixelated"
+  }} draggable={false} loading="eager" /> {/* PATCH: eager! */}
+<img src={linePng} alt="right deco line"
+  width={90} height={70}
+  style={{
+    position: "absolute", top: 15, left: 213,
+    zIndex: 13, pointerEvents: "none",
+    transform: "scaleX(-1)", transformOrigin: "center center",
+    imageRendering: "pixelated"
+  }} draggable={false} loading="eager" /> {/* PATCH: eager! */}
+
 
         {/* --- TITOLO --- */}
 <div style={{
