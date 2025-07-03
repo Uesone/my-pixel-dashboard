@@ -1,24 +1,17 @@
-// src/components/DashboardBase.jsx
 import React, { forwardRef } from "react";
-// --- ASSET principali ---
+// ...ASSET IMPORTS...
 import frame from "../assets/pixel-map-sprites/base/3.png";
 import background from "../assets/pixel-map-sprites/base/0.png";
 import corners from "../assets/pixel-map-sprites/base/1.png";
 import leftBar from "../assets/pixel-map-sprites/base/2.png";
-// --- POWER HUB ---
 import powerHubTube from "../assets/pixel-map-sprites/power-hub/1.png";
 import powerHubGlow from "../assets/pixel-map-sprites/power-hub/2.png";
 import powerHubBox from "../assets/pixel-map-sprites/power-hub/3.png";
 import PowerHubLights from "./PowerHubLights";
-// --- FOGLIO ARROTOLATO ---
 import pageRollPng from "../assets/content/page-flip/next-page/11.png";
-// --- BUSSOLA/COMPASS & CLOCK ---
 import Compass from "./Compass";
 import ClockAnimated from "./ClockAnimated";
 
-/**
- * DashboardBase (pixel art, no layout shift)
- */
 const DASHBOARD_WIDTH = 487;
 const DASHBOARD_HEIGHT = 399;
 
@@ -28,7 +21,12 @@ const DashboardBase = forwardRef(({
   showPageRoll = false,
   pageFlipOverlay = null,
   isFlipping = false,
-  PowerHubProps = {}
+  PowerHubProps = {},
+  // Overlay hole config (passati da App, così non c'è divergenza!)
+  holeTop = 403,    // DEFAULT, override da App.jsx
+  holeLeft = 810,
+  holeWidth = 61,
+  holeHeight = 140
 }, ref) => (
   <div
     className="dashboard-base"
@@ -47,17 +45,19 @@ const DashboardBase = forwardRef(({
       overflow: "hidden"
     }}
   >
-    {/* ==== RISERVA SPAZIO LAMPADINA (Ghost Div, NO contenuto, solo stile) ==== */}
+    {/* ==== GHOST DIV: RISERVA SPAZIO BUCO OVERLAY (no CLS, sempre in posizione!) ==== */}
     <div
       style={{
         position: "absolute",
-        top: 84,
-        left: 34,
-        width: 112,
-        height: 240,
-        zIndex: 0,
-        pointerEvents: "none",
+        top: holeTop,
+        left: holeLeft,
+        width: holeWidth,
+        height: holeHeight,
         opacity: 0,
+        pointerEvents: "none",
+        zIndex: 0,
+        minWidth: holeWidth,
+        minHeight: holeHeight,
         userSelect: "none"
       }}
       aria-hidden="true"
@@ -83,8 +83,7 @@ const DashboardBase = forwardRef(({
         loading="eager"
       />
     )}
-
-    {/* Frame bordo */}
+    {/* ...tutto il resto come prima... */}
     <img
       src={frame}
       alt="frame"
@@ -102,8 +101,6 @@ const DashboardBase = forwardRef(({
       draggable={false}
       loading="eager"
     />
-
-    {/* Barra laterale sinistra */}
     <img
       src={leftBar}
       alt="left bar"
@@ -121,8 +118,6 @@ const DashboardBase = forwardRef(({
       draggable={false}
       loading="eager"
     />
-
-    {/* Sfondo centrale */}
     <img
       src={background}
       alt="background"
@@ -140,8 +135,6 @@ const DashboardBase = forwardRef(({
       draggable={false}
       loading="eager"
     />
-
-    {/* Area contenuto */}
     <div
       style={{
         position: "absolute",
@@ -156,8 +149,6 @@ const DashboardBase = forwardRef(({
       {children}
       {pageFlipOverlay}
     </div>
-
-    {/* Decorazione angoli */}
     {!isFlipping && (
       <img
         src={corners}
@@ -177,8 +168,6 @@ const DashboardBase = forwardRef(({
         loading="eager"
       />
     )}
-
-    {/* Power hub: tubo, glow, box */}
     <img
       src={powerHubTube}
       alt="power hub tube"
@@ -196,12 +185,8 @@ const DashboardBase = forwardRef(({
       draggable={false}
       loading="eager"
     />
-
-    {/* Glow orizzontali e verticali */}
-    {[
-      // orizzontali
+    {[ // Glow
       { top: 50, left: 35 }, { top: 150, left: 35 }, { top: 65, left: 428 }, { top: 170, left: 428 }, { top: 250, left: 35 },
-      // verticali
       { top: 36, left: 400, vertical: true },
       { top: 36, left: 320, vertical: true },
       { top: 36, left: 245, vertical: true },
@@ -228,8 +213,6 @@ const DashboardBase = forwardRef(({
         loading="eager"
       />
     ))}
-
-    {/* Box power hub */}
     <img
       src={powerHubBox}
       alt="power hub box"
@@ -247,14 +230,8 @@ const DashboardBase = forwardRef(({
       draggable={false}
       loading="eager"
     />
-
-    {/* Power hub animato */}
     <PowerHubLights {...PowerHubProps} />
-
-    {/* Bussola */}
     <Compass />
-
-    {/* Clock */}
     <ClockAnimated />
   </div>
 ));

@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar/SideBar";
@@ -15,30 +14,29 @@ import holder0 from "./assets/page-content-sprites/holders/8.png";
 import useIsMobile from "./hooks/useIsMobile";
 import UmbyBotRPG from "./mobile/UmbyBotRPG";
 
-// === CONFIGURAZIONE ===
+// --- CONFIG BUCO POWER HUB (centralizzata qui, riusata ovunque) ---
+const HOLE_TOP = 316 + 87;
+const HOLE_LEFT = 814 - 4;
+const HOLE_WIDTH = 61;
+const HOLE_HEIGHT = 140;
+const HOLE_RADIUS = 9;
+
 const SECTIONS = ["home", "about", "projects", "contacts"];
 const FLIP_DURATION = 820;
 const DASHBOARD_SCALE = 1.5;
 const AVATAR_ORIG_LEFT = 262, AVATAR_ORIG_TOP = 185, AVATAR_WIDTH = 80, AVATAR_HEIGHT = 80;
 const CIRCLE_ORIG_LEFT = 250, CIRCLE_ORIG_TOP = 175, CIRCLE_WIDTH = 100, CIRCLE_HEIGHT = 100;
 
-/**
- * AnimatedDashboard: gestisce overlay, flip, animazioni e sidebar.
- * La flip animation viene attivata su QUALSIASI cambio route (non solo al click!).
- * L'avatar animato riceve la prop "talking" direttamente da AppRoutes!
- */
 function AnimatedDashboard({
   children,
   selectedSection,
   navigate,
-  avatarTalking // 👈 PATCH: ricevi stato dall'alto!
+  avatarTalking
 }) {
-  // Overlay, bulb, dialog box
   const [overlayVisible, setOverlayVisible] = useState(true);
   const [bulbLight, setBulbLight] = useState(false);
   const [dialogBoxVisible, setDialogBoxVisible] = useState(false);
 
-  // Animazione flip route
   const [pendingSection, setPendingSection] = useState(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipDirection, setFlipDirection] = useState("forward");
@@ -50,7 +48,6 @@ function AnimatedDashboard({
   const [avatarAbs, setAvatarAbs] = useState({ left: 0, top: 0 });
   const [circleAbs, setCircleAbs] = useState({ left: 0, top: 0 });
 
-  // Aggiorna posizioni overlay/avatar a ogni mount/resize/scroll/route
   useEffect(() => {
     function updatePos() {
       if (!dashboardRef.current) return;
@@ -79,7 +76,6 @@ function AnimatedDashboard({
     };
   }, [selectedSection, DASHBOARD_SCALE]);
 
-  // Animazione flip su cambio route
   useEffect(() => {
     if (prevSectionRef.current !== selectedSection) {
       const prevIdx = SECTIONS.indexOf(prevSectionRef.current);
@@ -125,17 +121,17 @@ function AnimatedDashboard({
         overflow: "hidden",
       }}
     >
-      {/* === Overlay sopra tutto === */}
+      {/* === Overlay DINAMICO sopra tutto === */}
       <OverlayWithHole
         visible={overlayVisible}
         opacity={bulbLight ? 0.12 : 0.77}
         zIndex={20000}
         containerRef={dashboardRef}
-        holeTop={316 + 87}
-        holeLeft={814 + -4}
-        holeWidth={61}
-        holeHeight={140}
-        borderRadius={9}
+        holeTop={HOLE_TOP}
+        holeLeft={HOLE_LEFT}
+        holeWidth={HOLE_WIDTH}
+        holeHeight={HOLE_HEIGHT}
+        borderRadius={HOLE_RADIUS}
       />
 
       {/* === Cerchio + Avatar (solo su Home) === */}
@@ -170,7 +166,6 @@ function AnimatedDashboard({
               background: "none",
             }}
           >
-            {/* === L'avatar animato riceve la prop talking! === */}
             <AvatarAnimato talking={avatarTalking} />
           </div>
         </>
@@ -217,6 +212,10 @@ function AnimatedDashboard({
             scale={DASHBOARD_SCALE}
             showPageRoll={showPageRoll}
             isFlipping={isFlipping}
+            holeTop={HOLE_TOP}
+            holeLeft={HOLE_LEFT}
+            holeWidth={HOLE_WIDTH}
+            holeHeight={HOLE_HEIGHT}
             pageFlipOverlay={
               isFlipping && hasInteracted ? (
                 <PageFlipTransition
@@ -232,7 +231,6 @@ function AnimatedDashboard({
               onPowerClick: handlePowerClick,
             }}
           >
-            {/* Render solo se NON stai flippando */}
             {!isFlipping && children}
           </DashboardBase>
         </div>
@@ -241,10 +239,7 @@ function AnimatedDashboard({
   );
 }
 
-/**
- * AppRoutes: mappa path → sezione e gestisce le route con React Router.
- * Passa selectedSection, navigate E LO STATO avatarTalking/setAvatarTalking
- */
+// ...AppRoutes e App come prima...
 function AppRoutes() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -255,15 +250,13 @@ function AppRoutes() {
     "/contacts": "contacts",
   };
   const selectedSection = pathToSection[location.pathname] || "home";
-
-  // === PATCH: qui si trova lo stato globale dell'avatar che parla ===
   const [avatarTalking, setAvatarTalking] = useState(false);
 
   return (
     <AnimatedDashboard
       selectedSection={selectedSection}
       navigate={navigate}
-      avatarTalking={avatarTalking} // 👈 lo passiamo in giù!
+      avatarTalking={avatarTalking}
     >
       <Routes>
         <Route
@@ -271,23 +264,19 @@ function AppRoutes() {
           element={
             <HomeSection
               dialogBoxVisible
-              onAvatarTalking={setAvatarTalking} // 👈 passaggio corretto!
+              onAvatarTalking={setAvatarTalking}
             />
           }
         />
         <Route path="/about" element={<AboutSection />} />
         <Route path="/projects" element={<ProjectsSection />} />
         <Route path="/contacts" element={<ContactsSection />} />
-        {/* Fallback: redirect a Home */}
         <Route path="*" element={<HomeSection />} />
       </Routes>
     </AnimatedDashboard>
   );
 }
 
-/**
- * App principale. Se mobile, mostra UmbyBotRPG, altrimenti tutto il routing React Router.
- */
 function App() {
   const isMobile = useIsMobile();
   if (isMobile) return <UmbyBotRPG />;
@@ -297,5 +286,4 @@ function App() {
     </BrowserRouter>
   );
 }
-
 export default App;
