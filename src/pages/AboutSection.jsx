@@ -193,13 +193,13 @@ const AboutSection = () => {
             style={{
               marginLeft: 0, marginRight: "-3px",
               imageRendering: "pixelated", verticalAlign: "middle", marginTop: "4px",
-            }} draggable={false} loading="lazy" />
+            }} draggable={false} loading="eager" />
           <img src={xpBarEmptyPng} alt="XP Progress Empty"
             width={30} height={30}
             style={{
               marginLeft: "-3px", imageRendering: "pixelated",
               verticalAlign: "middle", marginTop: "4px",
-            }} draggable={false} loading="lazy" />
+            }} draggable={false} loading="eager" />
           <span style={{
             fontFamily: "'Pixel Operator', 'VT323', monospace",
             fontSize: 13, marginLeft: 3, color: "#d98e42"
