@@ -11,8 +11,8 @@ import icon0 from "../../assets/sidebar-sprites/icons/0.png";
 import icon1 from "../../assets/sidebar-sprites/icons/1.png";
 import icon2 from "../../assets/sidebar-sprites/icons/2.png";
 import icon3 from "../../assets/sidebar-sprites/icons/3.png";
-import itFlag from "../../assets/ui/flags/it.png";
-import enFlag from "../../assets/ui/flags/en.png";
+import itFlag from "../../assets/ui/flags/it-64.webp";
+import enFlag from "../../assets/ui/flags/en-64.webp";
 
 // === LAYOUT CONFIG ===
 const startingTop = 39;
