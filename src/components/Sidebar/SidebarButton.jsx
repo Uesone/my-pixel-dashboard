@@ -1,18 +1,17 @@
 import React from "react";
 
 /**
- * SidebarButton: pulsante pixel art custom per sidebar navigation
- * - bg: PNG bottone normale
+ * SidebarButton: bottone pixel art per la sidebar
+ * Props:
+ * - bg: PNG default
  * - bgHover: PNG su hover
  * - bgActive: PNG attivo
  * - icon: PNG icona centrale
- * - isActive: bool attivo
- * - isHovered: bool hover
+ * - isActive, isHovered: bool (stato)
  * - onMouseEnter, onMouseLeave, onClick: eventi
- * - buttonSize: lato bottone (px)
- * - iconSize: lato icona centrale (px)
- * - iconOffsetX, iconOffsetY: offset singolo icona centrale (default 0)
- * - style: oggetto {top, left, width, height, ...} posizione e dimensione
+ * - buttonSize, iconSize: dimensioni
+ * - iconOffsetX, iconOffsetY: offset icona centrale
+ * - style: oggetto posizione/dimensione
  */
 const SidebarButton = ({
   bg,
@@ -27,9 +26,9 @@ const SidebarButton = ({
   alt,
   buttonSize = 64,
   iconSize = 36,
-  iconOffsetX = 0, // Offset X aggiuntivo (solo bandiera, normalmente 0)
-  iconOffsetY = 0, // Offset Y aggiuntivo (solo bandiera, normalmente 0)
-  style = {}, // passa {top, left, width, height} dal parent!
+  iconOffsetX = 0,
+  iconOffsetY = 0,
+  style = {},
 }) => (
   <button
     onMouseEnter={onMouseEnter}
@@ -50,7 +49,7 @@ const SidebarButton = ({
     tabIndex={alt === "Language" ? -1 : 0}
     aria-label={alt}
   >
-    {/* Sfondo bottone (default, hover, attivo) */}
+    {/* Sfondo bottone */}
     <img
       src={isActive ? bgActive : isHovered ? bgHover : bg}
       alt=""
@@ -76,8 +75,8 @@ const SidebarButton = ({
           height: iconSize,
           imageRendering: "pixelated",
           position: "absolute",
-          left: `calc(50% - ${iconSize / 2}px + ${iconOffsetX}px)`, // Applica offset X
-          top: `calc(50% - ${iconSize / 2}px + ${iconOffsetY}px)`,  // Applica offset Y
+          left: `calc(50% - ${iconSize / 2}px + ${iconOffsetX}px)`,
+          top: `calc(50% - ${iconSize / 2}px + ${iconOffsetY}px)`,
           pointerEvents: "none",
           zIndex: 2,
         }}
