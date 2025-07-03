@@ -2,18 +2,38 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Icona del sito (favicon) -->
+    <!-- Icona del sito (favicon 32x32 o 16x16, formato PNG consigliato) -->
     <link rel="icon" type="image/x-icon" href="/favicon.png" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- === PATCH: preconnect Google Fonts per performance (Lighthouse fix) === -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Il font VT323 viene importato via CSS (vedi styles), ma preconnect qui migliora il punteggio -->
+
     <title>Uesone's Portfolio</title>
-    <!-- Puoi aggiungere qui altri meta, link font, o css globali -->
+
+    <!-- TODO: Altri meta-tag SEO/opengraph/social (facoltativi) -->
+    <!--
+      <meta name="description" content="Il portfolio di Umberto Amoroso, full stack developer." />
+      <meta property="og:title" content="Uesone's Portfolio" />
+      <meta property="og:image" content="/og-image.png" />
+    -->
+
+    <!-- TODO: Importa qui eventuali CSS globali se non li importi da JS -->
+    <!--
+      <link rel="stylesheet" href="/src/styles/global.css" />
+    -->
   </head>
   <body>
     <!-- Root principale di React -->
     <div id="root"></div>
-    <!-- Portal root: necessario per modali -->
+
+    <!-- Portal root: necessario per far apparire i modali sopra ogni altro componente React -->
     <div id="modal-root"></div>
-    <!-- Entry point React/Vite -->
+
+    <!-- Entry point React/Vite (build genera qui il JS principale) -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

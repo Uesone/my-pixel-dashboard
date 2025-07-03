@@ -1,4 +1,4 @@
-@import url('https://unpkg.com/nes.css/css/nes.min.css');
+@import 'nes.css/css/nes.min.css';
 
 /* ======================
    IMPOSTAZIONI GENERALI
@@ -87,13 +87,13 @@ html, body, #root {
 
 /* --- FIX FINALE: wrapper che mantiene la PNG centrata e croppa l'eccesso --- */
 .umbybot-sprite-fix {
-  width: 208px;      /* stessa dimensione di spriteSize in JSX */
+  width: 208px;
   height: 208px;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;  /* nasconde l'eccesso fuori dal box */
-  /* border-radius: 32px; */ /* opzionale: se vuoi PNG tondo */
+  overflow: hidden;
+  /* border-radius: 32px; */
 }
 
 /* PNG del bot: sempre 100% del wrapper, mai valori fissi qui! */
@@ -101,7 +101,7 @@ html, body, #root {
   width: 100%;
   height: 100%;
   image-rendering: pixelated;
-  object-fit: contain; /* oppure cover se vuoi che riempia di più */
+  object-fit: contain;
   filter: drop-shadow(0 0 10px #46ffac80);
 }
 

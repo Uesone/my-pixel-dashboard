@@ -29,14 +29,11 @@ select,
 summary,
 .hoverable,
 .clickable,
-/* Tutto ciò che ha un evento onclick in React */
 *[onclick],
-/* E tutto ciò che ha tabindex (accessibile via tastiera) */
 *[tabindex]:not([tabindex="-1"]) {
   cursor: url('/assets/ui/cursor-nes.png'), pointer !important;
 }
 
-/* Opzionale: se vuoi la manina ANCHE sugli <img> che sono hoverabili/clickabili */
 img:hover,
 img:active {
   cursor: url('/assets/ui/cursor-nes.png'), pointer !important;
@@ -108,7 +105,6 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-/* MEDIA QUERY PER LIGHT MODE */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

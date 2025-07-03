@@ -1,17 +1,11 @@
+// BotAnimato.jsx
 import React, { useEffect, useState } from "react";
-import umbybotIdleWebp from "./assets/sprites/umbybot-idle.webp";
-import umbybotTalkingWebp from "./assets/sprites/umbybot-talking.webp";
+// Importa sprite ridimensionati (208px e 416px)
+import umbybotIdle208 from "./assets/sprites/umbybot-idle-208.webp";
+import umbybotIdle416 from "./assets/sprites/umbybot-idle-416.webp";
+import umbybotTalking208 from "./assets/sprites/umbybot-talking-208.webp";
+import umbybotTalking416 from "./assets/sprites/umbybot-talking-416.webp";
 
-
-/**
- * BotAnimato: Sprite animato della mascotte/chatbot.
- * - La bocca si muove (alternando sprite) solo quando "talking" è true.
- * - Alterna bocca aperta/chiusa ogni 120ms.
- *
- * Props:
- * - talking: boolean (true se il bot "parla", cioè il typewriter è attivo)
- * - size: dimensione (px)
- */
 export default function BotAnimato({ talking, size = 208 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -25,26 +19,28 @@ export default function BotAnimato({ talking, size = 208 }) {
     return () => clearInterval(interval);
   }, [talking]);
 
+  // Sprite attivo (idle o talking)
+  const sprite208 = talking && isOpen ? umbybotTalking208 : umbybotIdle208;
+  const sprite416 = talking && isOpen ? umbybotTalking416 : umbybotIdle416;
+
   return (
-    <picture>
-      <source
-        srcSet={talking && isOpen ? umbybotTalkingWebp : umbybotIdleWebp}
-        type="image/webp"
-      />
-      <img
-        src={talking && isOpen ? umbybotTalkingPng : umbybotIdlePng}
-        alt="Golem pixel NPC"
-        className="umbybot-sprite"
-        draggable={false}
-        style={{
-          width: size,
-          height: size,
-          imageRendering: "pixelated",
-        }}
-        width={size}
-        height={size}
-        loading="eager"
-      />
-    </picture>
+    <img
+      src={sprite208}
+      srcSet={`${sprite208} 208w, ${sprite416} 416w`}
+      sizes={`${size}px`}
+      alt="UmbyBot pixel sprite"
+      className="umbybot-sprite"
+      draggable={false}
+      style={{
+        width: size,
+        height: size,
+        imageRendering: "pixelated",
+      }}
+      width={size}
+      height={size}
+      loading="eager"
+      fetchPriority="high"
+      decoding="async"
+    />
   );
 }
