@@ -2,7 +2,9 @@
 import React from "react";
 
 /**
- * Overlay con buco arrotondato (riceve posizione assoluta)
+ * Overlay con buco arrotondato.
+ * PATCH CLS: Non renderizza nulla finché la posizione non è calcolata (0,0), 
+ * così eviti qualsiasi shift di layout all'avvio (tipico problema con overlay dinamici).
  */
 export default function OverlayWithHole({
   visible = true,
@@ -15,7 +17,10 @@ export default function OverlayWithHole({
   borderRadius = 6,
   transition = "opacity 0.65s"
 }) {
-  if (!visible) return null;
+  // PATCH ANTI-CLS: NON renderizzare nulla finché la posizione del buco è (0,0)
+  // (cioè prima che venga effettivamente calcolata dalle misure reali del DOM)
+  if (!visible || (holeTop === 0 && holeLeft === 0)) return null;
+
   return (
     <div style={{
       position: "fixed",
