@@ -16,7 +16,7 @@ import Compass from "./Compass";
 import ClockAnimated from "./ClockAnimated";
 
 /**
- * DashboardBase (ottimizzata performance/pixel art)
+ * DashboardBase (ottimizzata performance/pixel art, no layout shift!)
  */
 const DASHBOARD_WIDTH = 487;
 const DASHBOARD_HEIGHT = 399;
@@ -63,7 +63,7 @@ const DashboardBase = forwardRef(({
           imageRendering: "pixelated"
         }}
         draggable={false}
-        loading="eager"
+        loading="eager" // EAGER!
       />
     )}
 
@@ -82,7 +82,7 @@ const DashboardBase = forwardRef(({
         imageRendering: "pixelated"
       }}
       draggable={false}
-      loading="eager"
+      loading="eager" // EAGER!
     />
 
     {/* Barra laterale sinistra */}
@@ -100,7 +100,7 @@ const DashboardBase = forwardRef(({
         imageRendering: "pixelated"
       }}
       draggable={false}
-      loading="lazy"
+      loading="eager" // PATCH: EAGER! (mai lazy su elementi layout)
     />
 
     {/* Sfondo centrale */}
@@ -118,7 +118,7 @@ const DashboardBase = forwardRef(({
         imageRendering: "pixelated"
       }}
       draggable={false}
-      loading="eager"
+      loading="eager" // PATCH: EAGER!
     />
 
     {/* Area contenuto */}
@@ -153,7 +153,7 @@ const DashboardBase = forwardRef(({
           imageRendering: "pixelated"
         }}
         draggable={false}
-        loading="lazy"
+        loading="eager" // PATCH: EAGER!
       />
     )}
 
@@ -172,7 +172,7 @@ const DashboardBase = forwardRef(({
         imageRendering: "pixelated"
       }}
       draggable={false}
-      loading="lazy"
+      loading="eager" // PATCH: EAGER!
     />
 
     {/* Glow orizzontali e verticali (mappati) */}
@@ -202,7 +202,7 @@ const DashboardBase = forwardRef(({
           ...(glow.vertical ? { transform: "rotate(90deg)", transformOrigin: "center center" } : {})
         }}
         draggable={false}
-        loading="lazy"
+        loading="eager" // PATCH: EAGER!
       />
     ))}
 
@@ -221,7 +221,7 @@ const DashboardBase = forwardRef(({
         imageRendering: "pixelated"
       }}
       draggable={false}
-      loading="lazy"
+      loading="eager" // PATCH: EAGER!
     />
 
     {/* Power hub animato */}

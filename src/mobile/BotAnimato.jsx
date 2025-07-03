@@ -1,14 +1,11 @@
+// BotAnimato.jsx
 import React, { useEffect, useState } from "react";
+// Importa sprite ridimensionati (208px e 416px)
 import umbybotIdle208 from "./assets/sprites/umbybot-idle-208.webp";
 import umbybotIdle416 from "./assets/sprites/umbybot-idle-416.webp";
 import umbybotTalking208 from "./assets/sprites/umbybot-talking-208.webp";
 import umbybotTalking416 from "./assets/sprites/umbybot-talking-416.webp";
 
-/**
- * BotAnimato
- * Sprite animato: alterna sprite "idle" e "talking" per animare la bocca.
- * Immagini responsive, ottimizzate per Lighthouse.
- */
 export default function BotAnimato({ talking, size = 208 }) {
   const [isOpen, setIsOpen] = useState(false);
 

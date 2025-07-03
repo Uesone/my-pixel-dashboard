@@ -219,8 +219,8 @@ function App() {
           backgroundPosition: "center",
           boxShadow: "0 8px 32px #000c",
           padding: 36,
-          minWidth: 960,
-          minHeight: 600,
+          minWidth: 960, // FISSO = no shift!
+          minHeight: 600, // FISSO = no shift!
         }}
       >
         {/* Sidebar navigation */}
