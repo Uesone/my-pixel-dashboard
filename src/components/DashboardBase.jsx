@@ -54,21 +54,22 @@ const DashboardBase = forwardRef(({
     }}
   >
     {/* ==== GHOST DIV: RISERVA SPAZIO BUCO OVERLAY (CLS = 0) ==== */}
-    <div
-      id="dashboard-hole-placeholder"
-      style={{
-        position: "absolute",
-        top: holeTop,
-        left: holeLeft,
-        width: holeWidth,
-        height: holeHeight,
-        opacity: 0,
-        pointerEvents: "none",
-        zIndex: 0,
-        userSelect: "none"
-      }}
-      aria-hidden="true"
-    />
+<div
+  id="dashboard-hole-placeholder"
+  style={{
+    position: "absolute",
+    top: Math.round(holeTop),      // 👈 USA Math.round QUI
+    left: Math.round(holeLeft),
+    width: Math.round(holeWidth),
+    height: Math.round(holeHeight),
+    opacity: 0,
+    pointerEvents: "none",
+    zIndex: 0,
+    userSelect: "none"
+  }}
+  aria-hidden="true"
+/>
+
 
     {/* ==== Foglio arrotolato sopra ==== */}
     {showPageRoll && (

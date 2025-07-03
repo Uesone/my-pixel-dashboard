@@ -15,14 +15,13 @@ import holder0 from "./assets/page-content-sprites/holders/8.png";
 import useIsMobile from "./hooks/useIsMobile";
 import UmbyBotRPG from "./mobile/UmbyBotRPG";
 
-// --- CONFIG POSIZIONE DEL BUCO (in pixel RELATIVI ALLA DASHBOARD NON SCALATA) ---
-const HOLE_DASHBOARD_TOP = 268;   // Cambia qui la Y: 0 = in alto, 316+87 = posizione originale lampadina
-const HOLE_DASHBOARD_LEFT = 410;  // Cambia qui la X: 0 = tutto a sinistra
-const HOLE_WIDTH = 30;
+// --- CONFIG POSIZIONE DEL BUCO (relativi alla dashboard NON scalata) ---
+const HOLE_DASHBOARD_TOP = 268;     // Cambia qui la Y (0 = alto, 316+87 = lampadina originale)
+const HOLE_DASHBOARD_LEFT = 411;    // Cambia qui la X (0 = tutto a sinistra)
+const HOLE_WIDTH = 31;
 const HOLE_HEIGHT = 93;
 const HOLE_RADIUS = 4;
 
-// --- DASHBOARD ---
 const DASHBOARD_WIDTH = 487;
 const DASHBOARD_HEIGHT = 399;
 const DASHBOARD_SCALE = 1.5;
@@ -52,7 +51,7 @@ function AnimatedDashboard({
   // Ref alla dashboard (serve per overlay e avatar positioning)
   const dashboardRef = useRef();
 
-  // Stato assoluto per overlay hole
+  // Stato assoluto per overlay hole (CLS = 0)
   const [holeAbs, setHoleAbs] = useState({
     top: 0,
     left: 0,
@@ -70,12 +69,12 @@ function AnimatedDashboard({
       if (!dashboardRef.current) return;
       const rect = dashboardRef.current.getBoundingClientRect();
 
-      // BUCO OVERLAY: responsivo/fluid per CLS=0
+      // BUCO OVERLAY: responsivo/fluid per CLS=0 (usa Math.round per evitare subpixel CLS)
       setHoleAbs({
-        top: rect.top + HOLE_DASHBOARD_TOP * (rect.height / DASHBOARD_HEIGHT),
-        left: rect.left + HOLE_DASHBOARD_LEFT * (rect.width / DASHBOARD_WIDTH),
-        width: HOLE_WIDTH * (rect.width / DASHBOARD_WIDTH),
-        height: HOLE_HEIGHT * (rect.height / DASHBOARD_HEIGHT)
+        top: Math.round(rect.top + HOLE_DASHBOARD_TOP * (rect.height / DASHBOARD_HEIGHT)),
+        left: Math.round(rect.left + HOLE_DASHBOARD_LEFT * (rect.width / DASHBOARD_WIDTH)),
+        width: Math.round(HOLE_WIDTH * (rect.width / DASHBOARD_WIDTH)),
+        height: Math.round(HOLE_HEIGHT * (rect.height / DASHBOARD_HEIGHT))
       });
 
       // AVATAR & CERCHIO: SOLO SCALATI, non fluid!
@@ -289,6 +288,7 @@ function AppRoutes() {
   );
 }
 
+// --- ENTRYPOINT ---
 function App() {
   const isMobile = useIsMobile();
   if (isMobile) return <UmbyBotRPG />;
