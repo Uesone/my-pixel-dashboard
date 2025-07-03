@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar/SideBar";
@@ -24,27 +25,32 @@ const CIRCLE_ORIG_LEFT = 250, CIRCLE_ORIG_TOP = 175, CIRCLE_WIDTH = 100, CIRCLE_
 /**
  * AnimatedDashboard: gestisce overlay, flip, animazioni e sidebar.
  * La flip animation viene attivata su QUALSIASI cambio route (non solo al click!).
+ * L'avatar animato riceve la prop "talking" direttamente da AppRoutes!
  */
-function AnimatedDashboard({ children, selectedSection, navigate }) {
-  // === Overlay/avatar state ===
+function AnimatedDashboard({
+  children,
+  selectedSection,
+  navigate,
+  avatarTalking // 👈 PATCH: ricevi stato dall'alto!
+}) {
+  // Overlay, bulb, dialog box
   const [overlayVisible, setOverlayVisible] = useState(true);
   const [bulbLight, setBulbLight] = useState(false);
   const [dialogBoxVisible, setDialogBoxVisible] = useState(false);
-  const [avatarTalking, setAvatarTalking] = useState(false);
 
-  // === Flip animation state ===
+  // Animazione flip route
   const [pendingSection, setPendingSection] = useState(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipDirection, setFlipDirection] = useState("forward");
   const [hasInteracted, setHasInteracted] = useState(false);
   const prevSectionRef = useRef(selectedSection);
 
-  // === Overlay/avatar positioning ===
+  // Overlay/avatar positioning (responsive, no CLS)
   const dashboardRef = useRef();
   const [avatarAbs, setAvatarAbs] = useState({ left: 0, top: 0 });
   const [circleAbs, setCircleAbs] = useState({ left: 0, top: 0 });
 
-  // Aggiorna posizione overlay/avatar su mount/resize/scroll
+  // Aggiorna posizioni overlay/avatar a ogni mount/resize/scroll/route
   useEffect(() => {
     function updatePos() {
       if (!dashboardRef.current) return;
@@ -73,10 +79,9 @@ function AnimatedDashboard({ children, selectedSection, navigate }) {
     };
   }, [selectedSection, DASHBOARD_SCALE]);
 
-  // === Animazione flip AUTOMATICA su cambio route (patch!) ===
+  // Animazione flip su cambio route
   useEffect(() => {
     if (prevSectionRef.current !== selectedSection) {
-      // Calcola direzione flip
       const prevIdx = SECTIONS.indexOf(prevSectionRef.current);
       const newIdx = SECTIONS.indexOf(selectedSection);
       setFlipDirection(newIdx > prevIdx ? "forward" : "backward");
@@ -85,7 +90,6 @@ function AnimatedDashboard({ children, selectedSection, navigate }) {
       setPendingSection(selectedSection);
       setIsFlipping(true);
 
-      // Dopo la flip, aggiorna lo stato
       const timeout = setTimeout(() => {
         setIsFlipping(false);
         setPendingSection(null);
@@ -95,7 +99,7 @@ function AnimatedDashboard({ children, selectedSection, navigate }) {
     }
   }, [selectedSection]);
 
-  // === CALLBACKS powerHub ===
+  // CALLBACKS: PowerHub (overlay, dialogBox, bulb)
   const handlePowerOnFinished = useCallback(() => {
     setOverlayVisible(false);
     setDialogBoxVisible(true);
@@ -106,6 +110,7 @@ function AnimatedDashboard({ children, selectedSection, navigate }) {
   }, []);
   const handleBulbChange = useCallback((on) => setBulbLight(on), []);
 
+  // Visualizza la pagina arrotolata se non sei su Home
   const showPageRoll = selectedSection !== "home";
 
   return (
@@ -165,6 +170,7 @@ function AnimatedDashboard({ children, selectedSection, navigate }) {
               background: "none",
             }}
           >
+            {/* === L'avatar animato riceve la prop talking! === */}
             <AvatarAnimato talking={avatarTalking} />
           </div>
         </>
@@ -237,7 +243,7 @@ function AnimatedDashboard({ children, selectedSection, navigate }) {
 
 /**
  * AppRoutes: mappa path → sezione e gestisce le route con React Router.
- * Passa selectedSection e navigate a AnimatedDashboard.
+ * Passa selectedSection, navigate E LO STATO avatarTalking/setAvatarTalking
  */
 function AppRoutes() {
   const location = useLocation();
@@ -250,15 +256,22 @@ function AppRoutes() {
   };
   const selectedSection = pathToSection[location.pathname] || "home";
 
+  // === PATCH: qui si trova lo stato globale dell'avatar che parla ===
+  const [avatarTalking, setAvatarTalking] = useState(false);
+
   return (
-    <AnimatedDashboard selectedSection={selectedSection} navigate={navigate}>
+    <AnimatedDashboard
+      selectedSection={selectedSection}
+      navigate={navigate}
+      avatarTalking={avatarTalking} // 👈 lo passiamo in giù!
+    >
       <Routes>
         <Route
           path="/"
           element={
             <HomeSection
               dialogBoxVisible
-              onAvatarTalking={() => {}}
+              onAvatarTalking={setAvatarTalking} // 👈 passaggio corretto!
             />
           }
         />
