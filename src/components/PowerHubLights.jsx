@@ -1,4 +1,3 @@
-// src/components/PowerHubLights.jsx
 import React, { useEffect, useState, useRef } from "react";
 import bulbBase from "../assets/pixel-map-sprites/bulb/0.webp";
 import bulbGlass from "../assets/pixel-map-sprites/bulb/1.webp";
@@ -26,7 +25,7 @@ export default function PowerHubLights({
   const canClick = !animating && animated;
   const hasCalledOnFinished = useRef(false);
 
-  // === Clean-up timer su unmount
+  // Clean-up timer su unmount
   useEffect(() => {
     return () => {
       timeoutsRef.current.forEach((t) => clearTimeout(t));
@@ -34,18 +33,15 @@ export default function PowerHubLights({
     };
   }, []);
 
-  // === Reset callback ref ogni ciclo
   useEffect(() => {
     hasCalledOnFinished.current = false;
   }, [isOn, animated, onPowerOnFinished]);
 
-  // === Notifica lampadina
   useEffect(() => {
     if (typeof onBulbChange === "function") onBulbChange(bulbOn);
     // eslint-disable-next-line
   }, [bulbOn]);
 
-  // === Animazione accensione/spegnimento
   useEffect(() => {
     timeoutsRef.current.forEach((t) => clearTimeout(t));
     timeoutsRef.current = [];
@@ -159,7 +155,7 @@ export default function PowerHubLights({
   }
 
   // --- Posizione e stile freccia PNG
-  const arrowTop = 284;    // int, non stringa (così width/height lavorano meglio)
+  const arrowTop = 284;
   const arrowLeft = 452;
   const arrowWidth = 19;
   const arrowHeight = 19;
@@ -178,11 +174,12 @@ export default function PowerHubLights({
           top: 84, left: 34,
           zIndex: 40,
           pointerEvents: "none",
-          imageRendering: "pixelated"
+          imageRendering: "pixelated",
+          display: "block",         // PATCH ANTI-CLS
         }}
         draggable={false}
-  loading="eager"              
-  fetchpriority="high"  
+        loading="eager"
+        fetchpriority="high"
       />
       {/* LAMPADINA ACCESA */}
       {bulbOn && (
@@ -197,7 +194,8 @@ export default function PowerHubLights({
             opacity: 1,
             transition: "opacity 0.17s",
             imageRendering: "pixelated",
-            filter: "drop-shadow(0 0 12px #fff8) drop-shadow(0 0 28px #ffe7)"
+            filter: "drop-shadow(0 0 12px #fff8) drop-shadow(0 0 28px #ffe7)",
+            display: "block",
           }}
           draggable={false}
           loading="lazy"
@@ -223,10 +221,11 @@ export default function PowerHubLights({
               ? "drop-shadow(0 0 9px #ffe080) drop-shadow(0 0 20px #fff7)"
               : undefined,
             opacity: on ? 1 : 0.68,
-            transition: "opacity 0.16s"
+            transition: "opacity 0.16s",
+            display: "block",
           }}
           draggable={false}
-          loading="eager" // PATCH CLS: queste luci devono essere eagerly caricate!
+          loading="eager"
         />
       ))}
 
@@ -248,7 +247,8 @@ export default function PowerHubLights({
             transform: `rotate(${arrowRotation}deg)`,
             transition: "transform 0.18s",
             filter: "drop-shadow(1px 2px 0 #bbb)",
-            imageRendering: "pixelated"
+            imageRendering: "pixelated",
+            display: "block",
           }}
           draggable={false}
           loading="lazy"
@@ -270,7 +270,8 @@ export default function PowerHubLights({
             ? (btnPressed ? "drop-shadow(0 0 4px #f66) brightness(0.88)" : "drop-shadow(0 0 8px #f66)")
             : undefined,
           boxShadow: btnPressed ? "0 1px 8px #a11" : undefined,
-          imageRendering: "pixelated"
+          imageRendering: "pixelated",
+          display: "block",
         }}
         draggable={false}
         loading="eager"

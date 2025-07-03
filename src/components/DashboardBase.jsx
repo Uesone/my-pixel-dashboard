@@ -39,7 +39,6 @@ const DashboardBase = forwardRef(({
       position: "relative",
       width: DASHBOARD_WIDTH,
       height: DASHBOARD_HEIGHT,
-      // Riserva sempre spazio fisso = no CLS
       minWidth: DASHBOARD_WIDTH,
       minHeight: DASHBOARD_HEIGHT,
       maxWidth: DASHBOARD_WIDTH,
@@ -60,10 +59,11 @@ const DashboardBase = forwardRef(({
           left: -85,
           zIndex: 9999,
           pointerEvents: "none",
-          imageRendering: "pixelated"
+          imageRendering: "pixelated",
+          display: "block",
         }}
         draggable={false}
-        loading="eager" // EAGER!
+        loading="eager"
       />
     )}
 
@@ -79,10 +79,11 @@ const DashboardBase = forwardRef(({
         left: 0,
         zIndex: 1,
         pointerEvents: "none",
-        imageRendering: "pixelated"
+        imageRendering: "pixelated",
+        display: "block",
       }}
       draggable={false}
-      loading="eager" // EAGER!
+      loading="eager"
     />
 
     {/* Barra laterale sinistra */}
@@ -97,10 +98,11 @@ const DashboardBase = forwardRef(({
         left: 36,
         zIndex: 2,
         pointerEvents: "none",
-        imageRendering: "pixelated"
+        imageRendering: "pixelated",
+        display: "block",
       }}
       draggable={false}
-      loading="eager" // PATCH: EAGER! (mai lazy su elementi layout)
+      loading="eager"
     />
 
     {/* Sfondo centrale */}
@@ -115,10 +117,11 @@ const DashboardBase = forwardRef(({
         left: 103,
         zIndex: 3,
         pointerEvents: "none",
-        imageRendering: "pixelated"
+        imageRendering: "pixelated",
+        display: "block",
       }}
       draggable={false}
-      loading="eager" // PATCH: EAGER!
+      loading="eager"
     />
 
     {/* Area contenuto */}
@@ -150,10 +153,11 @@ const DashboardBase = forwardRef(({
           left: 116,
           zIndex: 20,
           pointerEvents: "none",
-          imageRendering: "pixelated"
+          imageRendering: "pixelated",
+          display: "block",
         }}
         draggable={false}
-        loading="eager" // PATCH: EAGER!
+        loading="eager"
       />
     )}
 
@@ -169,10 +173,11 @@ const DashboardBase = forwardRef(({
         left: 25,
         zIndex: 30,
         pointerEvents: "none",
-        imageRendering: "pixelated"
+        imageRendering: "pixelated",
+        display: "block",
       }}
       draggable={false}
-      loading="eager" // PATCH: EAGER!
+      loading="eager"
     />
 
     {/* Glow orizzontali e verticali (mappati) */}
@@ -199,10 +204,11 @@ const DashboardBase = forwardRef(({
           zIndex: glow.vertical ? 32 : 31,
           pointerEvents: "none",
           imageRendering: "pixelated",
+          display: "block",
           ...(glow.vertical ? { transform: "rotate(90deg)", transformOrigin: "center center" } : {})
         }}
         draggable={false}
-        loading="eager" // PATCH: EAGER!
+        loading="eager"
       />
     ))}
 
@@ -218,10 +224,11 @@ const DashboardBase = forwardRef(({
         left: 418,
         zIndex: 33,
         pointerEvents: "none",
-        imageRendering: "pixelated"
+        imageRendering: "pixelated",
+        display: "block",
       }}
       draggable={false}
-      loading="eager" // PATCH: EAGER!
+      loading="eager"
     />
 
     {/* Power hub animato */}
