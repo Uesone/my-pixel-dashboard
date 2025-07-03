@@ -144,16 +144,26 @@ const AboutSection = () => {
           }} draggable={false} loading="lazy" />
 
         {/* --- TITOLO --- */}
-        <div style={{
-          position: "absolute", top: 9, left: 90,
-          fontFamily: "'Pixel Operator', 'VT323', monospace",
-          fontSize: 52, color: "#24170b", letterSpacing: 0, padding: "3px 16px",
-          zIndex: 20, textShadow: `-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643`,
-          userSelect: "none",
-          whiteSpace: "nowrap"
-        }}>
-          {t("about.title")}
-        </div>
+<div style={{
+  position: "absolute", 
+  top: 20, 
+  left: 90,
+  fontFamily: "'Pixel Operator', 'VT323', monospace",
+  fontSize: 52, 
+  color: "#24170b", 
+  letterSpacing: 0, 
+  padding: "3px 16px",
+  zIndex: 20, 
+  textShadow: `-2px 2px 0 #e7d7b6, 2px 2px 0 #e7d7b6, 2px 4px 2px #7e6643`,
+  userSelect: "none",
+  whiteSpace: "nowrap",
+  height: "68px",           // PATCH: spazio fisso anche durante font swap!
+  lineHeight: "1",
+  overflow: "hidden",
+  boxSizing: "border-box"
+}}>
+  {t("about.title")}
+</div>
 
         {/* --- INFO PROFILO --- */}
         <div style={{
