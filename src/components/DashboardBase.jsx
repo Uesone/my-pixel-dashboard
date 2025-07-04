@@ -93,7 +93,8 @@ const DashboardBase = forwardRef(({
         position: "absolute", top: 0, left: 0, zIndex: 1, pointerEvents: "none",
         imageRendering: "pixelated", display: "block"
       }}
-      draggable={false} loading="eager"
+      draggable={false} loading="eager"  fetchPriority="high"   // PATCH LCP: priorità massima!
+  decoding="async"       // PATCH: decodifica non bloccante
     />
     {/* === BAR LATERALE === */}
     <img src={leftBar} alt="left bar" width={129} height={373}

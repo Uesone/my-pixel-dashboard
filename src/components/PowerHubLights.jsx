@@ -287,8 +287,8 @@ export default function PowerHubLights({
             opacity: btnOn ? 1 : 0,
             transition: "opacity 0.13s, filter 0.22s, boxShadow 0.16s",
             filter: btnPressed
-              ? "drop-shadow(0 0 4px #f66) brightness(0.88)"
-              : "drop-shadow(0 0 8px #f66)",
+              ? "drop-shadow(0 0 12px #f66) brightness(0.58)"
+              : "drop-shadow(0 0 12px #f66)",
             boxShadow: btnPressed ? "0 1px 8px #a11" : "0 0 0 0 transparent",
             imageRendering: "pixelated",
             display: "block"

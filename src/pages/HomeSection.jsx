@@ -1,6 +1,5 @@
 import React from "react";
 import PageWrapper from "../components/PageWrapper";
-import { useLanguage } from "../components/LanguageContext.jsx";
 import linePng from "../assets/page-content-sprites/holders/0.png";
 import HomeDialogBox from "../components/animation/HomeDialogBox.jsx";
 
