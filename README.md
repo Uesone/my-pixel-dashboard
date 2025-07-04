@@ -20,7 +20,7 @@ It showcases my projects, skills, and experience through a fully interactive, an
 ## 🕹 Key Features
 
 - Fully custom pixel-art UI with retro animations (GSAP/Framer Motion)
-- Animated sidebar and PowerHub, modals, overlays, optional sound effects
+- Animated sidebar and PowerHub, modals, overlays.
 - **UmbyBot Chatbot** (OpenAI API) — RPG-style interaction on desktop & mobile
 - Multi-language (IT/EN) with automatic language detection
 - Dynamic routing (React Router DOM 7)
@@ -65,9 +65,6 @@ The desktop version of **my-pixel-dashboard** offers a fully interactive **dashb
 
 - **PowerHub Animation**:  
   A central feature representing the "power" of your profile with custom animations.
-
-- **RPG-like Chatbot**:  
-  On desktop, **UmbyBot** responds in a text-based RPG style with cool animations, providing information about your skills, projects, and more.
 
 - **Modals and Overlay Effects**:  
   Smooth transitions for additional content, pop-ups for detailed views, and background dimming effects for a gaming experience.
