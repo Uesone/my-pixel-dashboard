@@ -2,17 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Icona del sito (favicon 32x32 o 16x16, formato PNG consigliato) -->
     <link rel="icon" type="image/x-icon" href="/favicon.png" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- === PATCH: Google Fonts NON BLOCKING === -->
-    <!-- Preconnect velocizza la connessione con i server Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Preload e caricamento asincrono del font VT323 per evitare blocco rendering -->
     <link
       rel="preload"
       as="style"
@@ -32,31 +27,19 @@
     </noscript>
     <!-- FINE PATCH GOOGLE FONTS -->
 
-    <title>Uesone's Portfolio</title>
+    <title><%= title %></title>
 
-    <!-- Meta description SEO -->
-    <meta
-      name="description"
-      content="Il portfolio di Umberto Amoroso, full stack developer. Scopri progetti, competenze e contatti."
-    />
-    <!-- Open Graph / Social preview -->
-    <meta property="og:title" content="Uesone's Portfolio" />
-    <meta
-      property="og:description"
-      content="Il portfolio di Umberto Amoroso, full stack developer. Scopri progetti, competenze e contatti."
-    />
-    <meta property="og:image" content="/og-image.png" />
+    <!-- Meta SEO e Open Graph dinamici -->
+    <meta name="description" content="<%= description %>" />
+    <meta property="og:title" content="<%= title %>" />
+    <meta property="og:description" content="<%= description %>" />
+    <meta property="og:image" content="<%= ogImage %>" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://uesone.vercel.app/" />
+    <meta property="og:url" content="<%= ogUrl %>" />
   </head>
   <body>
-    <!-- Root principale di React -->
     <div id="root"></div>
-
-    <!-- Portal root: per modali sopra ogni altro componente React -->
     <div id="modal-root"></div>
-
-    <!-- Entry point React/Vite (build genera qui il JS principale) -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
