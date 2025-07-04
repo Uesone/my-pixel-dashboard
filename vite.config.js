@@ -1,11 +1,24 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { createHtmlPlugin } from "vite-plugin-html";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    createHtmlPlugin({
+      inject: {
+        data: {
+          title: "Uesone's Portfolio",
+          description:
+            "Il portfolio di Umberto Amoroso, full stack developer. Scopri progetti, competenze e contatti.",
+          ogImage: "/og-image.png",
+          ogUrl: "https://uesone.vercel.app/",
+        },
+      },
+    }),
+  ],
   server: {
-    host: true, // oppure: host: '0.0.0.0'
-    port: 5173, // opzionale, se vuoi forzare la porta (di default è 5173)
+    host: true,
+    port: 5173,
   },
 });

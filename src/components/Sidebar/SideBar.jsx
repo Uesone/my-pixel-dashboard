@@ -3,20 +3,18 @@ import SidebarButton from "./SidebarButton";
 import PixelTooltip from "../PixelTooltip";
 import { useLanguage } from "../LanguageContext";
 
-// PNG bottoni e icone
+// === ASSETS (PNG) ===
 import btn0 from "../../assets/sidebar-sprites/buttons/0.png";
 import btn1 from "../../assets/sidebar-sprites/buttons/1.png";
 import btn2 from "../../assets/sidebar-sprites/buttons/2.png";
-import btn3 from "../../assets/sidebar-sprites/buttons/3.png";
 import icon0 from "../../assets/sidebar-sprites/icons/0.png";
 import icon1 from "../../assets/sidebar-sprites/icons/1.png";
 import icon2 from "../../assets/sidebar-sprites/icons/2.png";
 import icon3 from "../../assets/sidebar-sprites/icons/3.png";
-// Bandiere
-import itFlag from "../../assets/ui/flags/it.png";
-import enFlag from "../../assets/ui/flags/en.png";
+import itFlag from "../../assets/ui/flags/it-64.webp";
+import enFlag from "../../assets/ui/flags/en-64.webp";
 
-// ========== CONFIGURAZIONE LAYOUT ==========
+// === LAYOUT CONFIG ===
 const startingTop = 39;
 const buttonSpacing = 110;
 const buttonLeft = 70;
@@ -24,11 +22,11 @@ const defaultButtonSize = 78;
 const defaultSidebarWidth = 120;
 const defaultSidebarHeight = 520;
 
-// === PERSONALIZZA QUI LA POSIZIONE DELL’ICONA HOME! ===
+// === Home icon offset ===
 const homeIconOffsetX = -2.2;
 const homeIconOffsetY = 0;
 
-// Personalizzazione posizione/dimensione solo per il bottone lingua
+// === Language button config ===
 const langButtonOffsetTop = 0;
 const langButtonOffsetLeft = 2;
 const langButtonSize = 74;
@@ -36,7 +34,7 @@ const langIconSize = 32;
 const langIconOffsetX = 0.5;
 const langIconOffsetY = 1;
 
-// ====== TOOLTIP LOCALIZZATI ======
+// === Tooltip texts ===
 const TOOLTIP_TEXTS = {
   it: {
     home: "Home",
@@ -54,23 +52,16 @@ const TOOLTIP_TEXTS = {
   }
 };
 
-/**
- * Configurazione CENTRALIZZATA della posizione tooltip!
- * Modifica qui per cambiare la posizione di tutti i tooltip sidebar.
- * - tooltipTop: offset verticale rispetto al top del bottone (default: -65)
- * - tooltipLeft: offset orizzontale aggiuntivo (default: 0 = centrato)
- * Puoi anche sovrascrivere per un bottone singolo, es: { home: { tooltipTop: -90 } }
- */
+// === Tooltip position config ===
 const TOOLTIP_POSITION_CONFIG = {
   default: {
-    tooltipTop:  73.5,
+    tooltipTop: 73.5,
     tooltipLeft: 0
-  },
-  // Per bottoni singoli: sovrascrivi così
-  // home: { tooltipTop: -90, tooltipLeft: 0 }
+  }
+  // puoi aggiungere override per singolo bottone qui se vuoi
 };
 
-// ====== DEFINIZIONE BOTTONI ======
+// === Sidebar button list ===
 const BUTTONS_BASE = [
   { key: "home",     icon: icon0, alt: "Home",     iconSize: 58, buttonSize: defaultButtonSize },
   { key: "about",    icon: icon1, alt: "About",    iconSize: 26, buttonSize: defaultButtonSize },
@@ -79,9 +70,13 @@ const BUTTONS_BASE = [
   { key: "lang",     icon: null,  alt: "Language", iconSize: langIconSize, buttonSize: langButtonSize },
 ];
 
+/**
+ * Sidebar aggiornata per routing SPA (React Router).
+ * Usa la prop `navigate` (passata dal parent) per cambiare la route.
+ */
 const Sidebar = ({
-  selected,
-  onSelect,
+  selected,        // key attiva: "home", "about", ...
+  navigate,        // funzione navigate di React Router
   width = defaultSidebarWidth,
   height = defaultSidebarHeight,
   sidebarStyle = {},
@@ -99,11 +94,10 @@ const Sidebar = ({
   const flagIcon = nextLang === "it" ? itFlag : enFlag;
   const flagAlt  = nextLang === "it" ? "Cambia lingua: Italiano" : "Change language: English";
 
-  const getTooltip = (key) => {
-    return TOOLTIP_TEXTS[language][key] || "";
-  };
+  // Tooltip text per lingua corrente
+  const getTooltip = (key) => TOOLTIP_TEXTS[language][key] || "";
 
-  // LOGICA OFFSET ICONE E TOOLTIP
+  // Button config (offset, bandiera ecc.)
   const BUTTONS = BUTTONS_BASE.map((btn, idx) => {
     let iconOffsetX = 0, iconOffsetY = 0;
     if (btn.key === "home") {
@@ -116,8 +110,6 @@ const Sidebar = ({
       iconOffsetX = langIconOffsetX;
       iconOffsetY = langIconOffsetY;
     }
-
-    // Prendi la posizione tooltip custom oppure la default centrale
     const tooltipPos =
       TOOLTIP_POSITION_CONFIG[btn.key] || TOOLTIP_POSITION_CONFIG.default;
 
@@ -137,7 +129,7 @@ const Sidebar = ({
     };
   });
 
-  // Gestione hover per tooltip (posizione custom)
+  // Gestione hover/tooltip
   const handleMouseEnter = (btn, e) => {
     setHovered(btn.key);
     const rect = e.currentTarget.getBoundingClientRect();
@@ -154,6 +146,14 @@ const Sidebar = ({
     setTooltip(t => ({ ...t, visible: false }));
   };
 
+  // Path associati alle sezioni
+  const sectionToPath = {
+    home: "/",
+    about: "/about",
+    projects: "/projects",
+    contacts: "/contacts"
+  };
+
   return (
     <div
       style={{
@@ -166,7 +166,7 @@ const Sidebar = ({
         ...sidebarStyle,
       }}
     >
-      {/* Render di ogni bottone */}
+      {/* Renderizza tutti i bottoni */}
       {BUTTONS.map((btn) => (
         <SidebarButton
           key={btn.key}
@@ -181,7 +181,7 @@ const Sidebar = ({
           onMouseLeave={handleMouseLeave}
           onClick={() => {
             if (btn.key === "lang") setLanguage(nextLang);
-            else onSelect(btn.key);
+            else if (navigate && sectionToPath[btn.key]) navigate(sectionToPath[btn.key]);
           }}
           buttonSize={btn.buttonSize}
           iconSize={btn.iconSize}
@@ -190,7 +190,7 @@ const Sidebar = ({
           iconOffsetY={btn.iconOffsetY}
         />
       ))}
-      {/* Tooltip pixel-art/steampunk */}
+      {/* Tooltip pixel art */}
       <PixelTooltip
         visible={tooltip.visible}
         text={tooltip.text}

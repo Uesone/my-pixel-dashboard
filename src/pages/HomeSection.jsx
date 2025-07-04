@@ -1,6 +1,5 @@
 import React from "react";
 import PageWrapper from "../components/PageWrapper";
-import { useLanguage } from "../components/LanguageContext.jsx";
 import linePng from "../assets/page-content-sprites/holders/0.png";
 import HomeDialogBox from "../components/animation/HomeDialogBox.jsx";
 
@@ -9,19 +8,31 @@ import HomeDialogBox from "../components/animation/HomeDialogBox.jsx";
  * - Riceve dialogBoxVisible e onAvatarTalking come props.
  */
 const HomeSection = ({ dialogBoxVisible, onAvatarTalking = () => {} }) => {
+  // ---- PATCH ANTI-CLS: ghost div balloon ----
+  const balloonStyle = {
+    position: "absolute",
+    top: 20,
+    left: 100,
+    width: 180,
+    height: 80,
+    zIndex: 30,
+    pointerEvents: "none",
+    opacity: 0,
+    userSelect: "none",
+  };
+
   return (
     <PageWrapper>
+      {/* GHOST DIV ANTI-CLS (sempre presente, riserva spazio balloon) */}
+      <div style={balloonStyle} aria-hidden="true" />
+
       {/* BALLOON / DIALOG BOX */}
       {dialogBoxVisible && (
         <div
           style={{
-            position: "absolute",
-            top: 20,
-            left: 100,
-            width: 180,
-            height: 80,
-            zIndex: 30,
+            ...balloonStyle,
             pointerEvents: "auto",
+            opacity: 1, // il balloon vero è visibile
           }}
         >
           <HomeDialogBox
@@ -43,6 +54,7 @@ const HomeSection = ({ dialogBoxVisible, onAvatarTalking = () => {} }) => {
           />
         </div>
       )}
+
       {/* LINEE DECORATIVE */}
       <img
         src={linePng}
@@ -80,7 +92,7 @@ const HomeSection = ({ dialogBoxVisible, onAvatarTalking = () => {} }) => {
           position: "absolute",
           top: 4,
           left: 95,
-          fontFamily: "'VT323', monospace", // ATTENZIONE: Assicurati che sia già caricato, meglio locale o &display=swap!
+          fontFamily: "'VT323', monospace",
           fontSize: 52,
           color: "#24170b",
           letterSpacing: 2,

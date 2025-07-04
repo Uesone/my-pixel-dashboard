@@ -2,38 +2,44 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Icona del sito (favicon 32x32 o 16x16, formato PNG consigliato) -->
     <link rel="icon" type="image/x-icon" href="/favicon.png" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- === PATCH: preconnect Google Fonts per performance (Lighthouse fix) === -->
+    <!-- === PATCH: Google Fonts NON BLOCKING === -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Il font VT323 viene importato via CSS (vedi styles), ma preconnect qui migliora il punteggio -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      />
+    </noscript>
+    <!-- FINE PATCH GOOGLE FONTS -->
 
-    <title>Uesone's Portfolio</title>
+    <title><%= title %></title>
 
-    <!-- TODO: Altri meta-tag SEO/opengraph/social (facoltativi) -->
-    <!--
-      <meta name="description" content="Il portfolio di Umberto Amoroso, full stack developer." />
-      <meta property="og:title" content="Uesone's Portfolio" />
-      <meta property="og:image" content="/og-image.png" />
-    -->
-
-    <!-- TODO: Importa qui eventuali CSS globali se non li importi da JS -->
-    <!--
-      <link rel="stylesheet" href="/src/styles/global.css" />
-    -->
+    <!-- Meta SEO e Open Graph dinamici -->
+    <meta name="description" content="<%= description %>" />
+    <meta property="og:title" content="<%= title %>" />
+    <meta property="og:description" content="<%= description %>" />
+    <meta property="og:image" content="<%= ogImage %>" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="<%= ogUrl %>" />
   </head>
   <body>
-    <!-- Root principale di React -->
     <div id="root"></div>
-
-    <!-- Portal root: necessario per far apparire i modali sopra ogni altro componente React -->
     <div id="modal-root"></div>
-
-    <!-- Entry point React/Vite (build genera qui il JS principale) -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -2,9 +2,9 @@
 import React from "react";
 import { useLanguage } from "./LanguageContext";
 
-// Icone bandiera pixel art (personalizza con le tue!)
-import itFlag from "../assets/ui/flags/it.png";
-import enFlag from "../assets/ui/flags/en.png";
+// Icone bandiera pixel art (formato ottimizzato .webp 64x64)
+import itFlag from "../assets/ui/flags/it-64.webp";
+import enFlag from "../assets/ui/flags/en-64.webp";
 
 // Mappa codici -> asset/label
 const flagIcons = { it: itFlag, en: enFlag };
@@ -48,10 +48,17 @@ const LanguageSwitcher = ({
       <img
         src={flagIcons[nextLang]}
         alt={languageNames[nextLang]}
-        width={28}
-        height={20}
-        style={{ imageRendering: "pixelated", verticalAlign: "middle" }}
+        width={32}         // Puoi aumentare a 36/40 per più impatto, o scendere a 24 se vuoi più compattezza
+        height={20}        // Mantieni il rapporto originale della bandiera
+        style={{
+          imageRendering: "pixelated",
+          verticalAlign: "middle",
+          boxShadow: "0 1px 0 #fff8, 0 0 1px #a77 inset", // opzionale, leggero bordo
+          borderRadius: 2
+        }}
         draggable={false}
+        loading="lazy"
+        decoding="async"
       />
       {showLabel && (
         <span
