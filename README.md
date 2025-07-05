@@ -35,7 +35,7 @@ It showcases my projects, skills, and experience through a fully interactive, an
 
 In addition to the desktop dashboard, **the mobile version** has a **dedicated layout** optimized for smartphones and tablets:
 
-- **UmbyBot RPG Chatbot**  
+- **Golem RPG Chatbot**  
   On mobile, the chatbot turns into an RPG-style dialogue:
     - Typewriter animation and animated mouth
     - Minimal UI inspired by retro handheld consoles
