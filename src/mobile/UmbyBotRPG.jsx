@@ -28,6 +28,35 @@ function useTypewriterText(text, active, textSpeed = 30, onEnd) {
   return displayed;
 }
 
+// === LINKIFY: trasforma i link nel testo in <a>
+function formatTextWithLinks(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.split(urlRegex).map((part, index) => {
+    if (urlRegex.test(part)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: "#00ffe1",
+            textDecoration: "underline",
+            fontFamily: "'VT323', monospace",
+            wordBreak: "break-all",
+            textShadow: "1px 1px #333",
+            paddingLeft: 2, paddingRight: 2
+          }}
+        >
+          {part}
+        </a>
+      );
+    } else {
+      return <span key={index}>{part}</span>;
+    }
+  });
+}
+
 // === Utility: lingua di default ===
 function getDefaultLang() {
   const lang = navigator.language || "en";
@@ -35,7 +64,7 @@ function getDefaultLang() {
   return "en";
 }
 
-// === Costanti dati & testo ===
+// ...Costanti (lascia tutto come prima)
 const INITIAL_HISTORY = {
   it: [{
     user: "Chi sei?",
@@ -333,7 +362,7 @@ export default function UmbyBotRPG({
                     <b>{userLang === "it" ? "Tu" : "You"}:</b> {current.user}
                   </div>
                   <div className="dialogue-bot-reply">
-                    <span className="bot-label">Golem:</span> {botText}
+                    <span className="bot-label">Golem:</span> {formatTextWithLinks(botText)}
                   </div>
                   {error && (
                     <div style={{ color: "#ff7d7d", fontSize: 15, marginTop: 6 }}>{error}</div>
