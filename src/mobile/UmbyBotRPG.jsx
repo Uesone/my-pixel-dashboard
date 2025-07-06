@@ -8,7 +8,8 @@ import AboutPage from "./AboutPage.jsx";         // idem
 import ContactPage from "./ContactPage.jsx";     // idem
 import "./styles/rpg-mobile.css";
 
-// === HOOK Typewriter con callback onEnd ===
+
+// === HOOK: animazione typewriter con callback quando termina ===
 function useTypewriterText(text, active, textSpeed = 30, onEnd) {
   const [displayed, setDisplayed] = useState("");
   useEffect(() => {
@@ -32,33 +33,31 @@ function useTypewriterText(text, active, textSpeed = 30, onEnd) {
   return displayed;
 }
 
-// === LINKIFY: trasforma i link nel testo in <a>
+// === Funzione: trasforma link in <a> cliccabili nel testo ===
 function formatTextWithLinks(text) {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text.split(urlRegex).map((part, index) => {
-    if (urlRegex.test(part)) {
-      return (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: "#00ffe1",
-            textDecoration: "underline",
-            fontFamily: "'VT323', monospace",
-            wordBreak: "break-all",
-            textShadow: "1px 1px #333",
-            paddingLeft: 2, paddingRight: 2
-          }}
-        >
-          {part}
-        </a>
-      );
-    } else {
-      return <span key={index}>{part}</span>;
-    }
-  });
+  return text.split(urlRegex).map((part, index) =>
+    urlRegex.test(part) ? (
+      <a
+        key={index}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          color: "#00ffe1",
+          textDecoration: "underline",
+          fontFamily: "'VT323', monospace",
+          wordBreak: "break-all",
+          textShadow: "1px 1px #333",
+          paddingLeft: 2, paddingRight: 2
+        }}
+      >
+        {part}
+      </a>
+    ) : (
+      <span key={index}>{part}</span>
+    )
+  );
 }
 
 function getDefaultLang() {
@@ -67,16 +66,24 @@ function getDefaultLang() {
   return "en";
 }
 
+// === Costanti iniziali per lingua, errori, suggerimenti ===
 const INITIAL_HISTORY = {
   it: [{
     user: "Chi sei?",
-    bot: "Sono Golem, fedele assistente del mio maestro e creatore Umberto Amoroso. Puoi chiedermi tutto quello che vuoi sui suoi progetti, competenze o esperienze! Scegli bene le tue domande: posso rispondere fino a 10 al giorno, prima che i miei ingranaggi si surriscaldino!"
+    bot:
+      "Sono Golem, fedele assistente del mio maestro e creatore Umberto Amoroso. Puoi chiedermi tutto quello che vuoi sui suoi progetti, competenze o esperienze! " +
+      "Posso rispondere fino a 10 domande al giorno, prima che i miei ingranaggi si surriscaldino! " +
+      "Se hai fretta o vuoi solo un riassunto veloce, tocca ☰ in alto a sinistra: nel menu troverai sezioni rapide e riassuntive come Portfolio, Servizi, About e Contatti."
   }],
   en: [{
     user: "Who are you?",
-    bot: "I'm Golem, the loyal assistant of my master and creator, Umberto Amoroso. You can ask me anything about his projects, skills, or experience! Choose your questions wisely: I can answer up to 10 per day before my gears overheat!"
+    bot:
+      "I'm Golem, the loyal assistant of my master and creator, Umberto Amoroso. You can ask me anything about his projects, skills, or experience! " +
+      "I can answer up to 10 questions per day before my gears overheat! " +
+      "If you’re in a hurry or just want a quick overview, tap the ☰ menu at the top left: there you’ll find quick summary sections like Portfolio, Services, About and Contacts."
   }]
 };
+
 const ERRORS = {
   it: {
     connection: "Errore di collegamento alle caldaie OpenAI! ",
@@ -116,7 +123,7 @@ const suggestions = {
     "Può aiutarmi a sviluppare un'app?",
     "Come posso contattarlo?",
     "Raccontami del progetto Pixel Dashboard",
-    "Dove posso vedere i suoi lavori su GitHub?"
+    "Dove posso vedere i suoi lavori su GitHub?",
   ],
   en: [
     "What projects has Umberto worked on?",
@@ -124,9 +131,10 @@ const suggestions = {
     "Can he help me build an app?",
     "How can I contact him?",
     "Tell me about the Pixel Dashboard project",
-    "Where can I see his work on GitHub?"
+    "Where can I see his work on GitHub?",
   ]
 };
+
 const DAILY_QUESTION_LIMIT = 10;
 const STORAGE_KEY = "umbybot-usage";
 const MAX_INPUT_CHARS = 200;
@@ -136,10 +144,10 @@ export default function UmbyBotRPG({
   spriteMarginTop = 0,
   textSpeed = 30,
 }) {
-  // === PATCH: Gestione pagina menu hamburger
+  // === Stato del menu laterale/hamburger ===
   const [page, setPage] = useState(null);
 
-  // === Stato base
+  // === Stato chat ===
   const [userLang, setUserLang] = useState(getDefaultLang());
   const [history, setHistory] = useState(INITIAL_HISTORY[userLang] || INITIAL_HISTORY["en"]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -148,11 +156,11 @@ export default function UmbyBotRPG({
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [error, setError] = useState(null);
 
-  // === Limite domande giornaliero
+  // === Stato limiti domande giornaliere ===
   const [questionsLeft, setQuestionsLeft] = useState(DAILY_QUESTION_LIMIT);
   const [limitReached, setLimitReached] = useState(false);
 
-  // === Init limiti e suggerimenti
+  // === Gestione limiti domande giornalieri su localStorage ===
   useEffect(() => { updateUsage(); }, []);
   function updateUsage() {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -179,7 +187,7 @@ export default function UmbyBotRPG({
     }
   }
 
-  // === Suggerimenti randomici
+  // === Gestione suggerimenti randomici che ruotano ===
   const tips = suggestions[userLang] || suggestions["en"];
   const [tipIndex, setTipIndex] = useState(() => Math.floor(Math.random() * tips.length));
   useEffect(() => {
@@ -191,7 +199,7 @@ export default function UmbyBotRPG({
   }, [userLang]);
   useEffect(() => { setTipIndex(Math.floor(Math.random() * tips.length)); }, [userLang]);
 
-  // === Restore history da localStorage
+  // === Ripristina chat precedente se presente ===
   useEffect(() => {
     const saved = localStorage.getItem("umbybot-history");
     if (saved) {
@@ -204,13 +212,11 @@ export default function UmbyBotRPG({
       }
     }
   }, []);
-
-  // === Salva la chat ===
   useEffect(() => {
     localStorage.setItem("umbybot-history", JSON.stringify(history));
   }, [history]);
 
-  // === Scroll sempre in fondo
+  // === Scroll sempre in fondo dopo nuova risposta ===
   const messagesEndRef = useRef(null);
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -218,11 +224,11 @@ export default function UmbyBotRPG({
     }
   }, [history.length]);
 
-  // === Callback per typewriter: inizia/ferma bocca
+  // === Inizia/ferma animazione bocca bot ===
   const handleTypewriterStart = useCallback(() => setIsBotTyping(true), []);
   const handleTypewriterEnd = useCallback(() => setIsBotTyping(false), []);
 
-  // === Gestione invio domanda
+  // === Gestione invio domanda/chat ===
   async function handleSend(e) {
     e.preventDefault();
     if (!input.trim() || loading || limitReached) return;
@@ -234,7 +240,7 @@ export default function UmbyBotRPG({
       return;
     }
 
-    // Rileva lingua
+    // Rileva lingua input
     const isEnglish = new RegExp("\\b(" + enWords.join("|") + ")\\b", "i").test(domanda);
     const isItalian = new RegExp("\\b(" + itWords.join("|") + ")\\b", "i").test(domanda);
     let detectedLang = userLang;
@@ -246,7 +252,7 @@ export default function UmbyBotRPG({
     setInput("");
     setLoading(true);
 
-    // === Update usage
+    // === Update usage ===
     const saved = localStorage.getItem(STORAGE_KEY);
     let newCount = 1;
     let now = Date.now();
@@ -273,12 +279,12 @@ export default function UmbyBotRPG({
     setQuestionsLeft(Math.max(0, DAILY_QUESTION_LIMIT - newCount));
     setLimitReached(newCount >= DAILY_QUESTION_LIMIT);
 
-    // === Aggiungi domanda in history
+    // === Aggiorna history utente ===
     const newHistory = [...history, { user: domanda, bot: null }];
     setHistory(newHistory);
     setCurrentIdx(newHistory.length - 1);
 
-    // === Check lingua supportata
+    // === Check lingua supportata ===
     const isKnownLang = detectedLang === "it" || detectedLang === "en";
     const lang = isKnownLang ? detectedLang : "en";
     if (!isKnownLang) {
@@ -293,6 +299,7 @@ export default function UmbyBotRPG({
       return;
     }
 
+    // === CHIAMATA API ===
     try {
       const res = await fetch(import.meta.env.VITE_UMBYBOT_API_URL, {
         method: "POST",
@@ -320,7 +327,7 @@ export default function UmbyBotRPG({
     }
   }
 
-  // === Sync bocca/typewriter (callback usata!)
+  // === Sincronizza animazione typewriter e bocca bot ===
   const current = history[currentIdx];
   const isLast = currentIdx === history.length - 1;
 
@@ -337,12 +344,15 @@ export default function UmbyBotRPG({
   const goPrev = () => setCurrentIdx(idx => Math.max(0, idx - 1));
   const goNext = () => setCurrentIdx(idx => Math.min(history.length - 1, idx + 1));
 
+  // ===============================
+  // === COMPONENTE PRINCIPALE ====
+  // ===============================
   return (
-    <div className="device-frame">
-      {/* === HAMBURGER MENU FIXED === */}
+    <div className="device-inner-glass">
+      {/* === MENU BURGER FIXED === */}
       <BurgerMenu onSelect={setPage} />
 
-      {/* === OVERLAY PAGINE BURGER === */}
+      {/* === OVERLAY PAGINE BURGER (PORTFOLIO, ABOUT, ECC.) === */}
       {page && (
         <div className="burger-page-overlay">
           <div className="burger-page-content">
@@ -363,122 +373,125 @@ export default function UmbyBotRPG({
         </div>
       )}
 
-      <div className="device-inner-glass">
-        <div className="umbybot-mobile-wrapper">
-          {/* === Sprite animato mascotte === */}
-          <div className="umbybot-sprite-box is-centered" style={{ marginTop: spriteMarginTop }}>
-            <div className="umbybot-sprite-fix">
-              <BotAnimato talking={isLast && isBotTyping} size={spriteSize} />
-            </div>
-          </div>
-          {/* === Fumetto/dialogo === */}
-          <div className="dialogue-box-bleed">
-            <DialogueBox
-              npcName="Golem"
-              dialogue={
-                <>
-                  <div className="dialogue-user-question">
-                    <b>{userLang === "it" ? "Tu" : "You"}:</b> {current.user}
-                  </div>
-                  <div className="dialogue-bot-reply">
-                    <span className="bot-label">Golem:</span> {formatTextWithLinks(botText)}
-                  </div>
-                  {error && (
-                    <div style={{ color: "#ff7d7d", fontSize: 15, marginTop: 6 }}>{error}</div>
-                  )}
-                  <div ref={messagesEndRef} />
-                </>
-              }
-            />
-          </div>
-          {/* === Navigazione risposte === */}
-          <div className="dialogue-navigation">
-            <button type="button" onClick={goPrev} disabled={currentIdx === 0} className="nes-btn">
-              <span style={{ display: "inline-block", transform: "scaleX(-1)", fontSize: 15 }}>➤</span>
-            </button>
-            <span style={{ fontFamily: "monospace", fontSize: 16 }}>{currentIdx + 1} / {history.length}</span>
-            <button type="button" onClick={goNext} disabled={currentIdx === history.length - 1} className="nes-btn">
-              <span style={{ fontSize: 15 }}>➤</span>
-            </button>
+      <div className="umbybot-mobile-wrapper">
+        {/* === SPRITE BOT PIXEL ANIMATO === */}
+        <div className="umbybot-sprite-box is-centered" style={{ marginTop: spriteMarginTop }}>
+          <div className="umbybot-sprite-fix">
+            <BotAnimato talking={isLast && isBotTyping} size={spriteSize} />
           </div>
         </div>
-        {/* === Contatore domande rimaste === */}
-        <div style={{ padding: "2px 10px 3px 10px", fontSize: 13, color: "#ffe8ad", textAlign: "center", fontWeight: 500 }}>
-          {userLang === "it"
-            ? `Domande rimaste oggi: ${questionsLeft} / ${DAILY_QUESTION_LIMIT}`
-            : `Questions left today: ${questionsLeft} / ${DAILY_QUESTION_LIMIT}`}
+
+        {/* === DIALOGUE BOX === */}
+        <div className="dialogue-box-bleed">
+          <DialogueBox
+            npcName="Golem"
+            dialogue={
+              <>
+                <div className="dialogue-user-question">
+                  <b>{userLang === "it" ? "Tu" : "You"}:</b> {current.user}
+                </div>
+                <div className="dialogue-bot-reply">
+                  <span className="bot-label">Golem:</span> {formatTextWithLinks(botText)}
+                </div>
+                {error && (
+                  <div style={{ color: "#ff7d7d", fontSize: 15, marginTop: 6 }}>{error}</div>
+                )}
+                <div ref={messagesEndRef} />
+              </>
+            }
+          />
         </div>
-        {/* === Box input utente === */}
-        <form className="input-chatbox" onSubmit={handleSend} autoComplete="off">
-          <div style={{ position: "relative", width: "100%" }}>
-            <input
-              className="chat-input-steampunk nes-input"
-              type="text"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              maxLength={MAX_INPUT_CHARS}
-              placeholder={
-                limitReached
-                  ? (userLang === "it"
-                    ? "Limite raggiunto, torna domani!"
-                    : "Limit reached, come back tomorrow!")
-                  : loading
-                    ? (userLang === "it" ? "Attendi risposta..." : "Awaiting reply...")
-                    : (userLang === "it"
-                      ? "Fai una domanda su Umberto..."
-                      : "Ask something about Umberto...")
-              }
-              disabled={loading || limitReached}
-              style={{
-                flex: 1,
-                fontSize: 16,
-                width: "100%",
-                paddingRight: 60,
-              }}
-              autoFocus
-            />
-            {/* Char counter */}
-            <span
-              style={{
-                position: "absolute",
-                right: 16,
-                bottom: 18,
-                fontSize: 13,
-                color:
-                  input.length >= MAX_INPUT_CHARS
-                    ? "#ff6c6c"
-                    : input.length >= MAX_INPUT_CHARS - 10
-                      ? "#ffb488"
-                      : "#b8ffd9cc",
-                pointerEvents: "none",
-                fontFamily: "inherit",
-                userSelect: "none",
-                fontWeight: 600,
-                letterSpacing: 0.2,
-                background: "rgba(28,16,8,0.07)",
-                padding: "0 4px",
-                borderRadius: 7,
-                zIndex: 10
-              }}
-            >
-              {input.length}/{MAX_INPUT_CHARS}
-            </span>
-          </div>
-          <button
-            className="chat-send-btn nes-btn is-success"
-            type="submit"
-            disabled={loading || limitReached || !input.trim()}
-            style={{ fontSize: 22 }}
-          >
-            ➤
+
+        {/* === NAVIGAZIONE DOMANDE/RISPOSTE (CRONOLOGIA) === */}
+        <div className="dialogue-navigation">
+          <button type="button" onClick={goPrev} disabled={currentIdx === 0} className="nes-btn">
+            <span style={{ display: "inline-block", transform: "scaleX(-1)", fontSize: 15 }}>➤</span>
           </button>
-        </form>
-        {/* === Suggerimenti rotanti === */}
-        <div style={{ padding: "8px 10px 3px 10px", fontSize: 13, color: "#b8ffd9bb", textAlign: "center" }}>
-          {userLang === "it"
-            ? <>Prova a chiedere: <b>{tips[tipIndex]}</b></>
-            : <>Try asking: <b>{tips[tipIndex]}</b></>}
+          <span style={{ fontFamily: "monospace", fontSize: 16 }}>{currentIdx + 1} / {history.length}</span>
+          <button type="button" onClick={goNext} disabled={currentIdx === history.length - 1} className="nes-btn">
+            <span style={{ fontSize: 15 }}>➤</span>
+          </button>
         </div>
+      </div>
+
+      {/* === CONTATORE DOMANDE RIMASTE (LIMITE GIORNALIERO) === */}
+      <div style={{ padding: "2px 10px 3px 10px", fontSize: 13, color: "#ffe8ad", textAlign: "center", fontWeight: 500 }}>
+        {userLang === "it"
+          ? `Domande rimaste oggi: ${questionsLeft} / ${DAILY_QUESTION_LIMIT}`
+          : `Questions left today: ${questionsLeft} / ${DAILY_QUESTION_LIMIT}`}
+      </div>
+
+      {/* === INPUT CHAT UTENTE === */}
+      <form className="input-chatbox" onSubmit={handleSend} autoComplete="off">
+        <div style={{ position: "relative", width: "100%" }}>
+          <input
+            className="chat-input-steampunk nes-input"
+            type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            maxLength={MAX_INPUT_CHARS}
+            placeholder={
+              limitReached
+                ? (userLang === "it"
+                  ? "Limite raggiunto, torna domani!"
+                  : "Limit reached, come back tomorrow!")
+                : loading
+                  ? (userLang === "it" ? "Attendi risposta..." : "Awaiting reply...")
+                  : (userLang === "it"
+                    ? "Fai una domanda su Umberto..."
+                    : "Ask something about Umberto...")
+            }
+            disabled={loading || limitReached}
+            style={{
+              flex: 1,
+              fontSize: 16,
+              width: "100%",
+              paddingRight: 60,
+            }}
+            autoFocus
+          />
+          {/* Char counter */}
+          <span
+            style={{
+              position: "absolute",
+              right: 16,
+              bottom: 18,
+              fontSize: 13,
+              color:
+                input.length >= MAX_INPUT_CHARS
+                  ? "#ff6c6c"
+                  : input.length >= MAX_INPUT_CHARS - 10
+                    ? "#ffb488"
+                    : "#b8ffd9cc",
+              pointerEvents: "none",
+              fontFamily: "inherit",
+              userSelect: "none",
+              fontWeight: 600,
+              letterSpacing: 0.2,
+              background: "rgba(28,16,8,0.07)",
+              padding: "0 4px",
+              borderRadius: 7,
+              zIndex: 10
+            }}
+          >
+            {input.length}/{MAX_INPUT_CHARS}
+          </span>
+        </div>
+        <button
+          className="chat-send-btn nes-btn is-success"
+          type="submit"
+          disabled={loading || limitReached || !input.trim()}
+          style={{ fontSize: 22 }}
+        >
+          ➤
+        </button>
+      </form>
+
+      {/* === SUGGERIMENTI DOMANDE === */}
+      <div style={{ padding: "8px 10px 3px 10px", fontSize: 13, color: "#b8ffd9bb", textAlign: "center" }}>
+        {userLang === "it"
+          ? <>Prova a chiedere: <b>{tips[tipIndex]}</b></>
+          : <>Try asking: <b>{tips[tipIndex]}</b></>}
       </div>
     </div>
   );

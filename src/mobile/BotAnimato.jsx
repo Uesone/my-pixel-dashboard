@@ -6,9 +6,16 @@ import umbybotIdle416 from "./assets/sprites/umbybot-idle-416.webp";
 import umbybotTalking208 from "./assets/sprites/umbybot-talking-208.webp";
 import umbybotTalking416 from "./assets/sprites/umbybot-talking-416.webp";
 
+/**
+ * Sprite animata di UmbyBot: idle o talking (bocca che si muove)
+ * Props:
+ * - talking: boolean, true se bot deve animare la bocca
+ * - size: dimensione px (default 208)
+ */
 export default function BotAnimato({ talking, size = 208 }) {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Anima bocca del bot mentre "parla"
   useEffect(() => {
     let interval;
     if (talking) {
@@ -19,7 +26,7 @@ export default function BotAnimato({ talking, size = 208 }) {
     return () => clearInterval(interval);
   }, [talking]);
 
-  // Sprite attivo (idle o talking)
+  // Scegli sprite corretto per stato (idle/talking, risoluzione 208/416)
   const sprite208 = talking && isOpen ? umbybotTalking208 : umbybotIdle208;
   const sprite416 = talking && isOpen ? umbybotTalking416 : umbybotIdle416;
 
@@ -39,8 +46,7 @@ export default function BotAnimato({ talking, size = 208 }) {
       width={size}
       height={size}
       loading="eager"
-      fetchPriority="high"
-      decoding="async"
+      fetchPriority="high"       
     />
   );
 }

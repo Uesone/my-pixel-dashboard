@@ -6,46 +6,40 @@
 html, body, #root {
   width: 100vw !important;
   min-width: 0 !important;
+  height: 100vh;
+  min-height: 100vh;
+  margin: 0 !important;
+  padding: 0 !important;
   overflow-x: hidden !important;
   box-sizing: border-box;
   font-family: 'VT323', 'Press Start 2P', monospace !important;
   font-size: 16px;
   letter-spacing: 0px;
+  background: linear-gradient(145deg, #121715, #18231c);
+  color: #ffe8ad;
 }
 
-/* ===========================
-   FRAME ESTERNO (FAKE DEVICE)
-   =========================== */
-.device-frame {
-  background: linear-gradient(180deg, #3c4348 40%, #191a1d 100%);
-  border-radius: 44px;
-  box-shadow:
-    0 6px 10px #000d,
-    0 0 0 5px #262c34 inset,
-    0 1px 10px #0f151c;
-  padding: 14px;
-  max-width: 540px;
-  margin: 28px auto;
-  min-height: 92vh;
-  width: 100%;
-  min-width: 0 !important;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-/* =====================
-   GLASS EFFETTO DEVICE
-   ===================== */
+/* =======================
+   GLASS EFFETTO PRINCIPALE
+   ======================= */
 .device-inner-glass {
   flex: 1;
-  width: 100%;
-  min-width: 0;
-  background: linear-gradient(145deg, #222f26 76%, #1a1e17 100%),
+  width: 100vw;
+  max-width: 720px;
+  margin: 0 auto;
+  /* --- PATCH dvh con fallback vh --- */
+  min-height: 100dvh;
+  min-height: 100vh;
+  height: 100dvh;
+  height: 100vh;
+  background:
+    linear-gradient(145deg, #222f26 76%, #1a1e17 100%),
     radial-gradient(ellipse at 70% 18%, #54ffbf1a 0%, #3c6c38 85%, transparent 100%);
   border-radius: 30px;
-  box-shadow: 0 0 32px 6px #6fffb36b inset, 0 0 6px 2px #3bff82b2 inset, 0 1px 26px #46c67444;
+  box-shadow:
+    0 0 32px 6px #6fffb36b inset,
+    0 0 6px 2px #3bff82b2 inset,
+    0 1px 26px #46c67444;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -75,18 +69,12 @@ html, body, #root {
 /* ====================================
    SPRITE BOT — FIX E ANIMAZIONE BORDO
    ==================================== */
-
-/* Fix dimensione sprite: PNG SEMPRE della stessa area visiva */
-/* Zona sprite + menu hamburger: spazio e allineamento */
 .umbybot-sprite-box {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;   /* Distanza tra menu e sprite */
 }
-
-
-/* --- FIX FINALE: wrapper che mantiene la PNG centrata e croppa l'eccesso --- */
 .umbybot-sprite-fix {
   width: 208px;
   height: 208px;
@@ -94,10 +82,7 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* border-radius: 32px; */
 }
-
-/* PNG del bot: sempre 100% del wrapper, mai valori fissi qui! */
 .umbybot-sprite {
   width: 100%;
   height: 100%;
@@ -258,8 +243,7 @@ html, body, #root {
 .nes-btn[disabled] { opacity: 0.5 !important; cursor: not-allowed !important; }
 
 @media (max-width: 900px) {
-  .device-frame        { border-radius: 17px; }
-  .device-inner-glass  { border-radius: 7px; }
+  .device-inner-glass  { border-radius: 7px; max-width: 99vw; margin: 0 auto; }
   .umbybot-mobile-wrapper { padding: 6px 1vw 8px 1vw; }
   .input-chatbox       { padding: 7px 3px 4px 3px; border-radius: 0 0 12px 12px; }
   .dialogue-box-steampunk.nes-container {
@@ -277,7 +261,7 @@ html, body, #root {
    "UmbyBot:" etichetta colore
    =========================== */
 .bot-label {
-  color: #ffe066;            /* Giallo Steampunk */
+  color: #ffe066;
   font-weight: bold;
   letter-spacing: 0.04em;
   filter: drop-shadow(0 0 2px #fff76e80);

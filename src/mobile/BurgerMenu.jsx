@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import "./styles/BurgerMenu.css"
+import "./styles/BurgerMenu.css";
+
 export default function BurgerMenu({ onSelect }) {
   const [open, setOpen] = useState(false);
 
@@ -9,21 +10,12 @@ export default function BurgerMenu({ onSelect }) {
         className="burger-btn"
         aria-label="Apri menu"
         onClick={() => setOpen(!open)}
-        style={{
-          width: 40,
-          height: 40,
-          background: "none",
-          border: "none",
-          padding: 0,
-          marginRight: 16,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          cursor: "pointer"
-        }}
+        tabIndex={0}
       >
-        {/* Burger icon pure CSS for perf */}
-        <span className="burger-icon" />
+        <span className="burger-icon">
+          <span />
+          <span />
+        </span>
       </button>
       {open && (
         <div className="burger-menu-inline">
