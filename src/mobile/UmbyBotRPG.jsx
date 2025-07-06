@@ -48,7 +48,8 @@ function formatTextWithLinks(text) {
           fontFamily: "'VT323', monospace",
           wordBreak: "break-all",
           textShadow: "1px 1px #333",
-          paddingLeft: 2, paddingRight: 2
+          paddingLeft: 2,
+          paddingRight: 2
         }}
       >
         {part}
@@ -227,6 +228,15 @@ export default function UmbyBotRPG({
   const handleTypewriterStart = useCallback(() => setIsBotTyping(true), []);
   const handleTypewriterEnd = useCallback(() => setIsBotTyping(false), []);
 
+  // === Gestione cambio lingua da BurgerMenu ===
+  const handleChangeLang = (lang) => {
+    setUserLang(lang);
+    setHistory(INITIAL_HISTORY[lang] || INITIAL_HISTORY["en"]); // Resetta la chat!
+    setCurrentIdx(0);
+    setInput("");
+    setError(null);
+  };
+
   // === Gestione invio domanda/chat ===
   async function handleSend(e) {
     e.preventDefault();
@@ -349,7 +359,12 @@ export default function UmbyBotRPG({
   return (
     <div className="device-inner-glass">
       {/* === MENU BURGER FIXED === */}
-      <BurgerMenu onSelect={setPage} />
+      <BurgerMenu
+        onSelect={setPage}
+        lang={userLang}
+        onChangeLang={handleChangeLang}
+        key={userLang}
+      />
 
       {/* === OVERLAY PAGINE BURGER (PORTFOLIO, ABOUT, ECC.) === */}
       {page && (
@@ -362,10 +377,10 @@ export default function UmbyBotRPG({
               aria-label="Chiudi pagina"
               tabIndex={0}
             >×</button>
-            {page === "portfolio" && <PortfolioPage />}
-            {page === "services" && <ServicesPage />}
-            {page === "about" && <AboutPage />}
-            {page === "contact" && <ContactPage />}
+            {page === "portfolio" && <PortfolioPage lang={userLang} />}
+            {page === "services" && <ServicesPage lang={userLang} />}
+            {page === "about" && <AboutPage lang={userLang} />}
+            {page === "contact" && <ContactPage lang={userLang} />}
           </div>
         </div>
       )}
