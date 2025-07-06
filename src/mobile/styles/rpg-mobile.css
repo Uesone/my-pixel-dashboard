@@ -296,3 +296,137 @@ html, body, #root {
   from { transform: scale(0.93); opacity: 0.4; }
   to { transform: scale(1); opacity: 1; }
 }
+/* === Scrollbar custom per il contenuto delle pagine menu (Portfolio, About, ecc) === */
+.burger-page-content {
+  /* ...resto delle tue regole... */
+  max-height: 85vh;           /* Limita altezza, fa apparire la scrollbar */
+  overflow-y: auto !important; /* Attiva lo scroll verticale se serve */
+  /* (Puoi regolare max-height per non tagliare la X di chiusura su schermi piccoli) */
+}
+
+.burger-page-content::-webkit-scrollbar {
+  width: 7px;
+  background: #182b16;
+}
+.burger-page-content::-webkit-scrollbar-thumb {
+  background: #30e16a;
+  border-radius: 3px;
+}
+.burger-page-content::-webkit-scrollbar-thumb:hover {
+  background: #00ffe1;
+}
+.burger-page-content {
+  scrollbar-color: #30e16a #182b16;
+  scrollbar-width: thin;
+}
+.inline-burger-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 20;
+}
+
+/* BOTTON HAMBURGER - solo due linee, zero bordi e background */
+.burger-btn {
+  width: 38px;
+  height: 38px;
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  margin-right: 9px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.burger-btn:focus,
+.burger-btn:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  background: none !important;
+}
+
+.burger-icon {
+  width: 22px;
+  height: 22px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.burger-icon span {
+  display: block;
+  width: 100%;
+  height: 3.5px;
+  border-radius: 2px;
+  background: #ffe066;
+  box-shadow: 0 1px 6px #3affbb38;
+}
+
+/* Dropdown menu: invariato */
+.burger-menu-inline {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  background: linear-gradient(145deg, #222f26 76%, #1a1e17 100%);
+  border: 2px solid #3affbb85;
+  border-radius: 2px;
+  box-shadow: 0 6px 18px #30ffbe80;
+  min-width: 170px;
+  padding: 11px 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  animation: fade-in-menu .18s cubic-bezier(.7,0,.72,1);
+}
+
+@keyframes fade-in-menu {
+  from { opacity: 0; transform: translateY(-14px) scale(.98);}
+  to   { opacity: 1; transform: translateY(0) scale(1);}
+}
+
+.menu-item {
+  background: none;
+  border: none;
+  color: #ffe066;
+  font-size: 1.16em;
+  padding: 11px 20px;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.16s, color 0.16s;
+  outline: none;
+  margin: 1px 0;
+}
+.menu-item:hover, .menu-item:focus {
+  background: #293425;
+  color: #00ffe1;
+}
+.close-x-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 28px;
+  color: #ffe066;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 1;
+  z-index: 12;
+  transition: background 0.15s, color 0.13s;
+  padding: 0 5px 2px 5px;
+}
+.close-x-btn:hover,
+.close-x-btn:focus {
+  background: #232b2650;
+  color: #00ffe1;
+}

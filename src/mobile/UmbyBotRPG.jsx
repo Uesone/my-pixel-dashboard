@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import DialogueBox from "./DialogueBox.jsx";
 import BotAnimato from "./BotAnimato.jsx";
-import BurgerMenu from "./BurgerMenu.jsx"; // <-- nuovo!
-import PortfolioPage from "./PortfolioPage.jsx"; // crea semplice componente (vedi sopra)
-import ServicesPage from "./ServicePage.jsx";   // crea semplice componente se vuoi
-import AboutPage from "./AboutPage.jsx";         // idem
-import ContactPage from "./ContactPage.jsx";     // idem
+import BurgerMenu from "./BurgerMenu.jsx";
+import PortfolioPage from "./PortfolioPage.jsx";
+import ServicesPage from "./ServicePage.jsx";
+import AboutPage from "./AboutPage.jsx";
+import ContactPage from "./ContactPage.jsx";
 import "./styles/rpg-mobile.css";
-
 
 // === HOOK: animazione typewriter con callback quando termina ===
 function useTypewriterText(text, active, textSpeed = 30, onEnd) {
@@ -356,15 +355,13 @@ export default function UmbyBotRPG({
       {page && (
         <div className="burger-page-overlay">
           <div className="burger-page-content">
+            {/* X sobria */}
             <button
               onClick={() => setPage(null)}
-              className="nes-btn"
-              style={{
-                position: "absolute", top: 12, right: 16, fontSize: 22,
-                borderRadius: 8, zIndex: 12
-              }}
+              className="close-x-btn"
               aria-label="Chiudi pagina"
-            >✕</button>
+              tabIndex={0}
+            >×</button>
             {page === "portfolio" && <PortfolioPage />}
             {page === "services" && <ServicesPage />}
             {page === "about" && <AboutPage />}
