@@ -68,13 +68,12 @@ const PROJECTS = {
           <span style={{ color: "#00ffe1" }}>Team:</span> Umberto Amoroso, Mirko Abozzi, Kassandra Falsitta, Simone Pomponio, Mattia Susin.<br />
         </>
       ),
-      images: [
-        "https://raw.githubusercontent.com/Uesone/BW4_TEAM-2/refs/heads/main/Diagramma.png",
-      ],
+      images: [], // PATCH: nessuna immagine!
       github: "https://github.com/Uesone/BW4_TEAM-2",
     }
   ],
   en: [
+    // ...stesso patch per il progetto "Transport Agency (Backend)"
     {
       title: "APP-METEO",
       desc: (
@@ -137,9 +136,7 @@ const PROJECTS = {
           <span style={{ color: "#00ffe1" }}>Team:</span> Umberto Amoroso, Mirko Abozzi, Kassandra Falsitta, Simone Pomponio, Mattia Susin.<br />
         </>
       ),
-      images: [
-        "https://raw.githubusercontent.com/Uesone/BW4_TEAM-2/refs/heads/main/Diagramma.png",
-      ],
+      images: [], // PATCH!
       github: "https://github.com/Uesone/BW4_TEAM-2",
     }
   ]
@@ -150,15 +147,21 @@ const LABELS = {
   it: {
     portfolio: "Portfolio",
     github: "🔗 Vedi su GitHub",
+    more: "Guarda altri progetti su GitHub",
+    visit: "Visita il mio profilo",
   },
   en: {
     portfolio: "Portfolio",
     github: "🔗 View on GitHub",
+    more: "See more projects on GitHub",
+    visit: "Visit my profile",
   }
 };
 
-// === OVERLAY GALLERY SOLO SWIPE ===
-function GalleryOverlay({ images, current, onClose, onPrev, onNext, lang }) {
+// === OVERLAY GALLERY SOLO SWIPE/DRAG ===
+function GalleryOverlay({ images, current, onClose, onPrev, onNext }) {
+  // Filtra solo immagini non vuote!
+  const validImages = (images || []).filter(url => !!url && url.trim() !== "");
   const startX = useRef(null);
 
   // Touch events
@@ -169,13 +172,13 @@ function GalleryOverlay({ images, current, onClose, onPrev, onNext, lang }) {
     if (startX.current == null) return;
     const deltaX = e.changedTouches[0].clientX - startX.current;
     if (Math.abs(deltaX) > 40) {
-      if (deltaX < 0 && current < images.length - 1) onNext();
+      if (deltaX < 0 && current < validImages.length - 1) onNext();
       if (deltaX > 0 && current > 0) onPrev();
     }
     startX.current = null;
   }
 
-  // Mouse drag events
+  // Mouse drag events (desktop)
   function handleMouseDown(e) {
     startX.current = e.clientX;
     window.addEventListener("mousemove", handleMouseMove);
@@ -185,7 +188,7 @@ function GalleryOverlay({ images, current, onClose, onPrev, onNext, lang }) {
     if (startX.current == null) return;
     const deltaX = e.clientX - startX.current;
     if (Math.abs(deltaX) > 50) {
-      if (deltaX < 0 && current < images.length - 1) onNext();
+      if (deltaX < 0 && current < validImages.length - 1) onNext();
       if (deltaX > 0 && current > 0) onPrev();
       startX.current = null;
       window.removeEventListener("mousemove", handleMouseMove);
@@ -197,6 +200,8 @@ function GalleryOverlay({ images, current, onClose, onPrev, onNext, lang }) {
     window.removeEventListener("mousemove", handleMouseMove);
     window.removeEventListener("mouseup", handleMouseUp);
   }
+
+  if (!validImages.length) return null; // Non mostrare nulla!
 
   return (
     <div
@@ -222,7 +227,7 @@ function GalleryOverlay({ images, current, onClose, onPrev, onNext, lang }) {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* X chiusura sobria */}
+      {/* X chiusura */}
       <button
         aria-label="Chiudi"
         onClick={e => { e.stopPropagation(); onClose(); }}
@@ -250,7 +255,7 @@ function GalleryOverlay({ images, current, onClose, onPrev, onNext, lang }) {
         onBlur={e => (e.currentTarget.style.color = "#ffe066")}
       >×</button>
 
-      {/* Immagine ingrandita con swipe/drag */}
+      {/* Immagine ingrandita */}
       <div
         style={{
           display: "flex",
@@ -266,7 +271,7 @@ function GalleryOverlay({ images, current, onClose, onPrev, onNext, lang }) {
         onMouseDown={handleMouseDown}
       >
         <img
-          src={images[current]}
+          src={validImages[current]}
           alt={`Screenshot ${current + 1}`}
           style={{
             maxWidth: 390,
@@ -284,8 +289,8 @@ function GalleryOverlay({ images, current, onClose, onPrev, onNext, lang }) {
           draggable={false}
         />
       </div>
-      {/* Paginazione (solo testo) */}
-      {images.length > 1 && (
+      {/* Paginazione testo */}
+      {validImages.length > 1 && (
         <div style={{
           marginTop: 13,
           color: "#ffe066",
@@ -293,20 +298,20 @@ function GalleryOverlay({ images, current, onClose, onPrev, onNext, lang }) {
           fontSize: 17,
           letterSpacing: 1,
         }}>
-          {current + 1} / {images.length}
+          {current + 1} / {validImages.length}
         </div>
       )}
     </div>
   );
 }
 
-// === COMPONENTE PRINCIPALE PortfolioPage MULTILINGUA ===
+// === COMPONENTE PRINCIPALE PortfolioPage ===
 export default function PortfolioPage({ onClose, lang = "it" }) {
   const labels = LABELS[lang] || LABELS.it;
   const projects = PROJECTS[lang] || PROJECTS.it;
   const [gallery, setGallery] = useState({ images: null, index: 0 });
 
-  // Overlay: open/close, swipe
+  // Overlay: open/close, swipe/drag
   function openGallery(images, index) {
     setGallery({ images, index });
     setTimeout(() => {
@@ -323,7 +328,7 @@ export default function PortfolioPage({ onClose, lang = "it" }) {
   function nextImg() {
     setGallery(g => ({
       ...g,
-      index: Math.min((g.images?.length ?? 1) - 1, (g.index ?? 0) + 1)
+      index: Math.min(((g.images || []).filter(url => !!url && url.trim() !== "").length ?? 1) - 1, (g.index ?? 0) + 1)
     }));
   }
 
@@ -336,7 +341,7 @@ export default function PortfolioPage({ onClose, lang = "it" }) {
         maxWidth: "100vw",
       }}
     >
-      {/* X chiusura sobria */}
+      {/* X chiusura (se usato come overlay) */}
       {onClose && (
         <button
           className="close-x-btn"
@@ -381,6 +386,7 @@ export default function PortfolioPage({ onClose, lang = "it" }) {
         {labels.portfolio}
       </h2>
 
+      {/* LISTA PROGETTI */}
       <ul
         style={{
           padding: 0,
@@ -389,88 +395,96 @@ export default function PortfolioPage({ onClose, lang = "it" }) {
           minWidth: 0,
         }}
       >
-        {projects.map((proj, i) => (
-          <li
-            key={proj.title}
-            style={{
-              margin: "18px 0",
-              borderRadius: 11,
-              padding: "17px 13px 17px 13px",
-              background: "linear-gradient(90deg, #232b26 95%, #1a1e17 100%)",
-            }}
-          >
-            <b style={{ color: "#00ffe1", fontSize: 18, letterSpacing: 1 }}>
-              {proj.title}
-            </b>
-            <div style={{ fontSize: 15.5, color: "#b8ffd9", margin: "8px 0 0 0" }}>
-              {proj.desc}
-            </div>
-            {/* MINI GALLERY immagini */}
-            <div
+        {projects.map((proj, i) => {
+          const validImages = Array.isArray(proj.images)
+            ? proj.images.filter(url => !!url && url.trim() !== "")
+            : [];
+          return (
+            <li
+              key={proj.title}
               style={{
-                display: "flex",
-                gap: 9,
-                marginTop: 12,
-                alignItems: "center",
-                flexWrap: "wrap",
+                margin: "18px 0",
+                borderRadius: 11,
+                padding: "17px 13px 17px 13px",
+                background: "linear-gradient(90deg, #232b26 95%, #1a1e17 100%)",
               }}
             >
-              {proj.images.map((url, idx) => (
-                <img
-                  key={url}
-                  src={url}
-                  alt={`Screenshot ${proj.title} ${idx + 1}`}
-                  loading="lazy"
+              <b style={{ color: "#00ffe1", fontSize: 18, letterSpacing: 1 }}>
+                {proj.title}
+              </b>
+              <div style={{ fontSize: 15.5, color: "#b8ffd9", margin: "8px 0 0 0" }}>
+                {proj.desc}
+              </div>
+              {/* MINI GALLERY immagini SOLO SE CI SONO! */}
+              {validImages.length > 0 && (
+                <div
                   style={{
-                    maxWidth: 100,
-                    maxHeight: 170,
-                    borderRadius: 8,
-                    border: "2px solid #3affbb85",
-                    background: "#232b26",
-                    boxShadow: "0 1px 8px #2affbb35",
-                    objectFit: "cover",
-                    flexShrink: 0,
-                    cursor: "pointer",
-                    transition: "filter 0.13s",
-                    filter: "brightness(1)",
+                    display: "flex",
+                    gap: 9,
+                    marginTop: 12,
+                    alignItems: "center",
+                    flexWrap: "wrap",
                   }}
-                  onClick={() => openGallery(proj.images, idx)}
-                  onKeyDown={e => {
-                    if (e.key === "Enter" || e.key === " ") openGallery(proj.images, idx);
-                  }}
-                  tabIndex={0}
-                  draggable={false}
-                />
-              ))}
-            </div>
-            {/* LINK GITHUB */}
-            <a
-              href={proj.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "inline-block",
-                marginTop: 12,
-                padding: "7px 18px",
-                borderRadius: 8,
-                background: "#232b26",
-                color: "#00ffe1",
-                fontWeight: 700,
-                letterSpacing: 1,
-                fontFamily: "'VT323', monospace",
-                fontSize: 17,
-                border: "2px solid #3affbb85",
-                textDecoration: "none",
-                boxShadow: "0 1px 7px #29ffab30",
-                transition: "background 0.15s, color 0.13s",
-              }}
-            >
-              {labels.github}
-            </a>
-          </li>
-        ))}
+                >
+                  {validImages.map((url, idx) => (
+                    <img
+                      key={url + idx}
+                      src={url}
+                      alt={`Screenshot ${proj.title} ${idx + 1}`}
+                      loading="lazy"
+                      style={{
+                        maxWidth: 100,
+                        maxHeight: 170,
+                        borderRadius: 8,
+                        border: "2px solid #3affbb85",
+                        background: "#232b26",
+                        boxShadow: "0 1px 8px #2affbb35",
+                        objectFit: "cover",
+                        flexShrink: 0,
+                        cursor: "pointer",
+                        transition: "filter 0.13s",
+                        filter: "brightness(1)",
+                      }}
+                      onClick={() => openGallery(validImages, idx)}
+                      onKeyDown={e => {
+                        if (e.key === "Enter" || e.key === " ") openGallery(validImages, idx);
+                      }}
+                      tabIndex={0}
+                      draggable={false}
+                    />
+                  ))}
+                </div>
+              )}
+              {/* LINK GITHUB */}
+              <a
+                href={proj.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-block",
+                  marginTop: 12,
+                  padding: "7px 18px",
+                  borderRadius: 8,
+                  background: "#232b26",
+                  color: "#00ffe1",
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  fontFamily: "'VT323', monospace",
+                  fontSize: 17,
+                  border: "2px solid #3affbb85",
+                  textDecoration: "none",
+                  boxShadow: "0 1px 7px #29ffab30",
+                  transition: "background 0.15s, color 0.13s",
+                }}
+              >
+                {labels.github}
+              </a>
+            </li>
+          );
+        })}
       </ul>
-      {/* === OVERLAY GALLERY === */}
+
+      {/* OVERLAY GALLERY */}
       {gallery.images && (
         <GalleryOverlay
           images={gallery.images}
@@ -481,6 +495,51 @@ export default function PortfolioPage({ onClose, lang = "it" }) {
           lang={lang}
         />
       )}
+
+      {/* === LINK: altri progetti su GitHub === */}
+      <div
+        style={{
+          marginTop: 30,
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "inline-block",
+            background: "#20231b",
+            border: "2px solid #00ffe199",
+            borderRadius: 11,
+            padding: "13px 28px 15px 28px",
+            color: "#ffe066",
+            fontFamily: "'VT323', monospace",
+            fontSize: 18,
+            boxShadow: "0 3px 19px #00ffe14d",
+            marginBottom: 3,
+            letterSpacing: 1,
+          }}
+        >
+          <span style={{ display: "block", marginBottom: 6 }}>{labels.more}:</span>
+          <a
+            href="https://github.com/Uesone"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "#00ffe1",
+              textDecoration: "none",
+              fontWeight: "bold",
+              fontSize: 20,
+              letterSpacing: 1,
+              borderBottom: "1.5px dashed #00ffe199",
+              padding: "2px 2px",
+              transition: "color 0.12s",
+            }}
+            onMouseOver={e => (e.currentTarget.style.color = "#ffe066")}
+            onMouseOut={e => (e.currentTarget.style.color = "#00ffe1")}
+          >
+            {labels.visit} <span style={{ fontSize: 20 }}>→</span>
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
