@@ -1,16 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import DialogueBox from "./DialogueBox";
-import BotAnimato from "./BotAnimato";
+import DialogueBox from "./DialogueBox.jsx";
+import BotAnimato from "./BotAnimato.jsx";
+import BurgerMenu from "./BurgerMenu.jsx"; // <-- nuovo!
+import PortfolioPage from "./PortfolioPage.jsx"; // crea semplice componente (vedi sopra)
+import ServicesPage from "./ServicePage.jsx";   // crea semplice componente se vuoi
+import AboutPage from "./AboutPage.jsx";         // idem
+import ContactPage from "./ContactPage.jsx";     // idem
 import "./styles/rpg-mobile.css";
 
 // === HOOK Typewriter con callback onEnd ===
 function useTypewriterText(text, active, textSpeed = 30, onEnd) {
   const [displayed, setDisplayed] = useState("");
-
   useEffect(() => {
     if (!active) {
       setDisplayed(text);
-      if (onEnd) onEnd(); // Se non attivo, chiama comunque onEnd (es: bocca chiusa)
+      if (onEnd) onEnd();
       return;
     }
     setDisplayed("");
@@ -20,7 +24,7 @@ function useTypewriterText(text, active, textSpeed = 30, onEnd) {
       setDisplayed(text.slice(0, i));
       if (i >= text.length) {
         clearInterval(textInterval);
-        if (onEnd) onEnd(); // CALLBACK QUI: scrittura completata!
+        if (onEnd) onEnd();
       }
     }, textSpeed);
     return () => clearInterval(textInterval);
@@ -57,14 +61,12 @@ function formatTextWithLinks(text) {
   });
 }
 
-// === Utility: lingua di default ===
 function getDefaultLang() {
   const lang = navigator.language || "en";
   if (lang.startsWith("it")) return "it";
   return "en";
 }
 
-// ...Costanti (lascia tutto come prima)
 const INITIAL_HISTORY = {
   it: [{
     user: "Chi sei?",
@@ -129,26 +131,28 @@ const DAILY_QUESTION_LIMIT = 10;
 const STORAGE_KEY = "umbybot-usage";
 const MAX_INPUT_CHARS = 200;
 
-// ============== MAIN COMPONENT ==============
 export default function UmbyBotRPG({
   spriteSize = 208,
   spriteMarginTop = 0,
   textSpeed = 30,
 }) {
-  // === Stato base ===
+  // === PATCH: Gestione pagina menu hamburger
+  const [page, setPage] = useState(null);
+
+  // === Stato base
   const [userLang, setUserLang] = useState(getDefaultLang());
   const [history, setHistory] = useState(INITIAL_HISTORY[userLang] || INITIAL_HISTORY["en"]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isBotTyping, setIsBotTyping] = useState(false); // ⬅️ Controlla animazione bocca
+  const [isBotTyping, setIsBotTyping] = useState(false);
   const [error, setError] = useState(null);
 
-  // === Limite domande giornaliero ===
+  // === Limite domande giornaliero
   const [questionsLeft, setQuestionsLeft] = useState(DAILY_QUESTION_LIMIT);
   const [limitReached, setLimitReached] = useState(false);
 
-  // === Init limiti e suggerimenti ===
+  // === Init limiti e suggerimenti
   useEffect(() => { updateUsage(); }, []);
   function updateUsage() {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -175,7 +179,7 @@ export default function UmbyBotRPG({
     }
   }
 
-  // === Suggerimenti randomici ===
+  // === Suggerimenti randomici
   const tips = suggestions[userLang] || suggestions["en"];
   const [tipIndex, setTipIndex] = useState(() => Math.floor(Math.random() * tips.length));
   useEffect(() => {
@@ -187,7 +191,7 @@ export default function UmbyBotRPG({
   }, [userLang]);
   useEffect(() => { setTipIndex(Math.floor(Math.random() * tips.length)); }, [userLang]);
 
-  // === Restore history da localStorage ===
+  // === Restore history da localStorage
   useEffect(() => {
     const saved = localStorage.getItem("umbybot-history");
     if (saved) {
@@ -206,7 +210,7 @@ export default function UmbyBotRPG({
     localStorage.setItem("umbybot-history", JSON.stringify(history));
   }, [history]);
 
-  // === Scroll sempre in fondo ===
+  // === Scroll sempre in fondo
   const messagesEndRef = useRef(null);
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -214,18 +218,17 @@ export default function UmbyBotRPG({
     }
   }, [history.length]);
 
-  // === Callback per typewriter: inizia/ferma bocca ===
+  // === Callback per typewriter: inizia/ferma bocca
   const handleTypewriterStart = useCallback(() => setIsBotTyping(true), []);
   const handleTypewriterEnd = useCallback(() => setIsBotTyping(false), []);
 
-  // === Gestione invio domanda ===
+  // === Gestione invio domanda
   async function handleSend(e) {
     e.preventDefault();
     if (!input.trim() || loading || limitReached) return;
     setError(null);
     const domanda = input.trim();
 
-    // Check lunghezza domanda
     if (domanda.length > MAX_INPUT_CHARS) {
       setError(ERRORS[userLang].tooLong);
       return;
@@ -243,7 +246,7 @@ export default function UmbyBotRPG({
     setInput("");
     setLoading(true);
 
-    // === Update usage ===
+    // === Update usage
     const saved = localStorage.getItem(STORAGE_KEY);
     let newCount = 1;
     let now = Date.now();
@@ -270,12 +273,12 @@ export default function UmbyBotRPG({
     setQuestionsLeft(Math.max(0, DAILY_QUESTION_LIMIT - newCount));
     setLimitReached(newCount >= DAILY_QUESTION_LIMIT);
 
-    // === Aggiungi domanda in history ===
+    // === Aggiungi domanda in history
     const newHistory = [...history, { user: domanda, bot: null }];
     setHistory(newHistory);
     setCurrentIdx(newHistory.length - 1);
 
-    // === Check lingua supportata ===
+    // === Check lingua supportata
     const isKnownLang = detectedLang === "it" || detectedLang === "en";
     const lang = isKnownLang ? detectedLang : "en";
     if (!isKnownLang) {
@@ -291,23 +294,19 @@ export default function UmbyBotRPG({
     }
 
     try {
-      // FETCH risposta bot
       const res = await fetch(import.meta.env.VITE_UMBYBOT_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: domanda }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || ERRORS[lang].unknown);
-
       const updatedHistory = [
         ...newHistory.slice(0, -1),
         { user: domanda, bot: data.text }
       ];
       setHistory(updatedHistory);
       setCurrentIdx(updatedHistory.length - 1);
-
     } catch (err) {
       setError(ERRORS[lang].connection + (err.message || ERRORS[lang].unknown));
       const updatedHistory = [
@@ -321,29 +320,49 @@ export default function UmbyBotRPG({
     }
   }
 
-  // === Sync bocca/typewriter (callback usata!) ===
+  // === Sync bocca/typewriter (callback usata!)
   const current = history[currentIdx];
   const isLast = currentIdx === history.length - 1;
 
-  // === Typewriter "controllato" (parte/fine bocca in modo preciso) ===
   const botText = useTypewriterText(
     current.bot || "",
-    isLast && !!current.bot,     // Attivo SOLO su ultima risposta
+    isLast && !!current.bot,
     textSpeed,
-    handleTypewriterEnd          // Callback: FINE -> ferma bocca!
+    handleTypewriterEnd
   );
-  // Bocca parte solo quando si anima la risposta
   useEffect(() => {
-    if (isLast && !!current.bot) handleTypewriterStart(); // Start quando la risposta è pronta da scrivere
+    if (isLast && !!current.bot) handleTypewriterStart();
   }, [current.bot, isLast, handleTypewriterStart]);
 
-  // === Navigazione chat ===
   const goPrev = () => setCurrentIdx(idx => Math.max(0, idx - 1));
   const goNext = () => setCurrentIdx(idx => Math.min(history.length - 1, idx + 1));
 
-  // === Render ===
   return (
     <div className="device-frame">
+      {/* === HAMBURGER MENU FIXED === */}
+      <BurgerMenu onSelect={setPage} />
+
+      {/* === OVERLAY PAGINE BURGER === */}
+      {page && (
+        <div className="burger-page-overlay">
+          <div className="burger-page-content">
+            <button
+              onClick={() => setPage(null)}
+              className="nes-btn"
+              style={{
+                position: "absolute", top: 12, right: 16, fontSize: 22,
+                borderRadius: 8, zIndex: 12
+              }}
+              aria-label="Chiudi pagina"
+            >✕</button>
+            {page === "portfolio" && <PortfolioPage />}
+            {page === "services" && <ServicesPage />}
+            {page === "about" && <AboutPage />}
+            {page === "contact" && <ContactPage />}
+          </div>
+        </div>
+      )}
+
       <div className="device-inner-glass">
         <div className="umbybot-mobile-wrapper">
           {/* === Sprite animato mascotte === */}

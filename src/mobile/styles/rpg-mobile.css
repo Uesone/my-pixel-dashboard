@@ -77,13 +77,14 @@ html, body, #root {
    ==================================== */
 
 /* Fix dimensione sprite: PNG SEMPRE della stessa area visiva */
+/* Zona sprite + menu hamburger: spazio e allineamento */
 .umbybot-sprite-box {
-  margin-bottom: 18px;
-  padding: 8px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  gap: 12px;   /* Distanza tra menu e sprite */
 }
+
 
 /* --- FIX FINALE: wrapper che mantiene la PNG centrata e croppa l'eccesso --- */
 .umbybot-sprite-fix {
@@ -280,4 +281,34 @@ html, body, #root {
   font-weight: bold;
   letter-spacing: 0.04em;
   filter: drop-shadow(0 0 2px #fff76e80);
+}
+
+/* BURGER MENU AND PAGES */
+.burger-page-overlay {
+  position: fixed;
+  z-index: 12000;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(18,20,15,0.87);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.17s;
+}
+.burger-page-content {
+  background: linear-gradient(180deg, #212721 80%, #161b15 100%);
+  border-radius: 22px;
+  box-shadow: 0 6px 28px #4bffa4ba, 0 0 0 4px #41ffbc37 inset;
+  max-width: 96vw;
+  min-width: 0;
+  width: 370px;
+  padding: 34px 16px 30px 16px;
+  position: relative;
+  animation: pop-in .17s cubic-bezier(.63,0,.69,1);
+}
+@media (max-width: 500px) {
+  .burger-page-content { width: 98vw; max-width: 98vw; padding: 16px 4vw 16px 4vw; }
+}
+@keyframes pop-in {
+  from { transform: scale(0.93); opacity: 0.4; }
+  to { transform: scale(1); opacity: 1; }
 }
