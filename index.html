@@ -5,7 +5,7 @@
     <link rel="icon" type="image/x-icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- === PATCH: Preload font PixelOperator (super importante per performance pixel-art!) === -->
+    <!-- === PATCH: Preload font PixelOperator (perfetto per pixel-art!) === -->
     <link
       rel="preload"
       href="/fonts/PixelOperator.ttf"
@@ -14,7 +14,17 @@
       crossorigin="anonymous"
     />
 
-    <!-- === PATCH: Google Fonts NON BLOCKING === -->
+    <!-- === PATCH: Preload LCP Pixel Sprite (LCP boost) === -->
+    <link
+      rel="preload"
+      as="image"
+      href="/assets/umbybot-idle-208.webp"
+      fetchpriority="high"
+      imagesrcset="/assets/umbybot-idle-208.webp 208w, /assets/umbybot-idle-416.webp 416w"
+      imagesizes="208px"
+    />
+
+    <!-- === PATCH: Google Fonts NON BLOCKING (VT323) === -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -51,7 +61,7 @@
     <div id="modal-root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
-    <!-- === Google Analytics (Async, NON Blocking - messo qui in fondo!) === -->
+    <!-- === Google Analytics (Async, NON Blocking) === -->
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-YXRDWTGYEN"
