@@ -28,7 +28,7 @@ const TEXTS = {
     soft: <>
       Lavoro volentieri in team, scrivo codice pulito e costruisco prodotti che siano utili e belli da usare.<br />
       <span style={{ color: "#8fffc4", fontWeight: 500 }}>
-        Attualmente preferisco lavori freelance ma sono disponibile a valutare anche altre proposte!
+        In questo periodo mi sto concentrando soprattutto su progetti freelance, ma resto curioso e disponibile a valutare altre proposte!
       </span>
     </>,
     stack: {
@@ -67,7 +67,9 @@ const TEXTS = {
     soft: <>
       I enjoy working in teams, writing clean code and building products that are both useful and enjoyable to use.<br />
       <span style={{ color: "#8fffc4", fontWeight: 500 }}>
-        Currently I prefer freelance jobs but I’m open to other opportunities as well!
+        Right now I’m mostly working on freelance projects, but I’m curious and open to hearing about other possibilities as well!
+
+
       </span>
     </>,
     stack: {
