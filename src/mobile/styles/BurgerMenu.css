@@ -59,12 +59,12 @@
 /* Dropdown menu */
 .burger-menu-inline {
   position: absolute;
-  top: 44px;
+  top: 40px;
   left: 0;
   /* Stesso gradient del display, senza trasparenze */
   background: linear-gradient(145deg, #222f26 76%, #1a1e17 100%);
   border: 2px solid #3affbb85;
-  border-radius: 11px;
+  border-radius: 2px;
   box-shadow: 0 6px 18px #30ffbe80;
   min-width: 170px;
   padding: 11px 0;

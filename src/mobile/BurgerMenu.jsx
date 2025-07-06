@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import "./styles/BurgerMenu.css"
 export default function BurgerMenu({ onSelect }) {
   const [open, setOpen] = useState(false);
 
