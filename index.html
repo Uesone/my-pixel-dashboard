@@ -4,20 +4,15 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-YXRDWTGYEN"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
 
-      gtag("config", "G-YXRDWTGYEN");
-    </script>
+    <!-- === PATCH: Preload font PixelOperator (super importante per performance pixel-art!) === -->
+    <link
+      rel="preload"
+      href="/fonts/PixelOperator.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin="anonymous"
+    />
 
     <!-- === PATCH: Google Fonts NON BLOCKING === -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -55,5 +50,20 @@
     <div id="root"></div>
     <div id="modal-root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- === Google Analytics (Async, NON Blocking - messo qui in fondo!) === -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-YXRDWTGYEN"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-YXRDWTGYEN");
+    </script>
+    <!-- FINE Google Analytics -->
   </body>
 </html>
