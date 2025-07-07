@@ -12,7 +12,7 @@ const SERVICES = {
         <>
           Realizzazione di siti web moderni, e-commerce,  responsive e ottimizzati SEO, in stile <b>pixel-art</b> o classico. <br />
           Landing page, portfolio personale, blog o siti aziendali.
-          <br /><span style={{ color: "#ffd24c" }}>Tech:</span> React, Vite, Bootstrap, Tailwind.
+          <br /><span style={{ color: "#ffd24c" }}>Tech:</span> React, Vite, Bootstrap, Tailwind, Typescript.
         </>
       )
     },
@@ -58,7 +58,7 @@ const SERVICES = {
         <>
           Creation of modern, responsive and SEO-optimized websites and e-commerce in <b>pixel-art</b> or classic style.<br />
           Landing pages, personal portfolios, blogs or business sites.
-          <br /><span style={{ color: "#ffd24c" }}>Tech:</span> React, Vite, Bootstrap, Tailwind.
+          <br /><span style={{ color: "#ffd24c" }}>Tech:</span> React, Vite, Bootstrap, Tailwind, Typescript.
         </>
       )
     },
