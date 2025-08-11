@@ -88,7 +88,6 @@ export default async function handler(req, res) {
     "https://uesone.vercel.app",
     "https://umbertoamoroso.vercel.app",
   ];
-
   const origin = req.headers.origin;
   if (ORIGINS.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
@@ -96,6 +95,7 @@ export default async function handler(req, res) {
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Cache-Control", "no-store");
 
   // Preflight
   if (req.method === "OPTIONS") return res.status(200).end();
@@ -123,17 +123,16 @@ export default async function handler(req, res) {
         .json({ error: "Server not configured: missing OPENAI_API_KEY" });
     }
 
-    // Modello configurabile via ENV (default economico per test)
-    const model = process.env.OPENAI_MODEL || "gpt-4.1-mini";
+    // Modello configurabile via ENV (default gpt-4o)
+    const model = process.env.OPENAI_MODEL || "gpt-4o";
 
     // Header verso OpenAI
     const headers = {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     };
-    // Forza il Project ID se disponibile
     if (process.env.OPENAI_PROJECT) {
-      headers["OpenAI-Project"] = process.env.OPENAI_PROJECT;
+      headers["OpenAI-Project"] = process.env.OPENAI_PROJECT; // forza il project corretto
     }
 
     // Chiamata a OpenAI
