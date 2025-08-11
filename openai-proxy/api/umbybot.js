@@ -76,63 +76,85 @@ My master is currently focused on:
 Be a friendly, pixel-perfect assistant from a retro-futuristic workshop!
 `;
 
-// ==== API Handler: Chiamata a OpenAI GPT-4o ====
-// Gestisce la POST, limita la domanda a 200 caratteri, risponde con max 300 token, restituisce errore custom
+/**
+ * Proxy Vercel → OpenAI
+ * - legge OPENAI_API_KEY e OPENAI_PROJECT dalle ENV
+ * - forza il Project via header OpenAI-Project (se presente)
+ * - migliora CORS e gestione errori (401/402/429)
+ */
 export default async function handler(req, res) {
-  // === CORS FIX: permette chiamate cross-domain dal frontend ===
-  res.setHeader("Access-Control-Allow-Origin", "https://uesone.vercel.app");
+  // --- CORS ---
+  const ORIGIN = "https://uesone.vercel.app"; // cambia/aggiungi se usi altri domini
+  res.setHeader("Access-Control-Allow-Origin", ORIGIN);
+  res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") return res.status(200).end();
 
-  // Gestione preflight CORS (richieste OPTIONS)
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  // ✅ Consenti solo POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  let { prompt } = req.body;
-  if (!prompt || typeof prompt !== "string") {
-    return res.status(400).json({ error: "Missing prompt" });
-  }
-
-  // ✅ Limite caratteri domanda: 200 caratteri (gestito anche lato frontend)
-  if (prompt.length > 200) {
-    return res.status(400).json({
-      error: "Domanda troppo lunga / Question too long (max 200 characters).",
-    });
-  }
-
-  const apiKey = process.env.OPENAI_API_KEY;
   try {
-    // === Chiamata a OpenAI GPT-4o, max 300 token di risposta, temperature 0.75
-    const fetchRes = await fetch("https://api.openai.com/v1/chat/completions", {
+    const { prompt } = req.body || {};
+    if (!prompt || typeof prompt !== "string") {
+      return res.status(400).json({ error: "Missing prompt" });
+    }
+    if (prompt.length > 200) {
+      return res.status(400).json({
+        error: "Domanda troppo lunga / Question too long (max 200 characters).",
+      });
+    }
+
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return res
+        .status(500)
+        .json({ error: "Server not configured: missing OPENAI_API_KEY" });
+    }
+
+    // Modello configurabile da ENV, default economico per test
+    const model = process.env.OPENAI_MODEL || "gpt-4.1-mini";
+    const headers = {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    };
+    if (process.env.OPENAI_PROJECT) {
+      headers["OpenAI-Project"] = process.env.OPENAI_PROJECT; // forza il project corretto
+    }
+
+    const upstream = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
-        model: "gpt-4o",
+        model,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: prompt },
         ],
-        max_tokens: 300, // Limite risposta (output)
+        max_tokens: 300,
         temperature: 0.75,
       }),
     });
 
-    const data = await fetchRes.json();
-    // ✅ Ritorna la risposta o errore custom
-    const text =
-      data.choices?.[0]?.message?.content || "OpenAI response error.";
+    const raw = await upstream.text();
 
-    return res.status(200).json({ text });
-  } catch (err) {
-    return res.status(500).json({ error: "Server error: " + err.message });
+    // Se è JSON, prova a decodificare e propagare errori veri (401/402/429…)
+    try {
+      const json = JSON.parse(raw);
+      if (upstream.ok) {
+        const text =
+          json?.choices?.[0]?.message?.content || "OpenAI response error.";
+        return res.status(200).json({ text });
+      }
+      return res.status(upstream.status).json(json);
+    } catch {
+      // non-JSON: rimanda testo e status
+      return res.status(upstream.status).send(raw);
+    }
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ error: "Server error: " + (e?.message || String(e)) });
   }
 }
