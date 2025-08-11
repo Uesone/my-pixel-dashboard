@@ -83,14 +83,24 @@ Be a friendly, pixel-perfect assistant from a retro-futuristic workshop!
  * - migliora CORS e gestione errori (401/402/429)
  */
 export default async function handler(req, res) {
-  // --- CORS ---
-  const ORIGIN = "https://uesone.vercel.app"; // cambia/aggiungi se usi altri domini
-  res.setHeader("Access-Control-Allow-Origin", ORIGIN);
+  // --- CORS: consenti più domini ---
+  const ORIGINS = [
+    "https://uesone.vercel.app",
+    "https://umbertoamoroso.vercel.app",
+  ];
+
+  const origin = req.headers.origin;
+  if (ORIGINS.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // Preflight
   if (req.method === "OPTIONS") return res.status(200).end();
 
+  // Solo POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -113,16 +123,20 @@ export default async function handler(req, res) {
         .json({ error: "Server not configured: missing OPENAI_API_KEY" });
     }
 
-    // Modello configurabile da ENV, default economico per test
+    // Modello configurabile via ENV (default economico per test)
     const model = process.env.OPENAI_MODEL || "gpt-4.1-mini";
+
+    // Header verso OpenAI
     const headers = {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     };
+    // Forza il Project ID se disponibile
     if (process.env.OPENAI_PROJECT) {
-      headers["OpenAI-Project"] = process.env.OPENAI_PROJECT; // forza il project corretto
+      headers["OpenAI-Project"] = process.env.OPENAI_PROJECT;
     }
 
+    // Chiamata a OpenAI
     const upstream = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers,
@@ -139,7 +153,7 @@ export default async function handler(req, res) {
 
     const raw = await upstream.text();
 
-    // Se è JSON, prova a decodificare e propagare errori veri (401/402/429…)
+    // Propaga JSON o testo grezzo + status (utile per 401/402/429)
     try {
       const json = JSON.parse(raw);
       if (upstream.ok) {
@@ -149,7 +163,6 @@ export default async function handler(req, res) {
       }
       return res.status(upstream.status).json(json);
     } catch {
-      // non-JSON: rimanda testo e status
       return res.status(upstream.status).send(raw);
     }
   } catch (e) {
